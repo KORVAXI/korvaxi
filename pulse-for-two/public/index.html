@@ -1833,7 +1833,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       if (o.cuddling) endCuddle();
       else if (start.moved) {
         const h = opt.free ? 100 : o.y; o.held = false; o.vy = 0; o.pause = 1800; pe.classList.remove("dragging");
-        if (opt.free) { o.parked = true; o.home = { x: o.x, y: o.y }; }
+        if (opt.free) { o.parked = false; o.pause = 900; o.target = o.x; }
         if (opt.dropped && ev && opt.dropped(ev)) { start = null; return; }
         if (reduceMotion) { o.y = 0; opt.place(); }
         careAdd("plays");
@@ -2158,9 +2158,14 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     }
     // Not parked: he strolls along the bottom of the screen.
     const ground = bb.maxY; let moving = false;
-    if (Math.abs(BUD.y - ground) > 1) { BUD.y += Math.sign(ground - BUD.y) * Math.min(Math.abs(ground - BUD.y), 0.9 * dt / 16); moving = true; }
+    if (Math.abs(BUD.y - ground) > 1 && BUD.pause <= 0) {
+      BUD.y += Math.sign(ground - BUD.y) * Math.min(Math.abs(ground - BUD.y), 2 * dt / 16); moving = true;
+      BUD.wob = (BUD.wob || 0) + dt / 140; BUD.dir = Math.sin(BUD.wob) >= 0 ? 1 : -1; // waddle
+      if (Math.abs(BUD.y - ground) <= 2) { BUD.y = ground; BUD.pause = 700; anyHop(); }
+    }
     if (mood === "sleep") BUD.target = bb.maxX;
     if (BUD.pause > 0) BUD.pause -= dt;
+    else if (Math.abs(BUD.y - ground) > 1) { /* still walking down */ }
     else {
       const dx = BUD.target - BUD.x;
       if (Math.abs(dx) < 2) {
@@ -2193,7 +2198,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     renderAll(); setFace("cuddle"); petSay(pick(["Home sweet home!", "Ahh, my house!", "Back home. Comfy!"])); setTimeout(() => setFace(null), 1400);
   }
   function goOut(ev) {
-    S.petLoc = "out"; BUD.init = true; BUD.parked = true;
+    S.petLoc = "out"; BUD.init = true; BUD.parked = false; BUD.pause = 900;
     const bb = bBounds(); BUD.x = clamp(ev.clientX - BSIZE / 2, bb.minX, bb.maxX); BUD.y = clamp(ev.clientY - BSIZE / 2, bb.minY, bb.maxY);
     renderAll(); buddyHop(); buddySay(pick(["Let's go on an adventure!", "I'm coming with you!", "Wheee, out we go!"]));
   }
