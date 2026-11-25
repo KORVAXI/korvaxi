@@ -56,7 +56,8 @@ function locate(path) {
   const s = String(path || "").split("/");
   if (s[0] === "logs" && PEOPLE.includes(s[1])) {
     if (s.length === 2) return { blob: "person/" + s[1], key: null, owner: s[1], merge: true };
-    if (s.length === 4 && s[2] === "days" && DATE.test(s[3])) return { blob: `month/${s[1]}/${s[3].slice(0, 7)}`, key: s[3], owner: s[1], kind: "day" };
+    // Either of you may log in the other's diary; settings and saved meals stay personal.
+    if (s.length === 4 && s[2] === "days" && DATE.test(s[3])) return { blob: `month/${s[1]}/${s[3].slice(0, 7)}`, key: s[3], owner: null, diaryOf: s[1], kind: "day" };
     if (s.length === 4 && s[2] === "usuals" && ID.test(s[3])) return { blob: "usuals/" + s[1], key: s[3], owner: s[1] };
   }
   if (s[0] === "plans" && s.length === 2) {
@@ -99,7 +100,13 @@ function dayLabel(date, tz) {
 // Tell the partner about reminders, hearts and planned meals.
 async function afterWrite(store, env, loc, prev, next, writer) {
   if (loc.kind === "day") {
-    const to = partnerOf(loc.owner); const from = await nameOf(store, loc.owner);
+    if (writer && writer !== loc.diaryOf) {
+      const prevIds = new Set((Array.isArray(prev && prev.meals) ? prev.meals : []).map(m => m && m.id));
+      const added = (Array.isArray(next.meals) ? next.meals : []).filter(m => m && !prevIds.has(m.id));
+      if (added.length) await sendPush(store, env, loc.diaryOf, { title: `${await nameOf(store, writer)} logged food for you`, body: `${added[0].name || "Food"}${added.length > 1 ? ` and ${added.length - 1} more` : ""}`, tag: "logged" });
+      return;
+    }
+    const to = partnerOf(loc.diaryOf); const from = await nameOf(store, loc.diaryOf);
     const seen = new Set((Array.isArray(prev && prev.nudges) ? prev.nudges : []).map(x => x && x.at));
     for (const nd of Array.isArray(next.nudges) ? next.nudges : []) {
       if (!nd || seen.has(nd.at) || nd.to !== to) continue;

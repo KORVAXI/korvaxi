@@ -54,7 +54,7 @@
     timer = setInterval(() => { if (document.visibilityState === "visible") refresh(); }, POLL_MS);
     document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") refresh(); });
   }
-  const mine = path => { const s = path.split("/"); return s[0] !== "logs" || s[1] === (auth && auth.me); };
+  const mine = path => { const s = path.split("/"); return s[0] !== "logs" || s[1] === (auth && auth.me) || (s.length === 4 && s[2] === "days"); };
   async function send(path, method, body, apply) {
     if (!mine(path)) throw { code: "invalid_argument", message: "not your data" };
     apply(); emit(); writes++; writeEpoch++;
