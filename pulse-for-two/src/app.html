@@ -269,6 +269,17 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; c
 @keyframes hello-up { 0% { transform: translateY(24px); opacity: 0; } 100% { transform: none; opacity: 1; } }
 @keyframes hello-out { to { opacity: 0; transform: scale(1.06); } }
 @media (prefers-reduced-motion: reduce) { .hello-pet, .hello h1, .hello p, .hello-go, .hello.out { animation: none !important; } }
+/* Morning notes */
+.note-for { background: var(--sunk); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.note-for .nf-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.note-for .nf-head b { font-family: var(--display); font-weight: 600; }
+.note-for .nf-text { font-style: italic; overflow-wrap: anywhere; }
+.note-for .nf-state { font-size: .8rem; color: var(--muted); }
+.note-for textarea { min-height: 64px; background: var(--surface); }
+.note-for .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.note-for .chips .pill { font-size: .82rem; padding: 5px 10px; }
+.note-btn { border: 1px dashed var(--red); background: none; color: var(--red); border-radius: 12px; padding: 9px 12px; font-weight: 600; cursor: pointer; }
+.simple .note-for { text-align: left; }
 /* Pet that follows you */
 .buddy { position: fixed; inset: 0; z-index: 18; pointer-events: none; }
 .buddy .buddy-pet { position: absolute; left: 0; top: 0; width: 84px; height: 84px; pointer-events: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,.18)); }
@@ -524,6 +535,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
         <button class="pet" type="button" id="pet" aria-label="Your pet"><svg id="pet-svg" viewBox="0 0 100 100" aria-hidden="true"></svg></button>
         <div class="ground"></div>
       </div>
+      <div class="note-for" id="note-for" hidden></div>
       <div class="pet-stats" id="pet-stats"></div>
       <details class="journey" id="journey"><summary>Our journey together</summary><ol class="mem" id="mem"></ol></details>
     </div>
@@ -1288,7 +1300,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
 
   // Own timer alarm
   function checkAlarm() {
-    if (!S.me || !S.loaded || !S.days[S.me] || !$("#alert").hidden || !$("#hello").hidden) return;
+    if (!S.me || !S.loaded || !S.days[S.me] || !$("#alert").hidden || !$("#hello").hidden || (S.helloDoneAt && Date.now() - S.helloDoneAt < 12000)) return;
     const st = hungerState(S.me); if (!st.on || !st.due) { if (!st.due) S.alarmKey = null; return; }
     const key = st.last ? st.last.m.id : "none-" + TODAY;
     if (S.alarmKey === key && Date.now() - S.alarmAt < 60 * 60000) return;
@@ -1310,6 +1322,8 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   }
   function checkNudges() {
     const pid = partnerId(); if (!pid || !S.me || !$("#hello").hidden) return;
+    const since = S.helloDoneAt ? Date.now() - S.helloDoneAt : 1e9;
+    if (since < 10500) { clearTimeout(S.nudgeT); S.nudgeT = setTimeout(checkNudges, 10600 - since); return; }
     const e = stored(pid, TODAY); const seen = Math.max(seenAt(), S.nudgeSeen || 0);
     const list = (e && Array.isArray(e.nudges) ? e.nudges : []).filter(x => x && x.to === S.me && n(x.at) > seen && n(x.at) > Date.now() - 12 * 3600000);
     if (!list.length) return;
@@ -1502,6 +1516,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     }
     { const wv = n((entry(S.me, TODAY) || {}).water) || 0; const wg = goalsOf(S.me).waterGoal;
       const wb = el("button", "add-water", `+ Water (${wv}/${wg} glasses)`); wb.type = "button"; wb.addEventListener("click", () => setWater(wv + 1)); hero.append(wb); }
+    if (pid) { const nb = el("div", "note-for"); nb.id = "simple-note"; hero.append(nb); noteBox(nb); }
     const sk = togetherStreak(); if (sk.n) hero.append(el("div", "love-line", `${sk.n}-day streak${sk.both ? " together" : ""}`));
     const full = el("button", "link", "Switch to full view"); full.type = "button"; full.addEventListener("click", () => saveGoals({ simple: false })); hero.append(full);
   }
@@ -1590,7 +1605,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     const b = el("div"); b.append(document.createTextNode(lv.next ? `${lv.d} days together · grows at ${lv.next}` : `${lv.d} days together · fully grown!`));
     const bb = el("div", "bar"); const bi = el("i"); const prev = PET_LEVELS[lv.i][0]; bi.style.width = (lv.next ? clamp((lv.d - prev) / (lv.next - prev), 0, 1) : 1) * 100 + "%"; bb.append(bi); b.append(bb);
     st.append(a, b);
-    renderBondRow(); renderPetLife(); renderJourney(); maybeGreet(); setTimeout(maybeCelebrateStreak, 1800);
+    renderBondRow(); renderPetLife(); renderNoteFor(); renderJourney(); maybeGreet(); setTimeout(maybeCelebrateStreak, 1800);
     drawPet(); startPet();
   }
   function renderPetLife() {
@@ -1875,6 +1890,62 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     const night = h >= 22 || h < 4;
     showHello(`${night ? "Good night" : hi}, ${S.names[S.me] || "friend"}!`, msg, night);
   }
+
+  // ---------- Morning notes: Mochi reads your note at your partner's next good morning ----------
+  S.notes = {};
+  const NOTE_IDEAS = ["Have a great day!", "I love you", "Don't skip breakfast!", "Proud of you", "Drink your water!", "Can't wait to see you"];
+  function noteFor(uid) { const nt = S.notes[uid]; return nt && typeof nt.text === "string" && nt.text.trim() ? nt : null; }
+  async function saveNote(text) {
+    const pid = partnerId(); if (!S.db || !S.me || !pid) { toast("Sign in to claude.ai to leave a note"); return; }
+    const doc = { text: String(text || "").trim().slice(0, 200), from: S.me, at: Date.now(), readAt: 0 };
+    S.notes[pid] = doc; S.noteEditing = false; renderNoteFor();
+    try { await S.db.doc("shared/note-" + pid).set(doc); toast(doc.text ? `${PET.name} will give ${nameOf(pid)} your note in the morning` : "Note removed"); if (doc.text) anyHop(); }
+    catch (err) { toast(errText(err)); }
+  }
+  function noteBox(box) {
+    const old = box.querySelector("#note-text"); const keep = old ? old.value : null; const hadFocus = old && document.activeElement === old;
+    const pid = partnerId(); box.textContent = ""; if (!pid || !S.me) { box.hidden = true; return; }
+    box.hidden = false; const mine = noteFor(pid); const mineIsMine = mine && mine.from === S.me;
+    if (S.noteEditing) {
+      const head = el("div", "nf-head"); head.append(el("b", null, `Note for ${nameOf(pid)}'s morning`)); box.append(head);
+      const ta = el("textarea"); ta.id = "note-text"; ta.maxLength = 200; ta.placeholder = `${PET.name} will read this to ${nameOf(pid)} after good morning`;
+      ta.setAttribute("aria-label", `Note for ${nameOf(pid)}`); ta.value = keep != null ? keep : (mineIsMine && !mine.readAt ? mine.text : ""); box.append(ta); if (hadFocus) setTimeout(() => ta.focus(), 0);
+      const chips = el("div", "chips"); NOTE_IDEAS.forEach(t => { const c = el("button", "pill", t); c.type = "button"; c.addEventListener("click", () => { ta.value = ta.value.trim() ? ta.value.trim() + " " + t : t; ta.focus(); }); chips.append(c); }); box.append(chips);
+      const row = el("div", "row");
+      const save = el("button", "cta", "Save note"); save.type = "button"; save.addEventListener("click", () => { if (!ta.value.trim()) { toast("Write something first"); return; } saveNote(ta.value); });
+      const cancel = el("button", "pill", "Cancel"); cancel.type = "button"; cancel.addEventListener("click", () => { S.noteEditing = false; renderAll(); });
+      row.append(save, cancel); box.append(row);
+      return;
+    }
+    if (mineIsMine) {
+      const head = el("div", "nf-head"); head.append(el("b", null, `Your note for ${nameOf(pid)}`));
+      const acts = el("span", "row");
+      const ch = el("button", "pill", mine.readAt ? "Write a new one" : "Change"); ch.type = "button"; ch.addEventListener("click", () => { S.noteEditing = true; renderAll(); const t = $("#note-text"); if (t) t.focus(); });
+      acts.append(ch);
+      if (!mine.readAt) { const rm = el("button", "pill", "Remove"); rm.type = "button"; rm.addEventListener("click", () => saveNote("")); acts.append(rm); }
+      head.append(acts); box.append(head);
+      box.append(el("div", "nf-text", "“" + mine.text + "”"));
+      box.append(el("div", "nf-state", mine.readAt ? `${nameOf(pid)} got it at ${new Date(mine.readAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}` : `Waiting for ${nameOf(pid)}'s next good morning`));
+      return;
+    }
+    const b = el("button", "note-btn", `+ Leave a note for ${nameOf(pid)}'s morning`); b.type = "button";
+    b.addEventListener("click", () => { S.noteEditing = true; renderAll(); const t = $("#note-text"); if (t) t.focus(); });
+    box.append(b);
+  }
+  function renderNoteFor() { const b = $("#note-for"); if (b) noteBox(b); const sb = $("#simple-note"); if (sb) noteBox(sb); }
+  // Called after the good-morning greeting: read out a note left for me
+  function deliverNote() {
+    const nt = noteFor(S.me); if (!nt || nt.readAt || nt.from === S.me) return false;
+    const from = nameOf(nt.from);
+    setTimeout(() => {
+      anyHop(); if (!reduceMotion) burst(24, innerHeight * 0.6);
+      anySay(`${from} says: “${nt.text}”`, { label: `Send love to ${from}`, run: sendLove });
+    }, 4200);
+    const read = Object.assign({}, nt, { readAt: Date.now() }); S.notes[S.me] = read;
+    if (S.db) S.db.doc("shared/note-" + S.me).set(read).catch(() => {});
+    return true;
+  }
+
   let helloT = null, helloMsg = "", helloNight = false, helloLeaving = false;
   function showHello(title, msg, night) {
     const o = $("#hello"); $("#hello-title").textContent = title; helloMsg = msg; helloNight = !!night; helloLeaving = false;
@@ -1891,9 +1962,10 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   function hideHello() {
     const o = $("#hello"); if (o.hidden || helloLeaving) return; helloLeaving = true; clearTimeout(helloT);
     const finish = () => {
-      o.hidden = true; o.classList.remove("out", "clear"); helloLeaving = false; setTimeout(checkNudges, 2500);
-      if (helloNight) { setFace("sleep"); PET.state = ""; setTimeout(() => { setFace(null); }, 400); return; }
+      o.hidden = true; o.classList.remove("out", "clear"); helloLeaving = false; S.helloDoneAt = Date.now();
+      if (helloNight) { setFace("sleep"); PET.state = ""; setTimeout(() => { setFace(null); }, 400); setTimeout(checkNudges, 2500); return; }
       setFace(null); anyHop(); if (helloMsg) setTimeout(() => anySay(helloMsg), 250);
+      const hadNote = deliverNote(); setTimeout(checkNudges, hadNote ? 11000 : 2500);
     };
     const pet = o.querySelector(".hello-pet");
     const target = onScreen() ? $("#buddy-pet") : (S.view === "home" && !$("#yard").hidden && !$("#pet").hidden ? $("#pet") : null);
@@ -2550,6 +2622,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     renderAll(); subscribeDays(S.me);
     db.collection("shared").onSnapshot(snap => {
       snap.docs.forEach(d => {
+        if (d.id.startsWith("note-")) { const v = d.data() || {}; S.notes[d.id.slice(5)] = { text: typeof v.text === "string" ? v.text.slice(0, 200) : "", from: typeof v.from === "string" ? v.from : "", at: n(v.at) || 0, readAt: n(v.readAt) || 0 }; return; }
         if (d.id.startsWith("ws-")) {
           if (S.wsBusy) return; const v = d.data() || {}; const prev = S.ws[d.id]; S.ws[d.id] = { water: n(v.water), sleep: n(v.sleep), by: typeof v.by === "string" ? v.by : "", at: n(v.at) || 0 };
           const mineToday = d.id === wsId(S.me, TODAY);

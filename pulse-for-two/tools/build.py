@@ -27,6 +27,7 @@ for a, b in swaps:
     if n == 0:
         raise SystemExit(f"build: expected text not found: {a[:60]}")
     src = src.replace(a, b)
+src = src.replace("Sign in to claude.ai to", "Log in to")  # any newer messages of this kind
 if "claude.ai" in src:
     raise SystemExit("build: a claude.ai reference is left over")
 
