@@ -1648,10 +1648,11 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     const scarf = '<path d="M28 74q22 10 44 0v6q-22 10-44 0z" fill="#2E86DE"/><path d="M60 78l4 14h6l-3-15z" fill="#2E86DE"/><path d="M34 77v5M42 79v5M50 80v5M58 79v5M66 77v5" stroke="#fff" stroke-width="1.6"/>';
     const shades = '<g><rect x="33" y="47" width="14" height="9" rx="4" fill="#1B1B1F"/><rect x="53" y="47" width="14" height="9" rx="4" fill="#1B1B1F"/><path d="M47 50h6" stroke="#1B1B1F" stroke-width="2"/></g>';
     let gear = "";
-    if (S.wx && mood !== "sleep") {
+    if (S.wx) {
+      // Warm clothes stay on, even in bed; the umbrella and sunglasses come off when he sleeps
       if (wxt != null && wxt <= 2) gear += puffer; else if (wxt != null && wxt <= 10) gear += scarf;
-      if (wxk === "rain" || wxk === "storm") gear += umbrella;
-      if (wxt != null && wxt >= 24 && wxk === "clear" && S.wx.isDay) gear += shades;
+      if (mood !== "sleep" && (wxk === "rain" || wxk === "storm")) gear += umbrella;
+      if (mood !== "sleep" && wxt != null && wxt >= 24 && wxk === "clear" && S.wx.isDay) gear += shades;
     }
     const zzz = mood === "sleep" ? '<text x="70" y="30" font-size="12" font-weight="700" fill="var(--muted)" font-family="Fredoka, sans-serif">z</text><text x="78" y="20" font-size="15" font-weight="700" fill="var(--muted)" font-family="Fredoka, sans-serif">Z</text>' : "";
     const drip = mood === "hungry" ? '<path d="M56 68q2 6 0 8q-3-2 0-8z" fill="#9FD3FF"/>' : "";
@@ -2778,6 +2779,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       const people = {}; snap.docs.forEach(d => { people[d.id] = d.data() || {}; });
       const newcomer = Object.keys(people).some(id => !(id in S.names));
       S.people = people; S.loaded = true;
+      if (typeof WX_ON !== "undefined" && WX_ON && !S.wxStarted) { S.wxStarted = true; loadWeather(); }
       if (!S.goalPresetChecked && S.user && S.me && typeof S.user.isOwner === "function") { S.goalPresetChecked = true;
         S.user.isOwner().then(own => { const p = S.people[S.me] || {};
           if (!own && p.kcalSet !== true && n(p.kcalGoal) !== 2000) saveGoals({ kcalGoal: 2000, kcalSet: true }); }).catch(() => {}); }

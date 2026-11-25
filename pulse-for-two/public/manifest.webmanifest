@@ -2,7 +2,7 @@
   "name": "Pulse for Two",
   "short_name": "Pulse",
   "description": "A food diary for two: what you eat, when you eat it, and photos of it.",
-  "start_url": "/#food",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#FFF4F4",
   "theme_color": "#E0182D",
