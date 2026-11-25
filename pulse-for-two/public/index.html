@@ -6,11 +6,12 @@
 <title>Pulse for Two</title>
 <meta name="theme-color" content="#E0182D">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Pulse for Two">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pulse">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/icon-180.png">
-<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}</style>
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,7 +38,7 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 22px 120px; }
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 22px 190px; }
 .wrap { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; font-weight: 600; }
 h2 { font-size: 1.35rem; }
@@ -79,6 +80,201 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; c
 .invite { border: 2px dashed var(--line); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 6px; justify-content: center; color: var(--muted); }
 .invite strong { color: var(--ink); font-family: var(--display); font-size: 1.15rem; font-weight: 600; }
 
+/* Home */
+.hero { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.hero .hi { font-family: var(--display); font-size: 1.6rem; font-weight: 600; line-height: 1.1; }
+.hero .big-ring { width: 180px; height: 180px; }
+.hero .line { font-size: 1.05rem; }
+.hero .line b { color: var(--red); font-family: var(--display); font-weight: 600; }
+.big-cta { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; border: 0; border-radius: 18px; padding: 16px; background: var(--red); color: #fff; font: 600 1.2rem var(--display); cursor: pointer; transition: transform .12s ease; }
+.big-cta:active { transform: scale(0.97); }
+.big-cta svg { width: 24px; height: 24px; }
+.hero .two-btns { display: grid; grid-template-columns: 1fr auto; gap: 8px; width: 100%; }
+.cam-btn { border: 2px solid var(--red); background: var(--surface); color: var(--red); border-radius: 18px; padding: 0 18px; display: grid; place-items: center; cursor: pointer; }
+.cam-btn svg { width: 26px; height: 26px; }
+.sec-title { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.sec-title h3 { font-size: 1.15rem; }
+.link { border: 0; background: none; color: var(--red); font-weight: 600; padding: 4px 0; cursor: pointer; }
+.next { display: grid; grid-template-columns: 62px 1fr auto; gap: 10px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+.next:first-of-type { border-top: 0; }
+.next .t { font-family: var(--display); font-weight: 600; color: var(--red); }
+.next .nm { min-width: 0; overflow-wrap: anywhere; font-weight: 500; }
+.next .nm small { display: block; color: var(--muted); font-weight: 400; font-size: .8rem; }
+.from { display: inline-block; font-size: .72rem; font-weight: 600; background: var(--red-soft); color: var(--red); border-radius: 999px; padding: 1px 8px; margin-left: 4px; }
+.ate { border: 0; border-radius: 12px; padding: 9px 14px; background: var(--red); color: #fff; font-weight: 600; font-family: var(--display); cursor: pointer; white-space: nowrap; }
+.ate.done { background: var(--sunk); color: var(--red); }
+.partner { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; }
+.partner .av { width: 44px; height: 44px; font-size: 1.1rem; }
+.partner .info { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.partner .info b { font-family: var(--display); font-weight: 600; font-size: 1.05rem; }
+.partner .info span { font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+.heart-btn { width: 52px; height: 52px; border-radius: 50%; border: 0; background: var(--red); display: grid; place-items: center; cursor: pointer; transition: transform .12s ease; }
+.heart-btn:active { transform: scale(0.88); }
+.heart-btn svg { width: 26px; height: 26px; }
+.partner .acts2 { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap; }
+.eaten-row { display: grid; grid-template-columns: 62px 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+.eaten-row:first-of-type { border-top: 0; }
+.eaten-row .t { color: var(--muted); font-variant-numeric: tabular-nums; font-size: .9rem; }
+.eaten-row .nm { min-width: 0; overflow-wrap: anywhere; display: flex; align-items: center; gap: 8px; }
+.eaten-row .thumb { width: 36px; height: 36px; border-radius: 8px; flex: none; }
+.eaten-row .thumb img { border-radius: 8px; }
+/* Meal timer */
+.timer { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; align-items: center; }
+.timer .clock { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: var(--red-soft); color: var(--red); }
+.timer .clock svg { width: 34px; height: 34px; }
+.timer .since { font-family: var(--display); font-size: 1.9rem; font-weight: 700; line-height: 1; }
+.timer .lbl { color: var(--muted); font-size: .88rem; overflow-wrap: anywhere; }
+.timer .full { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; }
+.timer.due { background: linear-gradient(135deg, var(--red), var(--red-deep)); color: #fff; border: 0; }
+.timer.due .clock { background: rgba(255,255,255,.2); color: #fff; animation: ring 1.2s ease-in-out infinite; }
+.timer.due .lbl { color: rgba(255,255,255,.9); }
+.timer.due .bar { background: rgba(255,255,255,.25); }
+.timer.due .bar i { background: #fff; }
+.timer.due .row .pill { background: #fff; color: #9E0F22; border-color: #fff; font-weight: 600; }
+@keyframes ring { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-12deg); } 40% { transform: rotate(12deg); } 60% { transform: rotate(-6deg); } 80% { transform: rotate(6deg); } }
+.p-since.warn { color: var(--red); font-weight: 600; }
+.nudge-box { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; background: var(--sunk); border-radius: 14px; padding: 12px; }
+.nudge-box form { display: flex; gap: 8px; }
+.nudge-box input { flex: 1; }
+.remind-btn { border: 0; border-radius: 999px; padding: 7px 14px; background: var(--red); color: #fff; font-weight: 600; cursor: pointer; }
+.remind-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+.alert-bg { position: fixed; inset: 0; z-index: 55; background: rgba(20,4,8,.6); display: grid; place-items: center;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.alert { background: var(--surface); border-radius: 24px; padding: 24px 20px; width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 12px; text-align: center; box-shadow: 0 20px 60px -20px rgba(0,0,0,.5); }
+.alert-icon { width: 72px; height: 72px; margin: 0 auto; border-radius: 50%; background: var(--red); color: #fff; display: grid; place-items: center; animation: ring 1.2s ease-in-out 3; }
+.alert-icon svg { width: 40px; height: 40px; }
+.alert h2 { font-size: 1.5rem; }
+.alert p { font-size: 1.05rem; overflow-wrap: anywhere; }
+/* Streak, recap, usuals, simple view */
+.streak { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; align-items: center; }
+.streak .flame { width: 56px; height: 56px; border-radius: 16px; background: var(--red-soft); display: grid; place-items: center; }
+.streak .flame svg { width: 34px; height: 34px; }
+.streak .n { font-family: var(--display); font-size: 1.35rem; font-weight: 600; line-height: 1.1; }
+.streak .sub { color: var(--muted); font-size: .86rem; }
+.badges { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; }
+.badge { font-size: .76rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--sunk); color: var(--muted); }
+.badge.got { background: var(--red); color: #fff; }
+.recap { background: linear-gradient(150deg, var(--red), var(--red-deep)); color: #fff; border: 0; display: flex; flex-direction: column; gap: 12px; }
+.recap h3 { color: #fff; font-size: 1.3rem; }
+.recap .sub { opacity: .9; font-size: .88rem; }
+.recap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.recap-grid div { background: rgba(255,255,255,.16); border-radius: 14px; padding: 10px 12px; min-width: 0; }
+.recap-grid b { display: block; font-family: var(--display); font-size: 1.3rem; font-weight: 600; overflow-wrap: anywhere; }
+.recap-grid span { font-size: .78rem; opacity: .9; }
+.recap-banner { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--red-soft); border: 0; }
+.recap-banner b { font-family: var(--display); font-weight: 600; }
+.usual { position: relative; min-width: 0; }
+.usual .food { width: 100%; height: 100%; }
+.usual .x { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; border-radius: 50%; border: 0; background: var(--surface); color: var(--muted); display: grid; place-items: center; padding: 0; cursor: pointer; }
+.usual .x svg { width: 12px; height: 12px; }
+.save-usual { display: flex; gap: 8px; margin: 4px 0 8px; }
+.save-usual input { flex: 1; }
+.marks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.mark { border: 2px solid var(--line); background: var(--surface); border-radius: 16px; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-weight: 600; cursor: pointer; transition: transform .12s ease; min-width: 0; }
+.mark:active { transform: scale(0.94); }
+.mark small { font-weight: 400; color: var(--muted); font-size: .72rem; }
+.mark .ck { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; }
+.mark .ck svg { width: 16px; height: 16px; }
+.mark.done { border-color: var(--red); background: var(--red-soft); }
+.mark.done .ck { background: var(--red); border-color: var(--red); color: #fff; }
+.simple { display: flex; flex-direction: column; gap: 14px; text-align: center; align-items: stretch; }
+.simple .hi { font-family: var(--display); font-size: 1.7rem; font-weight: 600; }
+.simple .ago { font-size: 1.05rem; }
+.simple .ago.due { color: var(--red); font-weight: 600; }
+.simple .marks { grid-template-columns: 1fr 1fr; }
+.simple .mark { padding: 18px 6px; font-size: 1.1rem; font-family: var(--display); }
+.simple .mark .ck { width: 34px; height: 34px; }
+.simple .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.simple .duo .cta { padding: 16px 10px; }
+@media (max-width: 380px) { .marks { grid-template-columns: 1fr 1fr; } }
+/* Pet */
+.yard { display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+.yard-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.yard-top b { font-family: var(--display); font-size: 1.15rem; font-weight: 600; }
+.yard-area { position: relative; height: 196px; border-radius: 16px; background: linear-gradient(var(--sunk), var(--surface)); overflow: hidden; }
+.yard-area.night { background: linear-gradient(#2A1020, #3A1626); }
+.house { position: absolute; left: 6px; bottom: 16px; width: 120px; height: 112px; z-index: 0; }
+.bed { position: absolute; left: 6px; bottom: 12px; width: 120px; height: 26px; z-index: 0; }
+.bowl { position: absolute; right: 12px; bottom: 14px; width: 54px; height: 30px; z-index: 0; }
+.sky { position: absolute; top: 12px; right: 16px; width: 26px; height: 26px; border-radius: 50%; background: #F5B932; box-shadow: 0 0 0 6px rgba(245,185,50,.2); z-index: 0; }
+.yard-area.night .sky { background: #F4EAD5; box-shadow: -7px -3px 0 0 #2A1020 inset, 0 0 0 6px rgba(244,234,213,.12); }
+.yard-area.night .win { fill: #F5C94A; stroke: #F5C94A; }
+.yard-area .pet { z-index: 1; }
+.yard-area .bubble { z-index: 3; }
+.ground { position: absolute; left: 0; right: 0; bottom: 0; height: 22px; background: repeating-linear-gradient(90deg, var(--red-soft) 0 10px, transparent 10px 14px); opacity: .9; }
+.pet { position: absolute; left: 0; bottom: 12px; width: 104px; height: 104px; padding: 0; border: 0; background: none; cursor: pointer; will-change: transform; touch-action: manipulation; }
+.pet svg { width: 100%; height: 100%; overflow: visible; }
+.pet .body { transform-origin: 50px 92px; }
+.pet.walking .body { animation: bob .45s ease-in-out infinite; }
+.pet.walking .foot.l { animation: stepL .45s ease-in-out infinite; }
+.pet.walking .foot.r { animation: stepR .45s ease-in-out infinite; }
+.pet.hop .body { animation: hop .5s ease-out 1; }
+.pet .lid { transform-origin: 50px 52px; animation: blink 4.2s infinite; }
+@keyframes bob { 50% { transform: translateY(-3px) scaleY(1.03); } }
+@keyframes stepL { 50% { transform: translateY(-4px); } }
+@keyframes stepR { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(0); } }
+@keyframes hop { 0% { transform: translateY(0) scale(1.1, .9); } 40% { transform: translateY(-26px) scale(.95, 1.08); } 80% { transform: translateY(0) scale(1.08, .92); } 100% { transform: none; } }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(0); } 95% { transform: scaleY(1); } }
+.bubble { position: absolute; top: 8px; left: 8px; right: 8px; z-index: 2; background: var(--surface); border: 2px solid var(--red); border-radius: 14px; padding: 8px 10px; font-size: .9rem; display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; box-shadow: var(--shadow); }
+.bubble span { min-width: 0; overflow-wrap: anywhere; flex: 1 1 160px; }
+.pet-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: .82rem; color: var(--muted); }
+.pet-stats .bar { height: 8px; margin-top: 4px; }
+.crumb { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--red); pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .pet.walking .body, .pet.walking .foot, .pet .lid, .pet.hop .body { animation: none !important; } }
+/* Bond & play */
+.pet, .buddy-pet { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.pet.dragging { cursor: grabbing; }
+.pet.dragging .body { animation: dangle .5s ease-in-out infinite !important; }
+.pet.dragging .foot.l { transform: rotate(-12deg) translateY(2px); transform-origin: 40px 89px; }
+.pet.dragging .foot.r { transform: rotate(12deg) translateY(2px); transform-origin: 60px 89px; }
+.pet.giggle .body { animation: wiggle .25s ease-in-out 5 !important; }
+@keyframes dangle { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+@keyframes wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-8deg) scale(1.03); } 75% { transform: rotate(8deg) scale(1.03); } }
+.pet-stats .wide { grid-column: 1 / -1; }
+.pet-hint { font-size: .78rem; text-align: center; margin: 0; }
+.journey summary { cursor: pointer; font-family: var(--display); font-weight: 600; font-size: 1rem; }
+.mem { list-style: none; margin: 10px 0 0; padding: 0 0 0 14px; border-left: 2px solid var(--red-soft); display: flex; flex-direction: column; gap: 10px; }
+.mem li { position: relative; font-size: .9rem; overflow-wrap: anywhere; }
+.mem li::before { content: ""; position: absolute; left: -20px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--red); }
+.mem li small { display: block; color: var(--muted); font-size: .76rem; }
+/* Pet that follows you */
+.buddy { position: fixed; inset: 0; z-index: 18; pointer-events: none; }
+.buddy .buddy-pet { position: absolute; left: 0; top: 0; width: 84px; height: 84px; pointer-events: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,.18)); }
+.buddy-bubble { position: absolute; top: 0; left: 0; right: auto; width: min(300px, calc(100vw - 32px)); pointer-events: auto; }
+.buddy.hungry .buddy-pet { filter: drop-shadow(0 0 10px rgba(224,24,45,.6)); }
+/* Water */
+.water { display: flex; flex-direction: column; gap: 10px; }
+.water .wtop { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.water .wnum { font-family: var(--display); font-size: 1.6rem; font-weight: 600; color: #2E86DE; line-height: 1; }
+.water .wnum small { font-size: .9rem; color: var(--muted); font-weight: 500; }
+.water .glasses .glass { width: 34px; height: 42px; }
+.water .wbtns { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.water .add-water { border: 0; border-radius: 16px; padding: 13px; background: #2E86DE; color: #fff; font: 600 1.05rem var(--display); cursor: pointer; transition: transform .12s ease; }
+.water .add-water:active { transform: scale(0.96); }
+.water .bar i { background: #2E86DE; }
+.water .partner-w { font-size: .86rem; color: var(--muted); }
+.simple .add-water { border: 0; border-radius: 16px; padding: 14px; background: #2E86DE; color: #fff; font: 600 1.1rem var(--display); cursor: pointer; }
+/* Plan */
+.plan-sum { display: flex; flex-direction: column; gap: 8px; }
+.plan-sum .big { font-family: var(--display); font-size: 1.5rem; font-weight: 600; }
+.plan-sum .big small { font-size: .95rem; color: var(--muted); font-weight: 500; }
+.plan-slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.pslot { display: flex; flex-direction: column; gap: 4px; }
+.pslot .head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px; }
+.pslot .head h3 { font-size: 1.1rem; }
+.pslot .head span { color: var(--muted); font-size: .82rem; font-weight: 500; font-family: var(--body); margin-left: 6px; }
+.add-btn { border: 1px dashed var(--red); background: none; color: var(--red); border-radius: 12px; padding: 6px 12px; font-weight: 600; cursor: pointer; }
+.pitem { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+.pitem .nm { min-width: 0; overflow-wrap: anywhere; }
+.pitem .nm small { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; color: var(--muted); font-size: .8rem; margin-top: 2px; }
+.pitem.done .nm > span { text-decoration: line-through; text-decoration-color: var(--red); }
+.pitem .acts { display: flex; gap: 6px; align-items: center; }
+.empty-slot { color: var(--muted); font-size: .88rem; padding: 6px 0; }
+/* Sheet */
+.sheet-bg { position: fixed; inset: 0; z-index: 45; background: rgba(20,4,8,.5); display: flex; align-items: flex-end; justify-content: center; }
+.sheet { background: var(--bg); width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; border-radius: 24px 24px 0 0; display: flex; flex-direction: column; gap: 14px;
+  padding: 18px max(16px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+@media (min-width: 700px) { .sheet-bg { align-items: center; } .sheet { border-radius: 24px; } }
 /* Together hero */
 .together { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; background: linear-gradient(135deg, var(--red), var(--red-deep)); color: #fff; border: 0; }
 .together .big-heart { width: 104px; height: 104px; }
@@ -266,16 +462,66 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   <div class="status" id="status" hidden></div>
 
   <!-- TODAY -->
-  <section class="view" id="v-today" aria-label="Today">
-    <div class="card together" id="together"></div>
-    <div class="people" id="people"></div>
+  <section class="view" id="v-home" aria-label="Home">
+    <div class="card hero" id="hero"></div>
+    <div class="card yard" id="yard" hidden>
+      <div class="yard-top">
+        <div><b id="pet-name">Mochi</b> <span class="muted" id="pet-title"></span></div>
+        <button class="link" type="button" id="pet-rename">Rename</button>
+      </div>
+      <form class="save-usual" id="pet-name-form" hidden><input type="text" id="pet-name-in" maxlength="16" aria-label="Pet name"><button class="cta dark" type="submit">Save</button></form>
+      <div class="yard-area" id="yard-area">
+        <div class="sky" id="sky" aria-hidden="true"></div>
+        <svg class="house" viewBox="0 0 120 112" aria-hidden="true">
+          <path d="M8 46L60 8l52 38z" fill="var(--red)"/><path d="M56 12h8v8h-8z" fill="var(--red-deep)"/>
+          <rect x="16" y="44" width="88" height="66" rx="4" fill="var(--surface)" stroke="var(--red-soft)" stroke-width="3"/>
+          <path d="M44 110V78a16 16 0 0 1 32 0v32z" fill="var(--sunk)" stroke="var(--red-soft)" stroke-width="3"/>
+          <rect class="win" x="24" y="56" width="16" height="14" rx="3" fill="var(--sunk)" stroke="var(--red-soft)" stroke-width="2.5"/>
+          <rect class="win" x="80" y="56" width="16" height="14" rx="3" fill="var(--sunk)" stroke="var(--red-soft)" stroke-width="2.5"/>
+          <path d="M53 46q7-6 14 0q-7 6-14 0z" fill="var(--red-soft)"/>
+        </svg>
+        <svg class="bed" viewBox="0 0 120 26" aria-hidden="true"><rect x="4" y="8" width="112" height="16" rx="8" fill="#FFB3BD"/><rect x="4" y="14" width="112" height="10" rx="5" fill="#FF8C9A"/><ellipse cx="22" cy="10" rx="14" ry="6" fill="#fff"/></svg>
+        <svg class="bowl" viewBox="0 0 60 34" aria-hidden="true"><path id="bowl-food" d="M10 18q20-14 40 0z" fill="#F5B932"/><path d="M4 16h52q-3 16-26 16T4 16z" fill="var(--red)"/><path d="M14 22h32" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".5"/></svg>
+        <div class="bubble" id="pet-bubble" role="status" hidden><span id="pet-say"></span><button class="pill" type="button" id="pet-act" hidden></button></div>
+        <button class="pet" type="button" id="pet" aria-label="Your pet"><svg id="pet-svg" viewBox="0 0 100 100" aria-hidden="true"></svg></button>
+        <div class="ground"></div>
+      </div>
+      <div class="pet-stats" id="pet-stats"></div>
+      <details class="journey" id="journey"><summary>Our journey together</summary><ol class="mem" id="mem"></ol></details>
+    </div>
+    <div class="card recap-banner" id="recap-banner" hidden></div>
+    <div class="card streak" id="streak" hidden></div>
+    <div class="card timer" id="timer" hidden></div>
+    <div class="card water" id="water-card" hidden></div>
+    <div class="card" id="upnext"></div>
+    <div class="card partner" id="partner" hidden></div>
+    <div class="card" id="eaten"></div>
+    <div style="text-align:center"><button class="link" type="button" id="to-simple">Too much? Switch to simple view</button></div>
+  </section>
+
+  <!-- PLAN -->
+  <section class="view" id="v-plan" aria-label="Meal plan" hidden>
+    <div class="row between"><h2>Meal plan</h2><div class="seg" id="plan-who" role="group" aria-label="Whose plan"></div></div>
+    <p class="muted" style="margin-top:-8px">Plan meals for yourself or each other. Tap <b>Ate it</b> when you eat one and it goes in your diary.</p>
+    <div class="dates" id="plan-days" role="group" aria-label="Pick a day to plan"></div>
+    <div class="card plan-sum" id="plan-sum"></div>
+    <div class="plan-slots" id="plan-slots"></div>
   </section>
 
   <!-- FOOD -->
   <section class="view" id="v-food" aria-label="Food" hidden>
-    <div class="row between"><h2>What did you eat?</h2><span class="save-state" data-save role="status">Saves automatically</span></div>
+    <div class="row between"><button class="pill" type="button" data-go="home">‹ Home</button><span class="save-state" data-save role="status">Saves automatically</span></div>
+    <h2>What did you eat?</h2>
     <div class="dates" data-dates role="group" aria-label="Pick a day"></div>
-    <div class="card fuel" id="fuel"></div>
+    <div class="card" id="markit">
+      <div class="sec-title"><h3>Just mark it</h3><span class="muted" style="font-size:.82rem">No numbers needed</span></div>
+      <div class="marks" id="mark-btns"></div>
+    </div>
+    <div class="card" id="usuals-card">
+      <div class="sec-title"><h3>My usuals</h3><span class="muted" style="font-size:.82rem">One tap logs the whole meal</span></div>
+      <div class="foods" id="usuals"></div>
+      <p class="muted" id="usuals-empty" style="font-size:.85rem" hidden>Log a meal, then tap <b>Save as usual</b> next to it in the list below. Next time it's one tap.</p>
+    </div>
     <div class="card snap" id="snap" hidden>
       <div><h3>Snap your food</h3><div class="sub" id="snap-sub">Take a photo and it's saved to the day you picked, at the time above.</div></div>
       <label class="snap-btn" id="snap-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>Take a photo<input type="file" id="photo-in" class="vh" accept="image/*" capture="environment"></label>
@@ -304,6 +550,11 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       <p class="muted" style="font-size:.8rem">Quick-add values are typical portions. For exact numbers, check the label and use "Something else".</p>
     </div>
     <div class="card"><div class="row between" style="margin-bottom:8px"><h3>Meals</h3><span class="muted num" id="meal-count"></span></div><div class="meals" id="meals"></div></div>
+  </section>
+
+  <!-- LOG -->
+  <section class="view" id="v-log" aria-label="Log your day" hidden>
+    <div class="row between"><h2>Me</h2><span class="save-state" data-save role="status">Saves automatically</span></div>
     <div class="card weight-goal" id="wgoal"></div>
     <details class="card" id="food-settings">
       <summary>My food goals</summary>
@@ -317,11 +568,18 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
         <label class="f">Weight unit<span class="row" id="g-unit"><button class="pill" type="button" data-unit="kg">kg</button><button class="pill" type="button" data-unit="lb">lb</button></span></label>
       </div>
     </details>
-  </section>
-
-  <!-- LOG -->
-  <section class="view" id="v-log" aria-label="Log your day" hidden>
-    <div class="row between"><h2>Rest of your day</h2><span class="save-state" data-save role="status">Saves automatically</span></div>
+    <div class="card row between" id="buddy-settings"><div><h3>Mochi follows me</h3></div><span class="seg" role="group" aria-label="Pet follows me"><button class="pill" type="button" data-buddy="1">On</button><button class="pill" type="button" data-buddy="0">Off</button></span></div>
+    <div class="card row between" id="simple-settings"><div><h3>Simple view</h3><p class="muted" style="font-size:.85rem">Just big buttons: mark meals, remind, send love. No numbers.</p></div><span class="seg" role="group" aria-label="Simple view"><button class="pill" type="button" data-simple="1">On</button><button class="pill" type="button" data-simple="0">Off</button></span></div>
+    <details class="card" id="remind-settings">
+      <summary>Eating reminders</summary>
+      <div class="remind-grid">
+        <div class="row"><span class="muted">Reminders</span><span class="seg" role="group" aria-label="Reminders on or off"><button class="pill" type="button" data-ron="1">On</button><button class="pill" type="button" data-ron="0">Off</button></span></div>
+        <div class="row"><span class="muted">Remind me after</span><span class="seg" role="group" aria-label="Remind me after this long without food"><button class="pill" type="button" data-rh="2">2h</button><button class="pill" type="button" data-rh="3">3h</button><button class="pill" type="button" data-rh="4">4h</button><button class="pill" type="button" data-rh="5">5h</button></span></div>
+        <p class="muted" style="font-size:.85rem">The timer starts at 7am and restarts every time you log food. Reminders go off between 7am and 10pm while the app is open on your phone. Android phones vibrate too; iPhones don't let websites vibrate, so you'll see and hear the reminder instead.</p>
+        <div><button class="pill" type="button" id="r-test">Test a reminder</button></div>
+      </div>
+    </details>
+    <h3>Rest of your day</h3>
     <div class="dates" data-dates role="group" aria-label="Pick a day"></div>
     <div class="tiles">
       <div class="card tile">
@@ -373,6 +631,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       <h3 id="wk-label"></h3>
       <button class="icon-btn" type="button" id="wk-next" aria-label="Next week"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
+    <div class="card recap" id="recap" hidden></div>
     <div class="stats" id="wk-stats"></div>
     <div class="insight" id="wk-insight" hidden></div>
     <div class="card">
@@ -388,6 +647,32 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
 
 <nav class="tabs" aria-label="Sections"><div class="tabbar" id="tabs"></div></nav>
 <div class="toast" id="toast" role="status" hidden></div>
+<div class="buddy" id="buddy" hidden>
+  <div class="bubble buddy-bubble" id="buddy-bubble" role="status" hidden><span id="buddy-say"></span><button class="pill" type="button" id="buddy-act" hidden></button></div>
+  <button class="pet buddy-pet" type="button" id="buddy-pet" aria-label="Your pet"><svg id="buddy-svg" viewBox="0 0 100 100" aria-hidden="true"></svg></button>
+</div>
+<div class="alert-bg" id="alert" hidden>
+  <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="alert-title" aria-describedby="alert-msg">
+    <div class="alert-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 9v4l3 2M9 2h6M19 5l1.5 1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+    <h2 id="alert-title">Time to eat!</h2>
+    <p id="alert-msg"></p>
+    <button class="big-cta" type="button" id="alert-eat">I'll eat now</button>
+    <div class="row" style="justify-content:center"><button class="pill" type="button" id="alert-love" hidden>Send love back</button><button class="pill" type="button" id="alert-ok">Later</button></div>
+  </div>
+</div>
+<div class="sheet-bg" id="sheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="row between"><h3 id="sheet-title">Add to plan</h3><button class="icon-btn" type="button" id="sheet-close" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
+    <div class="row"><div class="seg" id="sh-slots" role="group" aria-label="Which meal"></div><label class="muted" for="sh-time" style="font-size:.85rem">at</label><input type="time" id="sh-time" style="width:auto"></div>
+    <div class="foods" id="sh-foods"></div>
+    <form class="custom" id="sh-custom" novalidate>
+      <label class="f name">Something else<input type="text" id="sh-name" maxlength="40" placeholder="e.g. Spaghetti bolognese"></label>
+      <label class="f">Calories<input type="number" id="sh-kcal" min="0" max="5000" inputmode="numeric" placeholder="kcal"></label>
+      <label class="f">Protein (g)<input type="number" id="sh-protein" min="0" max="500" inputmode="numeric" placeholder="g"></label>
+      <button class="cta dark" type="submit">Add</button>
+    </form>
+  </div>
+</div>
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Food photo" hidden><img id="lb-img" alt=""><p id="lb-cap"></p><button type="button" id="lb-close">Close</button></div>
 <canvas class="fx" id="fx" aria-hidden="true"></canvas>
 
@@ -407,13 +692,13 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     ["Banana", 105, 1], ["Granola bar", 200, 5],
   ];
   const MODES = {
-    gain: { label: "Build weight", kcal: 3000, protein: 150, help: "Eat more than you burn. A common start is 300–500 calories a day above what you eat now, with plenty of protein. Aim to gain slowly, around 0.25–0.5 kg a week." },
+    gain: { label: "Build weight", kcal: 2700, protein: 150, help: "Eat more than you burn. A common start is 300–500 calories a day above what you eat now, with plenty of protein. Aim to gain slowly, around 0.25–0.5 kg a week." },
     maintain: { label: "Stay the same", kcal: 2200, protein: 110, help: "Eat about what you burn. Keep an eye on the weight trend and adjust if it drifts." },
     lose: { label: "Lose weight", kcal: 1800, protein: 120, help: "Eat a little less than you burn and keep protein high. Slow and steady works best." },
   };
-  const DEFAULT_GOALS = { mode: "gain", kcalGoal: 3000, proteinGoal: 150, waterGoal: 8, sleepGoal: 8, stepsGoal: 8000, unit: "kg", targetWeight: null, startWeight: null };
+  const DEFAULT_GOALS = { mode: "gain", kcalGoal: 2700, proteinGoal: 150, waterGoal: 8, sleepGoal: 8, stepsGoal: 8000, unit: "kg", targetWeight: null, startWeight: null, remindOn: true, remindHours: 3, simple: false, buddy: true };
   const S = { db: null, user: null, room: null, me: null, people: {}, days: {}, subs: {}, names: {}, online: new Set(),
-    loaded: false, sel: null, drafts: {}, pending: {}, inflight: {}, timers: {}, metric: "kcal", range: 7, tip: null, view: "food",
+    loaded: false, sel: null, drafts: {}, pending: {}, inflight: {}, timers: {}, metric: "kcal", range: 7, tip: null, view: "home",
     goalsFilled: false, slot: null, portion: 1 };
 
   const z = x => String(x).padStart(2, "0");
@@ -427,11 +712,25 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   const fmt = (v, d = 0) => v == null ? "–" : v.toLocaleString(undefined, { maximumFractionDigits: d });
   const rid = () => Math.random().toString(36).slice(2, 10);
   const nowTime = () => { const d = new Date(); return z(d.getHours()) + ":" + z(d.getMinutes()); };
-  const slotForNow = () => { const h = new Date().getHours(); return h < 5 ? "Snack" : h < 11 ? "Breakfast" : h < 15 ? "Lunch" : h >= 17 && h < 21 ? "Dinner" : "Snack"; };
+  // Meal windows: Breakfast 7–10am, Lunch 12–2pm, Dinner 5–9pm. Any other time is a Snack.
+  const WINDOWS = { Breakfast: [7 * 60, 10 * 60], Lunch: [12 * 60, 14 * 60], Dinner: [17 * 60, 21 * 60] };
+  const WINDOW_LABEL = { Breakfast: "7–10am", Lunch: "12–2pm", Dinner: "5–9pm", Snack: "any time" };
+  const DEFAULT_TIME = { Breakfast: "08:00", Lunch: "13:00", Dinner: "19:00", Snack: "16:00" };
+  const hm = t => { const [h, m] = String(t).split(":").map(Number); return h * 60 + m; };
+  function slotForTime(t) { const m = hm(t); for (const k of ["Breakfast", "Lunch", "Dinner"]) { const [a, b] = WINDOWS[k]; if (m >= a && m <= b) return k; } return "Snack"; }
+  const slotForNow = () => slotForTime(nowTime());
+  // A time that fits the meal: keep the current one if it fits, use "now" for today if it fits, otherwise the usual time.
+  function fitTime(slot, current, isToday) {
+    const ok = t => /^\d{2}:\d{2}$/.test(t || "") && slotForTime(t) === slot;
+    if (ok(current)) return current;
+    if (isToday && ok(nowTime())) return nowTime();
+    if (slot === "Snack" && isToday) return nowTime();
+    return DEFAULT_TIME[slot];
+  }
   const SVGNS = "http://www.w3.org/2000/svg";
   const sv = (tag, attrs) => { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
   const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  S.slot = slotForNow();
+  S.slot = slotForNow(); S.slotAuto = true;
 
   $("#today-label").textContent = fromYmd(TODAY).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
 
@@ -445,7 +744,12 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     const p = S.people[id] || {}; const mode = MODES[p.mode] ? p.mode : "gain";
     const g = Object.assign({}, DEFAULT_GOALS, { mode, kcalGoal: MODES[mode].kcal, proteinGoal: MODES[mode].protein });
     ["kcalGoal", "proteinGoal", "waterGoal", "sleepGoal", "stepsGoal", "targetWeight", "startWeight"].forEach(k => { const v = n(p[k]); if (v && v > 0) g[k] = v; });
-    if (p.unit === "lb" || p.unit === "kg") g.unit = p.unit; return g;
+    // The old untouched "Build weight" default was 3,000; it is now 2,700. A goal someone typed in themselves is kept.
+    if (mode === "gain" && !p.kcalSet && n(p.kcalGoal) === 3000) g.kcalGoal = 2700;
+    g.kcalSet = p.kcalSet === true;
+    if (p.unit === "lb" || p.unit === "kg") g.unit = p.unit;
+    g.simple = p.simple === true; g.buddy = p.buddy !== false; g.remindOn = p.remindOn !== false; const rh = n(p.remindHours); if (rh >= 1 && rh <= 8) g.remindHours = rh;
+    return g;
   }
   function stored(id, date) { return (S.days[id] || []).find(e => e.date === date) || null; }
   function entry(id, date) { return (id === S.me && S.drafts[date]) ? S.drafts[date] : stored(id, date); }
@@ -518,21 +822,23 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
 
   // ---------- Tabs ----------
   const TABS = [
-    ["food", "Eat", "M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 0-3 2-3 5s1 5 3 5v8"],
+    ["home", "Home", "M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"],
+    ["plan", "Plan", "M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 0-3 2-3 5s1 5 3 5v8"],
     ["week", "Week", "M4 6h16v14H4zM4 10h16M8 3v5M16 3v5M8 14h2M12 14h2M8 17h2"],
-    ["today", "Us", "M12 20.5C6.6 16.2 3.5 13.2 3.5 9.8 3.5 7.4 5.4 5.5 7.8 5.5c1.6 0 3.1.8 4.2 2.1 1.1-1.3 2.6-2.1 4.2-2.1 2.4 0 4.3 1.9 4.3 4.3 0 3.4-3.1 6.4-8.5 10.7z"],
-    ["log", "Body", "M12 5v14M5 12h14"],
+    ["log", "Me", "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"],
   ];
+  const VIEWS = ["home", "plan", "week", "log", "food"];
   const tabsBox = $("#tabs");
   TABS.forEach(([id, label, d]) => {
     const b = el("button"); b.type = "button"; b.dataset.view = id;
     b.append(icon(d), document.createTextNode(label)); b.addEventListener("click", () => go(id)); tabsBox.append(b);
   });
   function go(view) {
-    if (!TABS.some(t => t[0] === view)) view = "food";
+    if (!VIEWS.includes(view)) view = "home";
     S.view = view;
-    TABS.forEach(([id]) => { $("#v-" + id).hidden = id !== view; });
-    tabsBox.querySelectorAll("button").forEach(b => { if (b.dataset.view === view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+    VIEWS.forEach(id => { $("#v-" + id).hidden = id !== view; });
+    const tab = view === "food" ? "home" : view;
+    tabsBox.querySelectorAll("button").forEach(b => { if (b.dataset.view === tab) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
     if (location.hash.slice(1) !== view) { try { history.replaceState(null, "", "#" + view); } catch (_) {} }
     renderAll(); window.scrollTo(0, 0);
   }
@@ -573,86 +879,998 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     });
   }
 
-  // ---------- Today ----------
-  function renderToday() {
-    const ids = personIds(); const order = [S.me, ...ids.filter(i => i !== S.me)].filter(Boolean);
-    const tg = $("#together"); tg.textContent = "";
-    const hits = order.map(id => ({ id, h: goalsHit(id) }));
-    const total = hits.length * 4; const done = hits.reduce((a, x) => a + x.h.kcal + x.h.protein + x.h.water + x.h.sleep, 0);
-    const pct = total ? done / total : 0;
-    const big = sv("svg", { viewBox: "0 0 24 24", class: "big-heart", role: "img", "aria-label": `${done} of ${total || 4} goals done together` });
-    const defs = sv("defs", {}); const cp = sv("clipPath", { id: "hfill" }); cp.append(sv("rect", { x: 0, y: (21.6 - 18.6 * pct).toFixed(2), width: 24, height: 24 })); defs.append(cp); big.append(defs);
-    big.append(sv("path", { d: HEART, fill: "rgba(255,255,255,0.22)", stroke: "#fff", "stroke-width": 1.2 }));
-    big.append(sv("path", { d: HEART, fill: "#fff", "clip-path": "url(#hfill)" }));
-    tg.append(big);
-    const txt = el("div");
-    txt.append(el("h2", null, total && done === total ? "Every goal done. Amazing team!" : done === 0 ? "Let's fill the heart together" : `${done} of ${total} goals done together`));
-    txt.append(el("p", null, "Calories, protein, water and sleep for both of you. Every goal you hit fills the heart a little more."));
-    const pips = el("div", "pips");
-    hits.forEach(x => [["kcal", "Calories"], ["protein", "Protein"], ["water", "Water"], ["sleep", "Sleep"]].forEach(([k, l]) => pips.append(el("span", "pip" + (x.h[k] ? " done" : ""), (order.length > 1 ? nameOf(x.id) + " · " : "") + l))));
-    txt.append(pips); tg.append(txt);
+  // ---------- Shared meal plan ----------
+  S.plans = {}; S.planLocal = {}; S.planBusy = {}; S.planQ = {}; S.planWho = null; S.planDate = null; S.seenPlan = null; S.sheet = null;
+  const planKey = (uid, date) => uid + "_" + date;
+  const PLAN_SLOT_TIME = { Breakfast: "08:00", Lunch: "13:00", Dinner: "19:00", Snack: "16:00" };
+  function dayName(date) {
+    if (date === TODAY) return "today";
+    const t = fromYmd(TODAY); t.setDate(t.getDate() + 1); if (date === ymd(t)) return "tomorrow";
+    const y = fromYmd(TODAY); y.setDate(y.getDate() - 1); if (date === ymd(y)) return "yesterday";
+    return fromYmd(date).toLocaleDateString(undefined, { weekday: "long" });
+  }
+  function cleanItem(i) {
+    const s = (v, m) => typeof v === "string" ? v.trim().slice(0, m) : "";
+    const slot = SLOTS.includes(i.slot) ? i.slot : "Snack";
+    return { id: s(i.id, 12) || rid(), name: s(i.name, 40) || "Food", kcal: clamp(Math.round(n(i.kcal) || 0), 0, 5000), protein: clamp(Math.round(n(i.protein) || 0), 0, 500),
+      slot, time: /^\d{2}:\d{2}$/.test(i.time) ? i.time : PLAN_SLOT_TIME[slot], by: s(i.by, 64) };
+  }
+  function planOf(uid, date) { const p = S.plans[planKey(uid, date)]; return p && Array.isArray(p.items) ? p.items.filter(i => i && typeof i === "object").map(cleanItem) : []; }
+  const byTime = (a, b) => (a.time < b.time ? -1 : a.time > b.time ? 1 : 0);
+  function isEaten(uid, date, item) { return mealsOf(entry(uid, date)).some(m => m.plan === item.id); }
+  function savePlan(uid, date, items) {
+    if (!S.db || !S.me) { toast("Log in to plan meals"); return; }
+    const key = planKey(uid, date);
+    const doc = { owner: uid, date, items: items.slice(0, 60).map(cleanItem), updatedAt: Date.now() };
+    S.plans[key] = doc; S.planLocal[key] = doc; S.planBusy[key] = (S.planBusy[key] || 0) + 1;
+    renderAll();
+    S.planQ[key] = (S.planQ[key] || Promise.resolve())
+      .then(() => S.db.doc("plans/" + key).set(doc))
+      .catch(err => toast(errText(err)))
+      .finally(() => { S.planBusy[key]--; if (!S.planBusy[key]) delete S.planLocal[key]; });
+  }
+  function notePartnerPlans(next) {
+    const mine = [];
+    Object.values(next).forEach(p => { if (p && p.owner === S.me && Array.isArray(p.items)) p.items.forEach(i => { if (i && i.by && i.by !== S.me && i.id) mine.push({ i, date: p.date }); }); });
+    if (S.seenPlan) mine.forEach(({ i, date }) => { if (!S.seenPlan.has(i.id)) toast(`${nameOf(i.by)} added ${String(i.name || "food").toLowerCase()} to your ${dayName(date)} plan`); });
+    S.seenPlan = new Set(mine.map(x => x.i.id));
+  }
+  function eatPlanned(date, item) {
+    const meal = addMeal(date, item.name, item.kcal, item.protein, 1, date === TODAY ? nowTime() : item.time, { plan: item.id, slot: item.slot });
+    if (meal) { toast(`Nice! ${item.name} added to your diary`); burst(14); }
+  }
+  function undoEat(date, item) {
+    const m = mealsOf(entry(S.me, date)).find(x => x.plan === item.id);
+    if (m) { removeMeal(date, m.id); toast("Taken back out of your diary"); }
+  }
+  function ateButton(date, item) {
+    const done = isEaten(S.me, date, item);
+    const b = el("button", "ate" + (done ? " done" : ""), done ? "Eaten ✓" : "Ate it"); b.type = "button";
+    b.setAttribute("aria-label", done ? `Undo: ${item.name} eaten` : `I ate ${item.name}`);
+    b.addEventListener("click", () => done ? undoEat(date, item) : eatPlanned(date, item));
+    return b;
+  }
+  function fromBadge(owner, item) {
+    if (!item.by || item.by === owner) return null;
+    return el("span", "from", "from " + (item.by === S.me ? "you" : nameOf(item.by)));
+  }
 
-    const box = $("#people"); box.textContent = "";
-    if (!S.loaded) { const i = el("div", "invite"); i.append(el("strong", null, "Loading your shared log…"), el("span", null, "Your day and your partner's will appear here side by side.")); box.append(i); return; }
-    order.forEach(id => box.append(personCard(id)));
-    if (order.length < 2) {
-      const i = el("div", "invite");
-      i.append(el("strong", null, "Waiting for your partner"), el("span", null, "Share this page with them from the Share menu and give them edit access. Their card appears here after they log something."));
-      box.append(i);
-    }
-  }
-  function personCard(id) {
-    const e = entry(id, TODAY) || {}; const g = goalsOf(id); const col = colorOf(id); const isMe = id === S.me; const t = totals(e);
-    const card = el("article", "card person"); card.style.borderTop = "5px solid " + col;
-    const head = el("div", "p-head"); head.append(avatar(id));
-    const hn = el("div"); hn.append(el("h3", null, isMe ? nameOf(id) + " (you)" : nameOf(id)));
-    const st = streak(id); hn.append(el("div", "sub", MODES[g.mode].label + " · " + (st > 0 ? `${st}-day streak` : "no streak yet")));
-    head.append(hn);
-    const mood = n(e.mood); if (mood) { const f = faceSvg(mood, col); f.setAttribute("class", "mood"); f.setAttribute("role", "img"); f.setAttribute("aria-label", "Mood: " + MOODS[mood - 1][1]); head.append(f); }
-    card.append(head);
-    const rings = el("div", "rings");
-    [["Calories", t.kcal, g.kcalGoal, "", 0], ["Protein", t.protein, g.proteinGoal, "g", 0], ["Water", n(e.water), g.waterGoal, "", 0], ["Sleep", n(e.sleep), g.sleepGoal, "h", 1]].forEach(([l, v, goal, u, d]) => {
-      const r = el("div", "ring"); r.append(ringSvg((v || 0) / goal, col));
-      r.append(el("span", "v num", (v ? fmt(v, d) : "0") + u + "/" + (goal >= 1000 ? fmt(goal / 1000, 1) + "k" : fmt(goal) + u))); r.append(el("span", "lbl", l)); rings.append(r);
+  // ---------- Home ----------
+  const PLUS = "M12 5v14M5 12h14", CAMERA = "M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z";
+  function renderHome() {
+    const hero = $("#hero"); hero.textContent = "";
+    const simple = S.me && goalsOf(S.me).simple;
+    hero.classList.toggle("simple", !!simple);
+    ["#timer", "#water-card", "#upnext", "#partner", "#eaten", "#streak", "#recap-banner"].forEach(sel => { $(sel).hidden = !!simple || $(sel).hidden; });
+    $("#to-simple").hidden = !S.me || !!simple;
+    renderPet();
+    if (simple) { renderSimpleHome(hero); return; }
+    renderStreak(); renderRecapBanner();
+    if (!S.me) { hero.append(el("div", "hi", "Hi there"), el("p", "muted", "Log in to start your food diary.")); $("#upnext").hidden = true; $("#eaten").hidden = true; $("#partner").hidden = true; return; }
+    $("#upnext").hidden = false; $("#eaten").hidden = false;
+    const g = goalsOf(S.me); const e = entry(S.me, TODAY) || {}; const t = totals(e);
+    hero.append(el("div", "hi", "Hi " + (S.names[S.me] || "there")));
+    const ring = ringSvg(t.kcal / g.kcalGoal, "var(--red)", { size: 180, stroke: 18, center: (s, c) => {
+      const a = sv("text", { x: c, y: c + 4, "text-anchor": "middle", "font-size": 34, "font-weight": 700, fill: "var(--ink)", "font-family": "Fredoka, Inter, sans-serif" }); a.textContent = fmt(t.kcal);
+      const b = sv("text", { x: c, y: c + 26, "text-anchor": "middle", "font-size": 13, fill: "var(--muted)", "font-family": "Inter, sans-serif" }); b.textContent = "of " + fmt(g.kcalGoal) + " kcal";
+      s.append(a, b); } });
+    ring.setAttribute("class", "big-ring"); ring.setAttribute("role", "img"); ring.setAttribute("aria-label", `${fmt(t.kcal)} of ${fmt(g.kcalGoal)} calories today`);
+    hero.append(ring);
+    const left = g.kcalGoal - t.kcal; const line = el("div", "line");
+    if (left > 0) {
+      line.append(el("b", null, fmt(left) + " kcal"), document.createTextNode(" to go today"));
+      if (g.mode === "gain" && paceNow(g) - t.kcal > 300) line.append(document.createTextNode(". Time for a snack!"));
+    } else line.append(el("b", null, "Goal done!"), document.createTextNode(g.mode === "gain" ? " Great eating today." : " Nice work."));
+    hero.append(line);
+    const btns = el("div", "two-btns");
+    const add = el("button", "big-cta"); add.type = "button"; add.append(icon(PLUS), document.createTextNode("I ate something"));
+    add.addEventListener("click", () => { S.sel = TODAY; S.timeEdited = false; S.slotAuto = true; S.slot = slotForNow(); go("food"); });
+    btns.append(add);
+    if (S.assets) { const cam = el("button", "cam-btn"); cam.type = "button"; cam.setAttribute("aria-label", "Take a photo of your food"); cam.append(icon(CAMERA));
+      cam.addEventListener("click", () => { S.sel = TODAY; S.timeEdited = false; S.slotAuto = true; S.slot = slotForNow(); go("food"); $("#photo-in").click(); }); btns.append(cam); }
+    else btns.style.gridTemplateColumns = "1fr";
+    hero.append(btns);
+
+    renderTimer(); renderWater();
+    // Today's plan
+    const up = $("#upnext"); up.textContent = "";
+    const items = planOf(S.me, TODAY).sort(byTime);
+    const head = el("div", "sec-title"); head.append(el("h3", null, "Today's plan"));
+    const edit = el("button", "link", items.length ? "Edit" : "Plan today"); edit.type = "button";
+    edit.addEventListener("click", () => { S.planWho = S.me; S.planDate = TODAY; go("plan"); }); head.append(edit); up.append(head);
+    if (!items.length) up.append(el("p", "muted", "Nothing planned yet. Plan your meals, or ask " + (partnerId() ? nameOf(partnerId()) : "your partner") + " to plan some for you."));
+    items.forEach(i => {
+      const r = el("div", "next"); r.append(el("span", "t num", fmtTime(i.time)));
+      const nm = el("div", "nm"); nm.append(el("span", null, i.name)); const fb = fromBadge(S.me, i); if (fb) nm.append(fb);
+      nm.append(el("small", null, `${fmt(i.kcal)} kcal · ${fmt(i.protein)}g protein`)); r.append(nm, ateButton(TODAY, i)); up.append(r);
     });
-    card.append(rings);
-    // Eating nudge
-    if (g.mode === "gain" && TODAY === ymd(new Date())) {
-      const pace = paceNow(g); const behind = pace - t.kcal; const left = g.kcalGoal - t.kcal;
-      const nd = el("div", "nudge");
-      if (left <= 0) nd.append(el("b", null, isMe ? "Calorie goal smashed today!" : `${nameOf(id)} hit their calorie goal!`));
-      else if (behind > 150) {
-        nd.append(el("b", null, isMe ? `You're ${fmt(behind)} kcal behind pace` : `${nameOf(id)} is ${fmt(behind)} kcal behind pace`));
-        const sug = suggestFood(Math.min(left, behind));
-        nd.append(el("span", null, isMe ? (sug ? `Time to eat. A ${sug[0].toLowerCase()} (${sug[1]} kcal) would help.` : "Time for a snack.") : "Maybe remind them to grab a snack."));
-        if (isMe && sug) { const b = el("button", "cta", `Add ${sug[0].toLowerCase()}`); b.type = "button"; b.addEventListener("click", () => { addMeal(TODAY, sug[0], sug[1], sug[2], 1, nowTime()); }); nd.append(b); }
-      } else nd.append(el("b", null, `${fmt(left)} kcal to go${isMe ? ". You're on pace" : ""}`));
-      card.append(nd);
+
+    // Partner
+    const pc = $("#partner"); pc.textContent = ""; const pid = partnerId(); pc.hidden = false;
+    if (!pid) { pc.style.display = "block"; pc.append(el("h3", null, "Waiting for your partner"), el("p", "muted", "Share this page with them from the Share menu, with edit access. You'll see their day here.")); }
+    else {
+      pc.style.display = ""; const pe = entry(pid, TODAY) || {}; const pt = totals(pe); const pg = goalsOf(pid);
+      const info = el("div", "info"); info.append(el("b", null, nameOf(pid)));
+      info.append(el("span", null, pt.count ? `${fmt(pt.kcal)} of ${fmt(pg.kcalGoal)} kcal today` : "Hasn't logged food today"));
+      const last = mealsOf(pe).map(m => ({ m, t: mealTime(m) })).sort((a, b) => toMin(a.t) - toMin(b.t)).pop();
+      if (last) info.append(el("span", null, `Last: ${String(last.m.name || "food")} at ${fmtTime(last.t)}`));
+      const ph = hungerState(pid); const ps = el("span", "p-since" + (ph.due ? " warn" : ""), sinceText(pid, ph)); ps.id = "p-since"; info.append(ps);
+      const bar = el("div", "bar"); const bi = el("i"); bi.style.width = clamp(pt.kcal / pg.kcalGoal * 100, 0, 100) + "%"; bar.append(bi); info.append(bar);
+      const love = el("button", "heart-btn"); love.type = "button"; love.setAttribute("aria-label", "Send love to " + nameOf(pid)); love.append(heartSvg(26, "#fff")); love.addEventListener("click", sendLove);
+      pc.append(avatar(pid), info, love);
+      const acts = el("div", "acts2");
+      const plan = el("button", "pill", `Plan ${nameOf(pid)}'s meals`); plan.type = "button"; plan.addEventListener("click", () => { S.planWho = pid; S.planDate = TODAY; go("plan"); });
+      const see = el("button", "pill", "See their week"); see.type = "button"; see.addEventListener("click", () => { S.weekWho = pid; go("week"); });
+      const rem = el("button", ph.due ? "remind-btn" : "pill", "Remind to eat"); rem.type = "button"; rem.setAttribute("aria-expanded", String(!!S.nudgeOpen));
+      rem.addEventListener("click", () => { S.nudgeOpen = !S.nudgeOpen; renderHome(); if (S.nudgeOpen) { const i = $("#nudge-text"); if (i) i.focus(); } });
+      acts.append(rem, plan, see); pc.append(acts);
+      if (S.nudgeOpen) {
+        const box = el("div", "nudge-box"); box.append(el("b", null, `Send ${nameOf(pid)} a reminder`), el("span", "muted", "Their phone buzzes and shows your message if the app is open. Otherwise they see it next time they open it."));
+        const chips = el("div", "row");
+        ["Time to eat, babe!", "Have you eaten yet?", "Grab a snack!", "Don't skip your meal!"].forEach(t => { const c = el("button", "pill", t); c.type = "button"; c.addEventListener("click", () => sendNudge(t)); chips.append(c); });
+        const f = el("form"); const inp = el("input"); inp.type = "text"; inp.id = "nudge-text"; inp.maxLength = 120; inp.placeholder = "Or write your own message"; inp.setAttribute("aria-label", "Your message");
+        const go2 = el("button", "remind-btn", "Send"); go2.type = "submit";
+        f.append(inp, go2); f.addEventListener("submit", e => { e.preventDefault(); const t = inp.value.trim(); if (!t) { toast("Write a message first"); return; } sendNudge(t.slice(0, 120)); });
+        box.append(chips, f); pc.append(box);
+      }
+      const got = n(pe.love) || 0; if (got) { const l = el("div", "love-line", `${nameOf(pid)} sent you ${got} heart${got === 1 ? "" : "s"} today`); l.style.gridColumn = "1 / -1"; pc.append(l); }
     }
-    const facts = el("div", "facts");
-    if (t.count) { const last = mealsOf(e).slice().sort((a, b) => String(a.time || "") < String(b.time || "") ? -1 : 1).pop(); facts.append(el("span", "fact", `${t.count} item${t.count === 1 ? "" : "s"} eaten · last: ${String(last.name || "food").slice(0, 30)}`)); }
-    else facts.append(el("span", "fact", isMe ? "No food logged yet today" : "No food logged yet today"));
-    const wi = weightInfo(id);
-    if (wi) facts.append(el("span", "fact", `${fmt(wi.latest, 1)} ${wi.unit}` + (wi.target ? ` · ${fmt(Math.abs(wi.target - wi.latest), 1)} to target` : "")));
-    const wk = n(e.workoutMin); if (wk) facts.append(el("span", "fact", `${fmt(wk)} min ${typeof e.workout === "string" && e.workout ? e.workout.toLowerCase() : "workout"}`));
-    card.append(facts);
-    const todays = mealsOf(e).filter(m => validPhoto(m.photo));
-    if (todays.length) { const pg = el("div", "pics"); todays.slice(-4).forEach(m => { const b = thumbBtn(m.photo, `${String(m.name || "Food")} · ${fmtTime(mealTime(m))}`, "pic"); b.append(el("span", null, fmtTime(mealTime(m)))); pg.append(b); }); card.append(pg); }
-    if (typeof e.notes === "string" && e.notes.trim()) card.append(el("p", "p-note", "“" + e.notes.trim() + "”"));
-    const love = n(e.love) || 0;
-    if (isMe) {
-      if (love) card.append(el("div", "love-line", `You sent ${love} heart${love === 1 ? "" : "s"} today`));
-      const b = el("button", "cta dark", "Log food"); b.type = "button"; b.dataset.go = "food"; card.append(b);
-    } else {
-      if (love) card.append(el("div", "love-line", `${nameOf(id)} sent you ${love} heart${love === 1 ? "" : "s"} today`));
-      const b = el("button", "cta love-btn"); b.type = "button"; b.append(heartSvg(20, "#fff"), document.createTextNode("Send love")); b.addEventListener("click", sendLove); card.append(b);
-    }
-    return card;
+
+    // Eaten today
+    const ea = $("#eaten"); ea.textContent = "";
+    const eh = el("div", "sec-title"); eh.append(el("h3", null, "What you ate today"));
+    const wk = el("button", "link", "See week"); wk.type = "button"; wk.addEventListener("click", () => { S.weekWho = S.me; go("week"); }); eh.append(wk); ea.append(eh);
+    const ms = mealsOf(e).map(m => ({ m, t: mealTime(m) })).sort((a, b) => toMin(a.t) - toMin(b.t));
+    if (!ms.length) ea.append(el("p", "muted", "Nothing yet. Tap \"I ate something\" or \"Ate it\" on your plan."));
+    ms.forEach(({ m, t }) => {
+      const r = el("div", "eaten-row"); r.append(el("span", "t", fmtTime(t)));
+      const nm = el("div", "nm"); if (validPhoto(m.photo)) nm.append(thumbBtn(m.photo, String(m.name || "Food"))); nm.append(el("span", null, String(m.name || "Food")));
+      r.append(nm, el("span", "num", kcalLabel(m))); ea.append(r);
+    });
   }
+
+  // ---------- Plan view ----------
+  function renderPlan() {
+    const ids = personIds(); const who = S.planWho && ids.includes(S.planWho) ? S.planWho : S.me;
+    const date = S.planDate || TODAY;
+    const wb = $("#plan-who"); wb.textContent = "";
+    if (ids.length > 1) ids.forEach(id => { const b = el("button", "pill", id === S.me ? "Me" : nameOf(id)); b.type = "button"; b.setAttribute("aria-pressed", String(id === who));
+      b.addEventListener("click", () => { S.planWho = id; renderPlan(); }); wb.append(b); });
+    const days = $("#plan-days"); days.textContent = "";
+    for (let i = -1; i <= 6; i++) {
+      const d = fromYmd(TODAY); d.setDate(d.getDate() + i); const key = ymd(d);
+      const b = el("button"); b.type = "button"; b.setAttribute("aria-pressed", String(key === date));
+      b.append(el("span", null, i === 0 ? "Today" : i === 1 ? "Tmrw" : i === -1 ? "Yest" : d.toLocaleDateString(undefined, { weekday: "short" })), el("b", null, String(d.getDate())));
+      if (who && planOf(who, key).length) b.append(el("i", "tick"));
+      b.addEventListener("click", () => { S.planDate = key; renderPlan(); }); days.append(b);
+    }
+    const sum = $("#plan-sum"); sum.textContent = ""; const slotsBox = $("#plan-slots"); slotsBox.textContent = "";
+    if (!who) { sum.append(el("p", "muted", "Log in to plan meals.")); return; }
+    const items = planOf(who, date); const g = goalsOf(who);
+    const kc = items.reduce((a, i) => a + i.kcal, 0), pr = items.reduce((a, i) => a + i.protein, 0);
+    const whose = who === S.me ? "your" : nameOf(who) + "'s";
+    sum.append(el("div", "muted", `${who === S.me ? "Your" : nameOf(who) + "'s"} plan for ${dayName(date)}`));
+    const big = el("div", "big num", fmt(kc) + " "); big.append(el("small", null, `/ ${fmt(g.kcalGoal)} kcal planned · ${fmt(pr)}g protein`)); sum.append(big);
+    const bar = el("div", "bar"); const bi = el("i"); bi.style.width = clamp(kc / g.kcalGoal * 100, 0, 100) + "%"; bar.append(bi); sum.append(bar);
+    const gap = g.kcalGoal - kc;
+    sum.append(el("div", null, !items.length ? "Nothing planned yet. Tap + Add on a meal below." : gap > 0 ? `Add ${fmt(gap)} more kcal to reach ${whose} goal.` : `This plan reaches ${whose} goal.`));
+    const row = el("div", "row");
+    if (items.length && gap > 150) {
+      const sug = suggestFood(gap);
+      if (sug) { const b = el("button", "pill", `+ Add ${sug[0].toLowerCase()} (${sug[1]} kcal)`); b.type = "button";
+        b.addEventListener("click", () => { savePlan(who, date, items.concat([{ id: rid(), name: sug[0], kcal: sug[1], protein: sug[2], slot: "Snack", time: "16:00", by: S.me }])); toast("Added to the plan"); }); row.append(b); }
+    }
+    const prev = fromYmd(date); prev.setDate(prev.getDate() - 1); const prevItems = planOf(who, ymd(prev));
+    if (!items.length && prevItems.length) { const b = el("button", "pill", "Copy the day before"); b.type = "button";
+      b.addEventListener("click", () => { savePlan(who, date, prevItems.map(i => Object.assign({}, i, { id: rid(), by: S.me }))); toast("Copied"); }); row.append(b); }
+    if (row.childNodes.length) sum.append(row);
+    SLOTS.forEach(slot => {
+      const card = el("div", "card pslot"); const head = el("div", "head"); const h = el("h3", null, slot); h.append(el("span", null, WINDOW_LABEL[slot]));
+      const list = items.filter(i => i.slot === slot).sort(byTime);
+      if (list.length) h.append(el("span", "num", fmt(list.reduce((a, i) => a + i.kcal, 0)) + " kcal"));
+      const add = el("button", "add-btn", "+ Add"); add.type = "button"; add.setAttribute("aria-label", `Add to ${slot.toLowerCase()}`);
+      add.addEventListener("click", () => openSheet({ uid: who, date, slot }));
+      head.append(h, add); card.append(head);
+      if (!list.length) card.append(el("div", "empty-slot", "Nothing planned"));
+      list.forEach(i => {
+        const r = el("div", "pitem" + (isEaten(who, date, i) ? " done" : ""));
+        const nm = el("div", "nm"); nm.append(el("span", null, i.name)); const fb = fromBadge(who, i); if (fb) nm.append(fb);
+        const sm = el("small"); const ti = el("input", "t-in"); ti.type = "time"; ti.value = i.time; ti.setAttribute("aria-label", "Time for " + i.name);
+        ti.addEventListener("change", () => { if (/^\d{2}:\d{2}$/.test(ti.value)) savePlan(who, date, planOf(who, date).map(x => x.id === i.id ? Object.assign({}, x, { time: ti.value, slot: slotForTime(ti.value) }) : x)); });
+        sm.append(ti, document.createTextNode(`${fmt(i.kcal)} kcal · ${fmt(i.protein)}g protein`)); nm.append(sm);
+        const acts = el("div", "acts");
+        if (who === S.me && date <= TODAY) acts.append(ateButton(date, i));
+        const del = el("button", "icon-btn"); del.type = "button"; del.setAttribute("aria-label", "Remove " + i.name + " from the plan"); del.append(icon("M6 6l12 12M18 6L6 18"));
+        del.addEventListener("click", () => { savePlan(who, date, planOf(who, date).filter(x => x.id !== i.id)); toast("Removed from the plan"); });
+        acts.append(del); r.append(nm, acts); card.append(r);
+      });
+      slotsBox.append(card);
+    });
+  }
+
+  // ---------- Add-to-plan sheet ----------
+  function openSheet(ctx) {
+    S.sheet = Object.assign({}, ctx); $("#sh-time").value = fitTime(ctx.slot, "", false);
+    $("#sh-name").value = ""; $("#sh-kcal").value = ""; $("#sh-protein").value = "";
+    renderSheet(); $("#sheet").hidden = false; $("#sheet-close").focus();
+  }
+  function closeSheet() { $("#sheet").hidden = true; S.sheet = null; }
+  function renderSheet() {
+    const c = S.sheet; if (!c) return;
+    $("#sheet-title").textContent = `Add to ${c.uid === S.me ? "your" : nameOf(c.uid) + "'s"} ${c.slot.toLowerCase()} · ${dayName(c.date)}`;
+    const sb = $("#sh-slots"); sb.textContent = "";
+    SLOTS.forEach(s => { const b = el("button", "pill", s); b.type = "button"; b.setAttribute("aria-pressed", String(s === c.slot));
+      b.title = WINDOW_LABEL[s]; b.addEventListener("click", () => { c.slot = s; $("#sh-time").value = fitTime(s, $("#sh-time").value, false); renderSheet(); }); sb.append(b); });
+    const fb = $("#sh-foods"); fb.textContent = "";
+    (S.usuals || []).forEach(u => { const b = el("button", "food"); b.type = "button"; b.append(el("b", null, u.name), el("span", null, `usual · ${u.items.length} items · ${fmt(usualKcal(u))} kcal`));
+      b.addEventListener("click", () => { savePlan(c.uid, c.date, planOf(c.uid, c.date).concat(u.items.map(i => ({ id: rid(), name: i.name, kcal: i.kcal, protein: i.protein, slot: c.slot, time: $("#sh-time").value || DEFAULT_TIME[c.slot], by: S.me })))); toast(`${u.name} planned`); closeSheet(); });
+      fb.append(b); });
+    const seen = new Set(); recentFoods().concat(QUICK).forEach(([nm, kc, pr]) => {
+      const k = nm.toLowerCase(); if (seen.has(k)) return; seen.add(k);
+      const b = el("button", "food"); b.type = "button"; b.append(el("b", null, nm), el("span", null, `${kc} kcal · ${pr}g protein`));
+      b.addEventListener("click", () => addToPlan(nm, kc, pr)); fb.append(b);
+    });
+  }
+  function addToPlan(name, kcal, protein) {
+    const c = S.sheet; if (!c) return;
+    const time = /^\d{2}:\d{2}$/.test($("#sh-time").value) ? $("#sh-time").value : PLAN_SLOT_TIME[c.slot];
+    savePlan(c.uid, c.date, planOf(c.uid, c.date).concat([{ id: rid(), name, kcal, protein, slot: c.slot, time, by: S.me }]));
+    toast(`${name} planned for ${c.uid === S.me ? "you" : nameOf(c.uid)}`); closeSheet();
+  }
+  $("#sheet-close").addEventListener("click", closeSheet);
+  setInterval(() => {
+    if (S.view !== "food" || S.sel !== TODAY || S.timeEdited || !S.slotAuto || document.activeElement === $("#m-time")) return;
+    const now = nowTime(); if ($("#m-time").value === now) return;
+    $("#m-time").value = now; const s2 = slotForNow(); if (s2 !== S.slot) { S.slot = s2; syncFoodControls(); }
+  }, 20000);
+  $("#sh-time").addEventListener("change", () => { const c = S.sheet; const v = $("#sh-time").value; if (!c || !/^\d{2}:\d{2}$/.test(v)) return; const s2 = slotForTime(v); if (s2 !== c.slot) { c.slot = s2; renderSheet(); toast(`Moved to ${s2.toLowerCase()}`); } });
+  $("#sheet").addEventListener("click", e => { if (e.target.id === "sheet") closeSheet(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
+  $("#sh-custom").addEventListener("submit", e => {
+    e.preventDefault(); const nm = $("#sh-name").value.trim(); const kc = n($("#sh-kcal").value);
+    if (!nm || kc == null) { toast("Add a name and calories"); return; }
+    addToPlan(nm.slice(0, 40), clamp(Math.round(kc), 0, 5000), clamp(Math.round(n($("#sh-protein").value) || 0), 0, 500));
+  });
+
+
+  // ---------- Meal timer & reminders ----------
+  const ACTIVE_FROM = 7 * 60, ACTIVE_TO = 22 * 60;
+  const dateAt = (date, t) => { const d = fromYmd(date); const m = hm(t); d.setHours(Math.floor(m / 60), m % 60, 0, 0); return d; };
+  const fmtDur = mins => { const h = Math.floor(mins / 60), m = mins % 60; return h ? `${h}h ${z(m)}m` : `${m}m`; };
+  function hungerState(uid) {
+    const g = goalsOf(uid); const now = new Date(); const nowM = now.getHours() * 60 + now.getMinutes();
+    const ms = mealsOf(entry(uid, TODAY)).map(m => ({ m, t: mealTime(m) })).filter(x => hm(x.t) <= nowM + 5).sort((a, b) => hm(a.t) - hm(b.t));
+    const last = ms.length ? ms[ms.length - 1] : null;
+    const start = last ? dateAt(TODAY, last.t) : dateAt(TODAY, "07:00");
+    const since = Math.max(0, Math.round((now - start) / 60000));
+    const limit = g.remindHours * 60;
+    const active = nowM >= ACTIVE_FROM && nowM < ACTIVE_TO;
+    return { last, since, limit, active, due: active && since >= limit, nextAt: new Date(start.getTime() + limit * 60000), on: g.remindOn };
+  }
+  function sinceText(uid, st) {
+    if (!st.active && !st.last) return "Hasn't eaten yet today";
+    if (!st.last) return st.since > 0 ? `No food logged today (${fmtDur(st.since)} since 7am)` : "No food logged yet today";
+    return `${fmtDur(st.since)} since last meal`;
+  }
+  function renderTimer() {
+    const box = $("#timer"); if (!S.me || !S.days[S.me]) { box.hidden = true; return; }
+    const st = hungerState(S.me); box.hidden = false; box.textContent = ""; box.classList.toggle("due", st.due);
+    const clock = el("div", "clock"); clock.append(icon("M12 21a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM12 9v4l3 2M9 2h6")); box.append(clock);
+    const txt = el("div");
+    const nowM = new Date().getHours() * 60 + new Date().getMinutes();
+    if (!st.last && nowM < ACTIVE_FROM) { txt.append(el("div", "since", "Morning!"), el("div", "lbl", "Your meal timer starts at 7am.")); box.append(txt); return; }
+    txt.append(el("div", "since num", fmtDur(st.since)));
+    txt.append(el("div", "lbl", st.last ? `since you ate ${String(st.last.m.name || "food").toLowerCase()} at ${fmtTime(st.last.t)}` : "and nothing logged yet today"));
+    box.append(txt);
+    const full = el("div", "full");
+    const bar = el("div", "bar"); const bi = el("i"); bi.style.width = clamp(st.since / st.limit * 100, 0, 100) + "%"; bar.append(bi); full.append(bar);
+    if (st.due) {
+      full.append(el("b", null, "Time to eat! Have something now."));
+      const row = el("div", "row");
+      const next = planOf(S.me, TODAY).sort(byTime).find(i => !isEaten(S.me, TODAY, i));
+      if (next) { const b = el("button", "pill", `Ate it: ${next.name}`); b.type = "button"; b.addEventListener("click", () => eatPlanned(TODAY, next)); row.append(b); }
+      const sug = suggestFood(Math.max(300, goalsOf(S.me).kcalGoal - totals(entry(S.me, TODAY)).kcal) / 3);
+      if (sug) { const b = el("button", "pill", `+ ${sug[0]}`); b.type = "button"; b.addEventListener("click", () => addMeal(TODAY, sug[0], sug[1], sug[2], 1, nowTime())); row.append(b); }
+      const other = el("button", "pill", "Something else"); other.type = "button"; other.addEventListener("click", () => { S.sel = TODAY; S.timeEdited = false; S.slotAuto = true; S.slot = slotForNow(); go("food"); }); row.append(other);
+      full.append(row);
+    } else if (!st.active) full.append(el("span", "lbl", "Reminders are off for the night. They start again at 7am."));
+    else full.append(el("span", "lbl", `Eat again by ${st.nextAt.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}${st.on ? ". I'll remind you." : "."}`));
+    box.append(full);
+  }
+
+  // Buzz, sound and pop-up
+  let audioCtx = null;
+  document.addEventListener("pointerdown", () => { if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (_) {} } }, { once: true });
+  function beep() {
+    if (!audioCtx) return;
+    try { [0, 0.25, 0.5].forEach((t, i) => { const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.frequency.value = i === 2 ? 1046 : 880; o.connect(g); g.connect(audioCtx.destination);
+      const at = audioCtx.currentTime + t; g.gain.setValueAtTime(0.0001, at); g.gain.exponentialRampToValueAtTime(0.25, at + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, at + 0.2); o.start(at); o.stop(at + 0.22); }); } catch (_) {}
+  }
+  function buzz() { try { if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 600]); } catch (_) {} }
+  let titleT = null; const baseTitle = document.title;
+  function flashTitle(msg) {
+    if (!document.hidden) return; clearInterval(titleT); let on = false;
+    titleT = setInterval(() => { on = !on; document.title = on ? msg : baseTitle; if (!document.hidden) { clearInterval(titleT); document.title = baseTitle; } }, 1000);
+  }
+  function showAlert(title, msg, fromPartner) {
+    $("#alert-title").textContent = title; $("#alert-msg").textContent = msg; $("#alert-love").hidden = !fromPartner;
+    $("#alert").hidden = false; $("#alert-eat").focus(); buzz(); beep(); flashTitle(title);
+  }
+  function hideAlert() { $("#alert").hidden = true; }
+  $("#alert-ok").addEventListener("click", hideAlert);
+  $("#alert-eat").addEventListener("click", () => { hideAlert(); S.sel = TODAY; S.timeEdited = false; S.slotAuto = true; S.slot = slotForNow(); go("food"); });
+  $("#alert-love").addEventListener("click", () => { hideAlert(); sendLove(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#alert").hidden) hideAlert(); });
+
+  // Own timer alarm
+  function checkAlarm() {
+    if (!S.me || !S.loaded || !S.days[S.me] || !$("#alert").hidden) return;
+    const st = hungerState(S.me); if (!st.on || !st.due) { if (!st.due) S.alarmKey = null; return; }
+    const key = st.last ? st.last.m.id : "none-" + TODAY;
+    if (S.alarmKey === key && Date.now() - S.alarmAt < 60 * 60000) return;
+    S.alarmKey = key; S.alarmAt = Date.now();
+    showAlert("Time to eat!", st.last ? `It's been ${fmtDur(st.since)} since you ate. Grab something now and log it.` : `You haven't logged any food today. Eat something and add it to the app.`, false);
+  }
+  setInterval(() => { if (S.view === "home") { renderTimer(); const pid = partnerId(); const ps = $("#p-since"); if (pid && ps) { const ph = hungerState(pid); ps.textContent = sinceText(pid, ph); ps.classList.toggle("warn", ph.due); } } checkAlarm(); }, 30000);
+
+  // Reminders between partners
+  const seenKey = () => "pulse.nudgeSeen." + S.me;
+  function seenAt() { try { return Number(localStorage.getItem(seenKey())) || 0; } catch (_) { return S.nudgeSeen || 0; } }
+  function markSeen(at) { S.nudgeSeen = Math.max(S.nudgeSeen || 0, at); try { localStorage.setItem(seenKey(), String(Math.max(seenAt(), at))); } catch (_) {} }
+  function sendNudge(text) {
+    const pid = partnerId(); if (!pid || !S.db) { toast("Log in to send reminders"); return; }
+    const at = Date.now(); const d = draft(TODAY);
+    if (!change(TODAY, { nudges: (Array.isArray(d.nudges) ? d.nudges : []).concat([{ to: pid, text, at }]).slice(-20) })) return;
+    if (S.room) S.room.emit("nudge", { to: pid, text, at }).catch(() => {});
+    S.nudgeOpen = false; toast(`Reminder sent to ${nameOf(pid)}`); renderHome();
+  }
+  function checkNudges() {
+    const pid = partnerId(); if (!pid || !S.me) return;
+    const e = stored(pid, TODAY); const seen = Math.max(seenAt(), S.nudgeSeen || 0);
+    const list = (e && Array.isArray(e.nudges) ? e.nudges : []).filter(x => x && x.to === S.me && n(x.at) > seen && n(x.at) > Date.now() - 12 * 3600000);
+    if (!list.length) return;
+    const last = list[list.length - 1]; markSeen(n(last.at));
+    const when = new Date(n(last.at)).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+    showAlert(`${nameOf(pid)} says`, `"${String(last.text || "Time to eat!").slice(0, 120)}" (sent ${when})`, true);
+  }
+  $("#r-test").addEventListener("click", () => showAlert("Time to eat!", "This is what a reminder looks like. Android phones vibrate as well.", false));
+  $$("[data-ron]").forEach(b => b.addEventListener("click", () => { saveGoals({ remindOn: b.dataset.ron === "1" }); S.alarmKey = null; }));
+  $$("[data-rh]").forEach(b => b.addEventListener("click", () => { saveGoals({ remindHours: Number(b.dataset.rh) }); S.alarmKey = null; }));
+
+
+  // ---------- Saved meals ("usuals") ----------
+  S.usuals = [];
+  const usualKcal = u => u.items.reduce((a, i) => a + i.kcal, 0);
+  function cleanUsual(id, d) {
+    const s2 = (v, m) => typeof v === "string" ? v.trim().slice(0, m) : "";
+    const items = (Array.isArray(d.items) ? d.items : []).filter(i => i && typeof i === "object").slice(0, 15)
+      .map(i => ({ name: s2(i.name, 40) || "Food", kcal: clamp(Math.round(n(i.kcal) || 0), 0, 5000), protein: clamp(Math.round(n(i.protein) || 0), 0, 500) }));
+    return { id, name: s2(d.name, 30) || "My usual", slot: SLOTS.includes(d.slot) ? d.slot : "Snack", items };
+  }
+  async function saveUsual(name, slot, list) {
+    if (!S.db || !S.me) { toast("Log in to save"); return; }
+    const real = list.filter(m => !((n(m.kcal) || 0) === 0 && SLOTS.includes(String(m.name))));
+    if (!real.length) { toast("Add some food to this meal first, then save it"); return; }
+    const id = rid(); const items = real.map(m => ({ name: String(m.name || "Food").slice(0, 40), kcal: n(m.kcal) || 0, protein: n(m.protein) || 0 }));
+    const u = cleanUsual(id, { name, slot, items });
+    S.usuals = S.usuals.concat([u]); S.savingSlot = null; renderAll();
+    try { await S.db.doc(`logs/${S.me}/usuals/${id}`).set({ name: u.name, slot: u.slot, items: u.items, createdAt: Date.now() }); toast(`Saved "${u.name}". Find it under My usuals.`); burst(12); }
+    catch (err) { toast(errText(err)); }
+  }
+  async function deleteUsual(u) {
+    S.usuals = S.usuals.filter(x => x.id !== u.id); renderAll();
+    try { await S.db.doc(`logs/${S.me}/usuals/${u.id}`).delete(); toast(`Removed "${u.name}"`); } catch (err) { toast(errText(err)); }
+  }
+  function logUsual(u, date) {
+    const t = /^\d{2}:\d{2}$/.test($("#m-time").value) ? $("#m-time").value : (date === TODAY ? nowTime() : DEFAULT_TIME[u.slot]);
+    const slot = slotForTime(t) === "Snack" ? u.slot : slotForTime(t);
+    const d = draft(date);
+    if (change(date, { meals: mealsOf(d).concat(u.items.map(i => ({ id: rid(), name: i.name, kcal: i.kcal, protein: i.protein, slot, time: t }))) })) { toast(`Logged ${u.name} · ${fmt(usualKcal(u))} kcal`); burst(14); setTimeout(() => petChomp({ name: u.name, kcal: usualKcal(u) }), 0); }
+  }
+  function renderUsuals() {
+    const box = $("#usuals"); box.textContent = "";
+    $("#usuals-empty").hidden = S.usuals.length > 0;
+    S.usuals.forEach(u => {
+      const w = el("div", "usual");
+      const b = el("button", "food"); b.type = "button"; b.append(el("b", null, u.name), el("span", null, `${u.items.length} item${u.items.length === 1 ? "" : "s"} · ${fmt(usualKcal(u))} kcal`));
+      b.title = u.items.map(i => i.name).join(", "); b.addEventListener("click", () => logUsual(u, S.sel));
+      const x = el("button", "x"); x.type = "button"; x.setAttribute("aria-label", `Delete ${u.name}`); x.append(icon("M6 6l12 12M18 6L6 18"));
+      x.addEventListener("click", () => deleteUsual(u));
+      w.append(b, x); box.append(w);
+    });
+  }
+
+  // ---------- "Just mark it" (no calories) ----------
+  const CHECK = "M5 12.5l4.5 4.5L19 7.5";
+  const kcalLabel = m => ((n(m.kcal) || 0) > 0 ? fmt(n(m.kcal)) + " kcal" : "✓ ate");
+  function markMeal(slot, date) {
+    const isToday = date === TODAY;
+    const t = isToday && slotForNow() === slot ? nowTime() : (isToday && slot === "Snack" ? nowTime() : DEFAULT_TIME[slot]);
+    const meal = addMeal(date, slot === "Snack" ? "Snack" : slot, 0, 0, 1, t, { slot });
+    if (meal) burst(10);
+  }
+  function renderMarks(box, date) {
+    if (!box) return; box.textContent = "";
+    const ms = mealsOf(entry(S.me, date));
+    SLOTS.forEach(slot => {
+      const done = ms.some(m => (SLOTS.includes(m.slot) ? m.slot : "Snack") === slot);
+      const b = el("button", "mark" + (done ? " done" : "")); b.type = "button";
+      const ck = el("span", "ck"); if (done) ck.append(icon(CHECK)); b.append(ck, el("span", null, slot === "Snack" ? "Snack" : slot), el("small", null, WINDOW_LABEL[slot]));
+      b.setAttribute("aria-label", done ? `${slot} logged. Tap to add another` : `I had ${slot.toLowerCase()}`);
+      b.addEventListener("click", () => markMeal(slot, date));
+      box.append(b);
+    });
+  }
+
+  // ---------- Streak together ----------
+  const BADGES = [3, 7, 14, 30, 60, 100];
+  function hasFood(uid, date) { return mealsOf(entry(uid, date)).length > 0; }
+  function togetherStreak() {
+    const ids = personIds(); if (!ids.length) return { n: 0, both: false, today: false };
+    const both = ids.length > 1;
+    const ok = d => ids.every(id => hasFood(id, d));
+    const d = fromYmd(TODAY); const today = ok(TODAY); if (!today) d.setDate(d.getDate() - 1);
+    let c = 0; while (c < 365 && ok(ymd(d))) { c++; d.setDate(d.getDate() - 1); }
+    return { n: c, both, today };
+  }
+  function renderStreak() {
+    const box = $("#streak"); if (!S.me || !S.loaded) { box.hidden = true; return; }
+    const st = togetherStreak(); const pid = partnerId(); box.hidden = false; box.textContent = "";
+    const fl = el("div", "flame"); const f = sv("svg", { viewBox: "0 0 24 24", "aria-hidden": "true" });
+    f.append(sv("path", { d: "M12 22c4 0 7-2.8 7-6.8 0-3.7-2.6-6.2-4.2-8.6-.4 2-1.4 3.2-2.6 3.6.2-3-1-6.2-3.6-8.2.2 3.4-1.6 5.6-3 7.6C4.5 11.5 5 13.4 5 15.2 5 19.2 8 22 12 22z", fill: "var(--red)" }));
+    f.append(sv("path", { d: HEART, fill: "#fff", transform: "translate(7.2 11.5) scale(.4)" })); fl.append(f); box.append(fl);
+    const t = el("div");
+    t.append(el("div", "n", st.n ? `${st.n} day${st.n === 1 ? "" : "s"} in a row${st.both ? " together" : ""}` : (st.both ? "Start a streak together" : "Start a streak")));
+    let sub;
+    if (st.both) { const meToday = hasFood(S.me, TODAY), herToday = hasFood(pid, TODAY);
+      sub = meToday && herToday ? "You both logged food today." : meToday ? `Waiting on ${nameOf(pid)} today. Send a reminder?` : herToday ? `${nameOf(pid)} logged today. Your turn!` : "Both log something today to keep it going."; }
+    else sub = hasFood(S.me, TODAY) ? "You logged food today." : "Log something today to keep it going.";
+    t.append(el("div", "sub", sub)); box.append(t);
+    const bd = el("div", "badges"); BADGES.forEach(b => bd.append(el("span", "badge" + (st.n >= b ? " got" : ""), `${b} days`))); box.append(bd);
+    // Celebrate a new badge once per device
+    const hit = BADGES.filter(b => st.n >= b).pop();
+    if (hit && st.today) { const key = `pulse.badge.${S.me}.${hit}`; let seen = false; try { seen = localStorage.getItem(key) === "1"; localStorage.setItem(key, "1"); } catch (_) { seen = S["b" + hit]; S["b" + hit] = true; }
+      if (!seen) { setTimeout(() => { burst(50); toast(`New badge: ${hit}-day streak${st.both ? " together" : ""}!`); }, 400); } }
+  }
+
+  // ---------- Weekly recap ----------
+  function weekRecap(offset) {
+    const mon = mondayOf(offset); const days = [];
+    for (let i = 0; i < 7; i++) { const d = new Date(mon); d.setDate(d.getDate() + i); const k = ymd(d); if (k <= TODAY) days.push(k); }
+    const ids = personIds().sort((x, y) => (x === S.me ? -1 : y === S.me ? 1 : 0)); const per = {}; const foodCount = {};
+    ids.forEach(id => {
+      let meals = 0, kcal = 0, best = null, love = 0, nudges = 0, photos = 0, logged = 0;
+      days.forEach(d => { const e = entry(id, d); const ms = mealsOf(e); const t = totals(e);
+        if (ms.length) logged++; meals += ms.length; kcal += t.kcal; if (!best || t.kcal > best.kcal) best = { d, kcal: t.kcal };
+        love += n(e && e.love) || 0; nudges += e && Array.isArray(e.nudges) ? e.nudges.length : 0; photos += ms.filter(m => validPhoto(m.photo)).length;
+        ms.forEach(m => { const k = String(m.name || "").replace(/^[\d.]+× /, ""); if (k && !SLOTS.includes(k)) foodCount[k] = (foodCount[k] || 0) + 1; }); });
+      per[id] = { meals, kcal, avg: logged ? Math.round(kcal / logged) : 0, best: best && best.kcal ? best : null, love, nudges, photos, logged };
+    });
+    const fav = Object.entries(foodCount).sort((a, b) => b[1] - a[1])[0] || null;
+    const bothDays = days.filter(d => ids.length > 1 && ids.every(id => hasFood(id, d))).length;
+    return { mon, days, ids, per, fav, bothDays };
+  }
+  function renderRecap(offset) {
+    const box = $("#recap"); const r = weekRecap(offset);
+    const any = r.ids.some(id => r.per[id].meals > 0); box.hidden = !any; box.textContent = ""; if (!any) return;
+    box.append(el("h3", null, offset === 0 ? "Your week so far" : offset === -1 ? "Last week's recap" : "Week of " + shortDate(ymd(r.mon))));
+    box.append(el("div", "sub", r.ids.length > 1 ? `You both logged food on ${r.bothDays} of ${r.days.length} days.` : `You logged food on ${r.per[S.me] ? r.per[S.me].logged : 0} of ${r.days.length} days.`));
+    const grid = el("div", "recap-grid");
+    const cell = (v, l) => { const d = el("div"); d.append(el("b", "num", v), el("span", null, l)); grid.append(d); };
+    r.ids.forEach(id => { const p = r.per[id]; const who = id === S.me ? "You" : nameOf(id);
+      cell(fmt(p.meals), `${who}: things eaten`); cell(p.avg ? fmt(p.avg) : "–", `${who}: avg kcal a day`);
+      if (p.best) cell(fromYmd(p.best.d).toLocaleDateString(undefined, { weekday: "short" }), `${who}: biggest day (${fmt(p.best.kcal)} kcal)`); });
+    if (r.fav) cell(r.fav[0], `Most eaten (${r.fav[1]}×)`);
+    if (r.ids.length > 1) { const [a, b] = r.ids; const la = r.per[a].love, lb = r.per[b].love;
+      cell(`${fmt(la + lb)}`, la === lb ? "Hearts sent (a tie!)" : `Hearts sent (${nameOf(la > lb ? a : b)} sent more)`);
+      cell(fmt(r.ids.reduce((x, id) => x + r.per[id].nudges, 0)), "Reminders to eat"); }
+    const ph = r.ids.reduce((x, id) => x + r.per[id].photos, 0); if (ph) cell(fmt(ph), "Food photos");
+    box.append(grid);
+  }
+  function renderRecapBanner() {
+    const box = $("#recap-banner"); const dow = fromYmd(TODAY).getDay();
+    if (!S.loaded || (dow !== 0 && dow !== 1)) { box.hidden = true; return; }
+    const offset = dow === 1 ? -1 : 0; const r = weekRecap(offset);
+    if (!r.ids.some(id => r.per[id].meals > 0)) { box.hidden = true; return; }
+    box.hidden = false; box.textContent = "";
+    const t = el("div"); t.append(el("b", null, "Your weekly recap is ready"), el("div", "muted", dow === 1 ? "See how last week went" : "See how this week went"));
+    const b = el("button", "cta", "See it"); b.type = "button"; b.addEventListener("click", () => { S.weekOffset = offset; S.weekWho = S.me; go("week"); });
+    box.append(t, b);
+  }
+
+  // ---------- Simple view ----------
+  function renderSimpleHome(hero) {
+    const pid = partnerId(); const st = hungerState(S.me);
+    hero.append(el("div", "hi", "Hi " + (S.names[S.me] || "there")));
+    const ago = el("div", "ago" + (st.due ? " due" : ""), !st.last ? "You haven't marked any food yet today" : (st.since < 2 ? "You just ate. Nice!" : `You last ate ${fmtDur(st.since)} ago` + (st.due ? ". Time to eat!" : "")));
+    hero.append(ago);
+    hero.append(el("div", "muted", "Tap what you've had:"));
+    const marks = el("div", "marks"); renderMarks(marks, TODAY); hero.append(marks);
+    const duo = el("div", "duo");
+    const pick = el("button", "cta dark", "Pick a food"); pick.type = "button"; pick.addEventListener("click", () => { S.sel = TODAY; S.timeEdited = false; S.slotAuto = true; S.slot = slotForNow(); go("food"); });
+    duo.append(pick);
+    if (S.assets) { const cam = el("button", "cta", "Snap a photo"); cam.type = "button"; cam.addEventListener("click", () => { S.sel = TODAY; S.timeEdited = false; S.slotAuto = true; S.slot = slotForNow(); go("food"); $("#photo-in").click(); }); duo.append(cam); }
+    else duo.style.gridTemplateColumns = "1fr";
+    hero.append(duo);
+    if (pid) {
+      const ph = hungerState(pid);
+      hero.append(el("div", "muted", `${nameOf(pid)}: ${sinceText(pid, ph).toLowerCase()}`));
+      const duo2 = el("div", "duo");
+      const rem = el("button", "cta", `Remind ${nameOf(pid)}`); rem.type = "button"; rem.addEventListener("click", () => { S.nudgeOpen = !S.nudgeOpen; renderHome(); });
+      const love = el("button", "cta dark love-btn"); love.type = "button"; love.append(heartSvg(20, "currentColor"), document.createTextNode("Send love")); love.addEventListener("click", sendLove);
+      duo2.append(rem, love); hero.append(duo2);
+      if (S.nudgeOpen) {
+        const chips = el("div", "row"); chips.style.justifyContent = "center";
+        ["Time to eat, babe!", "Have you eaten yet?", "Grab a snack!", "Don't skip your meal!"].forEach(t => { const c = el("button", "pill", t); c.type = "button"; c.addEventListener("click", () => sendNudge(t)); chips.append(c); });
+        hero.append(chips);
+      }
+      const got = n((entry(pid, TODAY) || {}).love) || 0; if (got) hero.append(el("div", "love-line", `${nameOf(pid)} sent you ${got} heart${got === 1 ? "" : "s"} today`));
+    }
+    { const wv = n((entry(S.me, TODAY) || {}).water) || 0; const wg = goalsOf(S.me).waterGoal;
+      const wb = el("button", "add-water", `+ Water (${wv}/${wg} glasses)`); wb.type = "button"; wb.addEventListener("click", () => setWater(wv + 1)); hero.append(wb); }
+    const sk = togetherStreak(); if (sk.n) hero.append(el("div", "love-line", `${sk.n}-day streak${sk.both ? " together" : ""}`));
+    const full = el("button", "link", "Switch to full view"); full.type = "button"; full.addEventListener("click", () => saveGoals({ simple: false })); hero.append(full);
+  }
+  $("#to-simple").addEventListener("click", () => saveGoals({ simple: true }));
+  $$("[data-simple]").forEach(b => b.addEventListener("click", () => saveGoals({ simple: b.dataset.simple === "1" })));
+
+
+  // ---------- Pet ----------
+  const PET_LEVELS = [[0, "Baby"], [3, "Little"], [7, "Big"], [14, "Super"], [30, "Legendary"]];
+  const BOOSTERS = [["Spoon of peanut butter", 95, 4], ["Glass of whole milk", 150, 8], ["Handful of nuts", 200, 6], ["Drizzle of olive oil", 120, 0], ["Slice of cheese", 110, 7], ["Spoon of honey", 65, 0], ["Half an avocado", 160, 2], ["Banana", 105, 1]];
+  const PET = { x: 40, y: 0, vy: 0, held: false, cuddling: false, face: null, target: 120, dir: 1, speed: 0.6, raf: 0, last: 0, pause: 0, tipIdx: 0, name: "Mochi", state: "" };
+  const hourNow = () => new Date().getHours();
+  const isNight = () => hourNow() >= 22 || hourNow() < 7;
+  function petFullness() {
+    const ids = personIds(); if (!ids.length) return 0;
+    return ids.reduce((a, id) => { const e = entry(id, TODAY); const t = totals(e); const g = goalsOf(id);
+      const byKcal = clamp(t.kcal / g.kcalGoal, 0, 1); const byMarks = clamp(mealsOf(e).length / 4, 0, 1);
+      return a + Math.max(byKcal, byMarks * 0.8); }, 0) / ids.length;
+  }
+  function daysTogether() {
+    const ids = personIds(); const dates = new Set();
+    ids.forEach(id => (S.days[id] || []).forEach(e => { if (mealsOf(e).length) dates.add(e.date); }));
+    return [...dates].filter(d => ids.every(id => hasFood(id, d))).length;
+  }
+  function petLevel() { const d = daysTogether(); let i = 0; PET_LEVELS.forEach((l, k) => { if (d >= l[0]) i = k; }); return { i, d, title: PET_LEVELS[i][1], next: PET_LEVELS[i + 1] ? PET_LEVELS[i + 1][0] : null }; }
+  function petMood() {
+    if (isNight()) return "sleep";
+    const hungry = personIds().some(id => hungerState(id).due);
+    if (hungry) return "hungry";
+    return petFullness() >= 0.9 ? "stuffed" : "happy";
+  }
+  function drawPet() {
+    const mood = PET.face || petMood(); const lv = petLevel().i; const full = petFullness();
+    const key = mood + lv + Math.round(full * 10); if (PET.state === key) return; PET.state = key;
+    const w = 30 + full * 9, h = 27 + full * 3; // gets chubbier as you eat
+    const FACE_EYES = {
+      held: '<circle cx="41" cy="51" r="6.5" fill="#fff"/><circle cx="59" cy="51" r="6.5" fill="#fff"/><circle cx="41" cy="52" r="3.6" fill="#2B0C10"/><circle cx="59" cy="52" r="3.6" fill="#2B0C10"/>',
+      cuddle: '<path d="M36 54q5-6 10 0M54 54q5-6 10 0" stroke="#2B0C10" stroke-width="2.8" fill="none" stroke-linecap="round"/>',
+      giggle: '<path d="M37 48l7 4-7 4M63 48l-7 4 7 4" stroke="#2B0C10" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+      grumpy: '<path d="M36 52h10M54 52h10" stroke="#2B0C10" stroke-width="2.8" stroke-linecap="round"/><path d="M36 47l9 2M64 47l-9 2" stroke="#2B0C10" stroke-width="2" stroke-linecap="round"/>',
+    };
+    const FACE_MOUTH = {
+      held: '<ellipse cx="50" cy="66" rx="3.4" ry="4.4" fill="#2B0C10"/>',
+      cuddle: '<path d="M42 62q8 8 16 0" stroke="#2B0C10" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M28 58q6-3 12 0M60 58q6-3 12 0" stroke="#FF9AA6" stroke-width="3" fill="none" stroke-linecap="round"/>',
+      giggle: '<path d="M41 61q9 12 18 0z" fill="#2B0C10"/><path d="M45 66q5 4 10 0" fill="#FF9AA6"/>',
+      grumpy: '<path d="M44 66q6-4 12 0" stroke="#2B0C10" stroke-width="2.6" fill="none" stroke-linecap="round"/>',
+    };
+    const eyes = FACE_EYES[mood] ? FACE_EYES[mood] : mood === "sleep" ? '<path d="M36 53q5 4 10 0M54 53q5 4 10 0" stroke="#2B0C10" stroke-width="2.6" fill="none" stroke-linecap="round"/>'
+      : '<circle cx="41" cy="52" r="4.6" fill="#2B0C10"/><circle cx="59" cy="52" r="4.6" fill="#2B0C10"/><circle cx="42.6" cy="50.4" r="1.5" fill="#fff"/><circle cx="60.6" cy="50.4" r="1.5" fill="#fff"/>'
+        + '<rect class="lid" x="35" y="46" width="30" height="11" fill="#FF5A6B"/>';
+    const mouth = FACE_MOUTH[mood] ? FACE_MOUTH[mood] : mood === "hungry" ? '<ellipse cx="50" cy="65" rx="4" ry="5" fill="#2B0C10"/>'
+      : mood === "sleep" ? '<path d="M47 64q3 2 6 0" stroke="#2B0C10" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
+      : mood === "stuffed" ? '<path d="M42 62q8 9 16 0z" fill="#2B0C10"/><path d="M46 66q4 3 8 0" fill="#FF9AA6"/>'
+      : '<path d="M43 62q7 7 14 0" stroke="#2B0C10" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+    const hats = [
+      "",
+      '<path d="M50 34q-2-10 6-14q0 9-6 14z" fill="#3FA463"/><path d="M50 34q-6-6-12-4q4 6 12 4z" fill="#56C27B"/>',
+      '<path d="M35 37q1-13 15-13t15 13z" fill="#24335F"/><path d="M62 36q11-1 15 3q-7 2-15 0z" fill="#17223F"/><path d="M42 30q8-3 16 0" stroke="#E0182D" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="50" cy="24.5" r="1.9" fill="#E0182D"/>',
+      '<path d="M37 37l4-12 9 7 9-7 4 12z" fill="#F5B932" stroke="#C98A0B" stroke-width="1.5" stroke-linejoin="round"/><circle cx="50" cy="31" r="2.2" fill="#E0182D"/>',
+      '<path d="M35 38l4-14 11 8 11-8 4 14z" fill="#F5B932" stroke="#C98A0B" stroke-width="1.5" stroke-linejoin="round"/><circle cx="43" cy="31" r="2" fill="#E0182D"/><circle cx="57" cy="31" r="2" fill="#E0182D"/><circle cx="50" cy="28" r="2.4" fill="#4FA3F7"/>',
+    ][lv];
+    const zzz = mood === "sleep" ? '<text x="70" y="30" font-size="12" font-weight="700" fill="var(--muted)" font-family="Fredoka, sans-serif">z</text><text x="78" y="20" font-size="15" font-weight="700" fill="var(--muted)" font-family="Fredoka, sans-serif">Z</text>' : "";
+    const drip = mood === "hungry" ? '<path d="M56 68q2 6 0 8q-3-2 0-8z" fill="#9FD3FF"/>' : "";
+    const markup =
+      '<ellipse cx="50" cy="94" rx="' + (w * 0.9).toFixed(1) + '" ry="4" fill="rgba(0,0,0,.12)"/>' +
+      '<g class="foot l"><ellipse cx="40" cy="89" rx="7" ry="4.5" fill="#B3132A"/></g><g class="foot r"><ellipse cx="60" cy="89" rx="7" ry="4.5" fill="#B3132A"/></g>' +
+      '<g class="body">' +
+        '<path d="M' + (50 - w) + ' 70 Q' + (50 - w) + ' ' + (60 - h * 1.1).toFixed(1) + ' 50 ' + (60 - h * 1.15).toFixed(1) + ' Q' + (50 + w) + ' ' + (60 - h * 1.1).toFixed(1) + ' ' + (50 + w) + ' 70 Q' + (50 + w) + ' 90 50 90 Q' + (50 - w) + ' 90 ' + (50 - w) + ' 70z" fill="#FF5A6B"/>' +
+        '<path d="M' + (50 - w * 0.7).toFixed(1) + ' 78 Q50 92 ' + (50 + w * 0.7).toFixed(1) + ' 78 Q50 86 ' + (50 - w * 0.7).toFixed(1) + ' 78z" fill="#E0182D" opacity=".5"/>' +
+        '<ellipse cx="' + (44 - w * 0.25).toFixed(1) + '" cy="40" rx="5" ry="3" fill="#fff" opacity=".35"/>' +
+        eyes + '<ellipse cx="34" cy="60" rx="4.5" ry="2.8" fill="#FF9AA6"/><ellipse cx="66" cy="60" rx="4.5" ry="2.8" fill="#FF9AA6"/>' + mouth + drip + hats +
+      '</g>' + zzz;
+    $("#pet-svg").innerHTML = markup; $("#buddy-svg").innerHTML = markup;
+    const p = $("#pet"); p.setAttribute("aria-label", `${PET.name} is ${mood === "sleep" ? "asleep" : mood}`);
+  }
+  function renderPet() {
+    const yard = $("#yard"); if (!S.me || !S.loaded) { yard.hidden = true; stopPet(); return; }
+    yard.hidden = false; $("#pet-name").textContent = PET.name;
+    const lv = petLevel(); $("#pet-title").textContent = `${lv.title} · level ${lv.i + 1}`;
+    $("#yard-area").classList.toggle("night", isNight());
+    { const f = petFullness(); $("#bowl-food").setAttribute("d", `M10 18q20 ${(-(4 + 18 * f)).toFixed(1)} 40 0z`); $("#bowl-food").style.opacity = f > 0.02 ? "1" : "0"; }
+    const st = $("#pet-stats"); st.textContent = "";
+    const full = petFullness();
+    const a = el("div"); a.append(document.createTextNode(`Tummy ${Math.round(full * 100)}%`)); const ab = el("div", "bar"); const ai = el("i"); ai.style.width = full * 100 + "%"; ab.append(ai); a.append(ab);
+    const b = el("div"); b.append(document.createTextNode(lv.next ? `${lv.d} days together · grows at ${lv.next}` : `${lv.d} days together · fully grown!`));
+    const bb = el("div", "bar"); const bi = el("i"); const prev = PET_LEVELS[lv.i][0]; bi.style.width = (lv.next ? clamp((lv.d - prev) / (lv.next - prev), 0, 1) : 1) * 100 + "%"; bb.append(bi); b.append(bb);
+    st.append(a, b);
+    renderBondRow(); renderJourney(); maybeGreet();
+    drawPet(); startPet();
+  }
+  function renderPetStats() { if (!$("#yard").hidden) { const old = $("#bond-row"); if (old) old.remove(); renderBondRow(); } }
+  function renderBondRow() {
+    const st = $("#pet-stats"); const bt = bondTier();
+    const c = el("div", "wide"); c.id = "bond-row";
+    c.append(document.createTextNode(bt.next ? `Bond: ${bt.name} · ${fmt(bt.sc)} hearts · ${bt.next[1]} at ${fmt(bt.next[0])}` : `Bond: ${bt.name} · ${fmt(bt.sc)} hearts`));
+    const bar = el("div", "bar"); const bi = el("i"); bi.style.width = (bt.next ? clamp((bt.sc - bt.prev) / (bt.next[0] - bt.prev), 0, 1) : 1) * 100 + "%"; bar.append(bi); c.append(bar);
+    const pid = partnerId(); const pc = pid && S.care[pid]; const mc = S.care[S.me];
+    const bits = [];
+    if (mc && mc.day === TODAY && mc.today.cuddles) bits.push(`You cuddled ${PET.name} today`);
+    if (pc && pc.day === TODAY && pc.today.cuddles) bits.push(`${nameOf(pid)} cuddled ${PET.name} ${pc.today.cuddles > 1 ? pc.today.cuddles + " times" : "once"} today`);
+    if (bits.length) { const sp = el("div", null, bits.join(" · ")); sp.style.marginTop = "4px"; c.append(sp); }
+    st.append(c);
+  }
+  function startPet() { if (!PET.raf && !reduceMotion) { PET.last = performance.now(); PET.raf = requestAnimationFrame(petTick); } else if (reduceMotion) placePet(); }
+  function stopPet() { if (PET.raf) cancelAnimationFrame(PET.raf); PET.raf = 0; }
+  function placePet() { const pe = $("#pet"); pe.style.transform = `translate(${PET.x.toFixed(1)}px, ${(-PET.y).toFixed(1)}px) scaleX(${PET.dir})`; }
+  function petTick(now) {
+    PET.raf = 0;
+    if (S.view !== "home" || document.hidden || $("#yard").hidden || $("#pet").hidden) return;
+    const area = $("#yard-area"); const maxX = Math.max(0, area.clientWidth - 104); const dt = Math.min(64, now - PET.last); PET.last = now;
+    const pe = $("#pet"); const mood = petMood();
+    if (PET.held || PET.cuddling || fallStep(PET, dt)) { pe.classList.remove("walking"); PET.x = clamp(PET.x, 0, maxX); placePet(); PET.raf = requestAnimationFrame(petTick); return; }
+    if (mood === "sleep") {
+      const bedX = 14; const dxb = bedX - PET.x;
+      if (Math.abs(dxb) > 2) { PET.dir = dxb > 0 ? 1 : -1; PET.x += Math.sign(dxb) * Math.min(Math.abs(dxb), 0.6 * dt / 16); pe.classList.add("walking"); }
+      else { pe.classList.remove("walking"); PET.dir = 1; }
+      placePet(); PET.raf = requestAnimationFrame(petTick); return;
+    }
+    if (PET.pause > 0) { PET.pause -= dt; pe.classList.remove("walking"); }
+    else {
+      const sp = (mood === "hungry" ? 0.35 : 0.75) * dt / 16;
+      const dx = PET.target - PET.x;
+      if (Math.abs(dx) < 2) {
+        if (mood === "hungry") { PET.pause = 2500; PET.target = maxX; PET.dir = 1; petHop(); } // waits by his bowl
+        else { PET.pause = 900 + Math.random() * 2600; PET.target = Math.random() < 0.25 ? maxX : Math.random() < 0.3 ? 20 : Math.random() * maxX; }
+      }
+      else { PET.dir = dx > 0 ? 1 : -1; PET.x += Math.sign(dx) * Math.min(Math.abs(dx), sp); pe.classList.add("walking"); }
+    }
+    PET.x = clamp(PET.x, 0, maxX); placePet();
+    PET.raf = requestAnimationFrame(petTick);
+  }
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && S.view === "home") startPet(); });
+  function petHop() { const pe = $("#pet"); pe.classList.remove("hop"); void pe.offsetWidth; pe.classList.add("hop"); setTimeout(() => pe.classList.remove("hop"), 550); }
+  let sayT = null;
+  function petSay(text, action) {
+    const b = $("#pet-bubble"); $("#pet-say").textContent = text; const btn = $("#pet-act");
+    if (action) { btn.hidden = false; btn.textContent = action.label; btn.onclick = () => { b.hidden = true; action.run(); }; } else { btn.hidden = true; btn.onclick = null; }
+    b.hidden = false; clearTimeout(sayT); sayT = setTimeout(() => { b.hidden = true; }, action ? 9000 : 5000);
+  }
+  function petTips() {
+    const tips = []; const pid = partnerId(); const me = hungerState(S.me);
+    let intro = false; try { intro = localStorage.getItem("pulse.petIntro") !== "1"; if (intro) localStorage.setItem("pulse.petIntro", "1"); } catch (_) { intro = !S.petIntro; S.petIntro = true; }
+    if (intro) return [{ text: `Hi, I'm ${PET.name}! I'm so happy to meet you.` }];
+    { const wv = n((entry(S.me, TODAY) || {}).water) || 0; const wg = goalsOf(S.me).waterGoal; const due = Math.round(wg * clamp((hourNow() - 8) / 13, 0, 1));
+      if (!isNight() && wv < due) tips.push({ text: `Thirsty? You've had ${wv} of ${wg} glasses of water today.`, action: { label: "+1 glass", run: () => setWater(wv + 1) } }); }
+    const mc = S.care[S.me]; if (!isNight() && hourNow() >= 17 && !(mc && mc.day === TODAY && mc.today.cuddles)) tips.push({ text: "I missed you today..." }); const g = goalsOf(S.me); const t = totals(entry(S.me, TODAY));
+    if (isNight()) tips.push({ text: `Shh... ${PET.name} is sleeping. Have a good night, you two.` });
+    if (me.due) tips.push({ text: me.last ? `My tummy is rumbling! You haven't eaten in ${fmtDur(me.since)}.` : "You haven't eaten anything today. Feed me by feeding you!", action: { label: "Log food", run: () => { S.sel = TODAY; S.timeEdited = false; S.slotAuto = true; S.slot = slotForNow(); go("food"); } } });
+    if (pid) { const ph = hungerState(pid); if (ph.due) tips.push({ text: `${nameOf(pid)} hasn't eaten in a while (${ph.last ? fmtDur(ph.since) : "nothing today"}). Shall I nag?`, action: { label: `Remind ${nameOf(pid)}`, run: () => sendNudge(`${PET.name} says: time to eat!`) } }); }
+    const next = planOf(S.me, TODAY).sort(byTime).find(i => !isEaten(S.me, TODAY, i));
+    if (next) tips.push({ text: `Next on your plan: ${next.name} at ${fmtTime(next.time)}.`, action: { label: "Ate it", run: () => eatPlanned(TODAY, next) } });
+    if (g.mode === "gain" && g.kcalGoal - t.kcal > 250) { const bo = BOOSTERS[Math.floor(Math.random() * BOOSTERS.length)];
+      tips.push({ text: `Easy boost: ${bo[0].toLowerCase()} adds ${bo[1]} kcal with hardly any effort.`, action: { label: `Add +${bo[1]}`, run: () => addMeal(TODAY, bo[0], bo[1], bo[2], 1, nowTime()) } }); }
+    const sk = togetherStreak(); if (sk.n >= 2) tips.push({ text: `We're on a ${sk.n}-day streak${sk.both ? " together" : ""}. Don't let me down!` });
+    const lv = petLevel(); if (lv.next) tips.push({ text: `${lv.next - lv.d} more day${lv.next - lv.d === 1 ? "" : "s"} of you both logging and I grow into a ${PET_LEVELS[lv.i + 1][1]} ${PET.name}!` });
+    if (pid) tips.push({ text: `Psst... ${nameOf(pid)} would love a heart right now.`, action: { label: "Send love", run: sendLove } });
+    tips.push({ text: ["You two make a great team.", "Water counts too! Have a glass.", "Snap a photo of your next meal, I love looking at food.", "Protein helps you build. Eggs, chicken, yogurt!"][Math.floor(Math.random() * 4)] });
+    return tips;
+  }
+  function petTapTip(say, hop) {
+    hop(); const tips = petTips(); const tip = tips[PET.tipIdx % tips.length]; PET.tipIdx++; say(tip.text, tip.action);
+  }
+  function petChomp(meal) {
+    if (buddyOn() || (S.view !== "home")) { PET.state = ""; renderBuddy(); if (onScreen()) { buddyHop(); buddySay(meal.kcal ? `Yum! ${meal.name} (+${fmt(meal.kcal)} kcal)` : `${meal.name} done. Thanks!`); } return; }
+    if ($("#yard").hidden) return; petHop();
+    const area = $("#yard-area"); if (!reduceMotion) for (let i = 0; i < 8; i++) { const c = el("i", "crumb"); c.style.left = (PET.x + 52) + "px"; c.style.bottom = "60px"; area.append(c);
+      const dx = (Math.random() - 0.5) * 80, dy = -20 - Math.random() * 40; c.animate([{ transform: "translate(0,0)", opacity: 1 }, { transform: `translate(${dx}px, ${-dy}px)`, opacity: 0 }], { duration: 700, easing: "ease-out" }).onfinish = () => c.remove(); }
+    petSay(meal.kcal ? `Yum! ${meal.name} (+${fmt(meal.kcal)} kcal). I feel ${petFullness() >= 0.9 ? "SO full" : "fuller already"}!` : `Yay, ${meal.name.toLowerCase()} done! Thanks for feeding me.`);
+    PET.state = ""; drawPet();
+  }
+  function petLove(from) {
+    if (buddyOn() || S.view !== "home") { if (onScreen()) { buddyHop(); buddySay(from ? `${from} sent you love. I'm blushing!` : "Love delivered!"); } return; }
+    if ($("#yard").hidden) return; petHop(); petSay(from ? `${from} sent you love. I'm blushing!` : "Love delivered! I ran it over myself."); }
+  // Name, shared by both of you
+  $("#pet-rename").addEventListener("click", () => { const f = $("#pet-name-form"); f.hidden = !f.hidden; if (!f.hidden) { $("#pet-name-in").value = PET.name; $("#pet-name-in").focus(); } });
+  $("#pet-name-form").addEventListener("submit", async e => {
+    e.preventDefault(); const v = $("#pet-name-in").value.trim().slice(0, 16); if (!v) return;
+    PET.name = v; $("#pet-name-form").hidden = true; renderPet(); anySay(`I love it! Call me ${v}.`); anyHop();
+    if (S.db) { try { await S.db.doc("shared/pet").set({ name: v, by: S.me, at: Date.now() }); } catch (err) { toast(errText(err)); } }
+  });
+
+
+
+  // ---------- Play: drag, cuddle, tickle ----------
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  function setFace(f) { PET.face = f; PET.state = ""; drawPet(); }
+  function fallStep(o, dt) {
+    if (o.held) return true;
+    if (o.y <= 0 && !o.vy) return false;
+    o.vy += 0.9 * dt / 16; o.y -= o.vy * dt / 16;
+    if (o.y <= 0) { o.y = 0; o.vy = o.vy > 5 ? -o.vy * 0.35 : 0; }
+    return true;
+  }
+  function heartsAt(elx, n) { if (reduceMotion) return; const r = elx.getBoundingClientRect(); burst(n || 3, r.top + 10); }
+  function attachPlay(pe, o, opt) {
+    let start = null, holdT = null, cuddleT = null, lastTap = 0;
+    pe.addEventListener("contextmenu", e => e.preventDefault());
+    pe.addEventListener("pointerdown", e => {
+      if (e.button > 0) return; e.preventDefault();
+      try { pe.setPointerCapture(e.pointerId); } catch (_) {}
+      start = { px: e.clientX, py: e.clientY, x: o.x, y: o.y, moved: false };
+      clearTimeout(holdT); holdT = setTimeout(() => { if (start && !start.moved) beginCuddle(); }, 550);
+    });
+    pe.addEventListener("pointermove", e => {
+      if (!start || o.cuddling) return;
+      const dx = e.clientX - start.px, dy = e.clientY - start.py;
+      if (!start.moved && Math.hypot(dx, dy) > 8) {
+        start.moved = true; clearTimeout(holdT); o.held = true; o.vy = 0;
+        pe.classList.add("dragging"); pe.classList.remove("walking"); setFace(isNight() ? "grumpy" : "held");
+        opt.say(isNight() ? "Huh? Who's there..." : pick(["Whee, up we go!", "Where are we going?", "Hold on tight!"]));
+      }
+      if (start.moved) { const b = opt.bounds();
+        o.x = clamp(start.x + dx, b.minX || 0, b.maxX); o.y = opt.free ? clamp(start.y + dy, b.minY || 0, b.maxY) : clamp(start.y - dy, 0, b.maxY);
+        if (Math.abs(e.movementX || 0) > 1) o.dir = e.movementX > 0 ? 1 : -1; opt.place(); }
+    });
+    const end = (ev) => {
+      if (!start) return; clearTimeout(holdT);
+      if (o.cuddling) endCuddle();
+      else if (start.moved) {
+        const h = opt.free ? 100 : o.y; o.held = false; o.vy = 0; o.pause = 1800; pe.classList.remove("dragging");
+        if (opt.free) { o.parked = true; o.home = { x: o.x, y: o.y }; }
+        if (opt.dropped && ev && opt.dropped(ev)) { start = null; return; }
+        if (reduceMotion) { o.y = 0; opt.place(); }
+        careAdd("plays");
+        if (isNight()) { opt.say("Hey! I was sleeping... zzz"); setTimeout(() => setFace(null), 1600); }
+        else { setFace("giggle"); opt.say(h > 60 ? pick(["Wheee! Again!", "I can fly!", "Whoa, that was high!"]) : pick(["Boing!", "I like it here.", "Hehe, that was fun!"])); setTimeout(() => setFace(null), 1200); }
+      } else {
+        const now = Date.now();
+        if (now - lastTap < 330) { lastTap = 0; tickle(); } else { lastTap = now; petTapTip(opt.say, opt.hop); }
+      }
+      start = null;
+    };
+    pe.addEventListener("pointerup", end); pe.addEventListener("pointercancel", end);
+    pe.addEventListener("click", e => { if (e.detail === 0) petTapTip(opt.say, opt.hop); }); // keyboard
+    function beginCuddle() {
+      o.cuddling = true; setFace(isNight() ? "sleep" : "cuddle"); heartsAt(pe, 5); careAdd("cuddles");
+      opt.say(isNight() ? "Mmm... sleepy cuddles..." : pick(["Mmm... warm hugs!", "I love you too!", "Best cuddle ever.", "Don't let go yet..."]));
+      cuddleT = setInterval(() => { heartsAt(pe, 2); careAdd("cuddles"); }, 900);
+    }
+    function endCuddle() {
+      o.cuddling = false; clearInterval(cuddleT); setFace(null);
+      opt.say(pick(["Thank you. I feel so loved!", "Again tomorrow?", "My heart is full. My tummy, not so much!", "You two give the best cuddles."]));
+    }
+    function tickle() {
+      setFace("giggle"); pe.classList.add("giggle"); careAdd("tickles"); heartsAt(pe, 2);
+      opt.say(pick(["Hehehe! Stop it!", "That tickles!", "Hahaha, okay okay!", "No fair, I'm ticklish!"]));
+      setTimeout(() => { setFace(null); pe.classList.remove("giggle"); }, 1400);
+    }
+  }
+
+  // ---------- Bond: grows with care from both of you ----------
+  S.care = {}; const CARE_CAP = { cuddles: 8, tickles: 5, plays: 5 };
+  const BOND_TIERS = [[0, "Shy"], [30, "Friendly"], [80, "Close"], [160, "Best friends"], [300, "Family"]];
+  function cleanCare(d) {
+    const today = d && typeof d.today === "object" && d.today ? d.today : {};
+    return { points: Math.max(0, Math.round(n(d && d.points) || 0)), day: d && typeof d.day === "string" ? d.day : "",
+      today: { cuddles: Math.max(0, Math.round(n(today.cuddles) || 0)), tickles: Math.max(0, Math.round(n(today.tickles) || 0)), plays: Math.max(0, Math.round(n(today.plays) || 0)) } };
+  }
+  let careT = null;
+  function careAdd(kind) {
+    if (!S.me) return;
+    const c = S.care[S.me] = cleanCare(S.care[S.me] || {});
+    if (c.day !== TODAY) { c.day = TODAY; c.today = { cuddles: 0, tickles: 0, plays: 0 }; }
+    const before = c.today[kind]; c.today[kind] = before + 1; if (before < CARE_CAP[kind]) c.points += 1;
+    S.careBusy = true; clearTimeout(careT);
+    careT = setTimeout(async () => {
+      if (!S.db) { S.careBusy = false; return; }
+      try { await S.db.doc("shared/care-" + S.me).set(Object.assign({ at: Date.now() }, S.care[S.me])); } catch (err) { toast(errText(err)); }
+      S.careBusy = false;
+    }, 1500);
+    if (S.view === "home") renderPetStats();
+  }
+  function bondScore() {
+    const ids = personIds(); let score = 0;
+    ids.forEach(id => {
+      score += (S.care[id] ? S.care[id].points : 0);
+      (S.days[id] || []).forEach(e => { score += mealsOf(e).length; score += 2 * (n(e.love) || 0); score += Array.isArray(e.nudges) ? e.nudges.length : 0; });
+    });
+    return score + 3 * daysTogether();
+  }
+  function bondTier() { const sc = bondScore(); let i = 0; BOND_TIERS.forEach((t, k) => { if (sc >= t[0]) i = k; }); return { sc, i, name: BOND_TIERS[i][1], next: BOND_TIERS[i + 1] || null, prev: BOND_TIERS[i][0] }; }
+
+  // ---------- Our journey (memories Mochi keeps) ----------
+  function journey() {
+    const ids = personIds(); const out = []; const add = (date, text) => { if (date) out.push({ date, text }); };
+    const foodDates = id => (S.days[id] || []).filter(e => mealsOf(e).length).map(e => e.date).sort();
+    const all = [...new Set(ids.flatMap(foodDates))].sort();
+    add(all[0], `${PET.name} hatched! Your food journey began.`);
+    const both = all.filter(d => ids.length > 1 && ids.every(id => hasFood(id, d)));
+    if (both.length) add(both[0], "First day you both logged food. A team!");
+    // streaks together + growing up
+    let run = 0, prev = null; const seen = new Set();
+    both.forEach((d, k) => {
+      const yd = fromYmd(d); yd.setDate(yd.getDate() - 1); run = prev === ymd(yd) ? run + 1 : 1; prev = d;
+      [3, 7, 14, 30, 60, 100].forEach(m => { if (run === m && !seen.has("s" + m)) { seen.add("s" + m); add(d, `${m}-day streak together!`); } });
+      PET_LEVELS.slice(1).forEach(([need, title]) => { if (k + 1 === need) add(d, `${PET.name} grew into a ${title} ${PET.name}.`); });
+    });
+    ids.forEach(id => {
+      const g = goalsOf(id); const nm = id === S.me ? "You" : nameOf(id);
+      const hit = (S.days[id] || []).filter(e => kcalHit(id, totals(e), g)).map(e => e.date).sort()[0];
+      add(hit, `${nm} reached the calorie goal for the first time.`);
+      const ph = (S.days[id] || []).filter(e => mealsOf(e).some(m => validPhoto(m.photo))).map(e => e.date).sort()[0];
+      add(ph, `${nm} shared the first food photo.`);
+      const ws = weights(id); if (ws.length > 1 && g.mode === "gain") { const base = ws[0].w; let step = 1;
+        ws.forEach(x => { while (x.w - base >= step && step <= 20) { add(x.date, `${nm} gained ${step} ${g.unit} since starting!`); step++; } }); }
+    });
+    if (PET.namedAt) add(ymd(new Date(PET.namedAt)), `You named your pet ${PET.name}.`);
+    return out.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  }
+  function renderJourney() {
+    const ol = $("#mem"); if (!ol) return; ol.textContent = "";
+    const list = journey();
+    if (!list.length) { ol.append(el("li", null, `Your story with ${PET.name} starts with your first logged meal.`)); return; }
+    list.slice(0, 20).forEach(m => { const li = el("li", null, m.text); li.append(el("small", null, fromYmd(m.date).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }))); ol.append(li); });
+  }
+
+  // ---------- Daily hello ----------
+  function maybeGreet() {
+    if (!S.me || !S.loaded || !S.days[S.me]) return;
+    const key = `pulse.greet.${S.me}.${TODAY}`; let done = false;
+    try { done = localStorage.getItem(key) === "1"; if (!done) localStorage.setItem(key, "1"); } catch (_) { done = !!S.greeted; S.greeted = true; }
+    if (done) return;
+    const h = hourNow(); const hi = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+    const y = fromYmd(TODAY); y.setDate(y.getDate() - 1); const yt = totals(entry(S.me, ymd(y))); const g = goalsOf(S.me);
+    let msg = yt.kcal >= g.kcalGoal ? `Yesterday you hit your goal with ${fmt(yt.kcal)} kcal. So proud of you!` : yt.kcal > 0 ? `Yesterday you ate ${fmt(yt.kcal)} kcal. Let's beat it today!` : "I missed you! Let's eat well today.";
+    const pid = partnerId(); const pc = pid && S.care[pid];
+    if (pc && pc.day === TODAY && pc.today.cuddles > 0) msg += ` ${nameOf(pid)} already cuddled me today!`;
+    const text = `${hi}, ${S.names[S.me] || "friend"}! ${msg}`;
+    setTimeout(() => { anyHop(); anySay(text); }, 900);
+  }
+
+  // ---------- Mochi on screen (one Mochi, on every tab) ----------
+  const BSIZE = 84;
+  const BUD = { x: 0, y: 0, vy: 0, held: false, cuddling: false, parked: false, home: null, target: 0, dir: -1, pause: 0, raf: 0, last: 0, init: false };
+  const vw = () => document.documentElement.clientWidth, vh = () => window.innerHeight;
+  const safeB = () => { const t = document.querySelector("nav.tabs .tabbar"); return t ? vh() - t.getBoundingClientRect().top + 6 : 96; };
+  const groundY = () => vh() - safeB() - BSIZE;
+  const bBounds = () => ({ minX: 8, maxX: Math.max(8, vw() - BSIZE - 8), minY: 8, maxY: Math.max(8, groundY()) });
+  S.petLoc = "out";
+  const atHome = () => !S.me || !goalsOf(S.me).buddy || isNight() || S.petLoc === "home";
+  function buddyOn() { return !!(S.me && S.loaded && !atHome() && $("#sheet").hidden && $("#alert").hidden); }
+  function renderBuddy() {
+    const b = $("#buddy"); const on = buddyOn();
+    $("#pet").hidden = on; // one Mochi: he's either out with you or at home
+    if (!on) { b.hidden = true; stopBuddy(); return; }
+    b.hidden = false; drawPet();
+    const mood = petMood(); b.classList.toggle("hungry", mood === "hungry");
+    $("#buddy-pet").setAttribute("aria-label", `${PET.name} is ${mood === "sleep" ? "asleep" : mood}`);
+    if (!BUD.init) { const bb = bBounds(); BUD.x = bb.maxX; BUD.y = bb.maxY; BUD.target = bb.maxX; BUD.init = true; }
+    startBuddy();
+  }
+  function startBuddy() { if (BUD.raf) return; if (reduceMotion) { keepInside(); placeBuddy(); return; } BUD.last = performance.now(); BUD.raf = requestAnimationFrame(buddyTick); }
+  function stopBuddy() { if (BUD.raf) cancelAnimationFrame(BUD.raf); BUD.raf = 0; }
+  function keepInside() { const bb = bBounds(); BUD.x = clamp(BUD.x, bb.minX, bb.maxX); BUD.y = clamp(BUD.y, bb.minY, bb.maxY); }
+  function placeBuddy() { $("#buddy-pet").style.transform = `translate(${BUD.x.toFixed(1)}px, ${BUD.y.toFixed(1)}px) scaleX(${BUD.dir})`; placeBubble(); }
+  function placeBubble() {
+    const bub = $("#buddy-bubble"); if (bub.hidden) return;
+    const w = bub.offsetWidth, h = bub.offsetHeight;
+    const left = clamp(BUD.x + BSIZE / 2 - w / 2, 8, vw() - w - 8);
+    const top = BUD.y - h - 8 >= 8 ? BUD.y - h - 8 : Math.min(BUD.y + BSIZE + 8, vh() - h - 8);
+    bub.style.transform = `translate(${left.toFixed(0)}px, ${top.toFixed(0)}px)`;
+  }
+  function buddyTick(now) {
+    BUD.raf = 0; if ($("#buddy").hidden || document.hidden) return;
+    const dt = Math.min(64, now - BUD.last); BUD.last = now;
+    const bb = bBounds(); const mood = petMood(); const pe = $("#buddy-pet");
+    if (BUD.held || BUD.cuddling) { pe.classList.remove("walking"); placeBuddy(); BUD.raf = requestAnimationFrame(buddyTick); return; }
+    if (mood === "sleep") { BUD.parked = false; BUD.home = null; } // bedtime: he goes back to his corner to sleep
+    if (BUD.parked) {
+      pe.classList.remove("walking"); keepInside();
+      if (mood === "hungry") { BUD.pause -= dt; if (BUD.pause <= 0) { buddyHop(); BUD.pause = 3500; } }
+      placeBuddy(); BUD.raf = requestAnimationFrame(buddyTick); return;
+    }
+    // Not parked: he strolls along the bottom of the screen.
+    const ground = bb.maxY; let moving = false;
+    if (Math.abs(BUD.y - ground) > 1) { BUD.y += Math.sign(ground - BUD.y) * Math.min(Math.abs(ground - BUD.y), 0.9 * dt / 16); moving = true; }
+    if (mood === "sleep") BUD.target = bb.maxX;
+    if (BUD.pause > 0) BUD.pause -= dt;
+    else {
+      const dx = BUD.target - BUD.x;
+      if (Math.abs(dx) < 2) {
+        if (mood === "hungry") { BUD.target = (bb.minX + bb.maxX) / 2; BUD.pause = 2600; buddyHop(); }
+        else if (mood === "sleep") BUD.pause = 5000;
+        else { BUD.pause = 3000 + Math.random() * 6000; BUD.target = bb.minX + (bb.maxX - bb.minX) * (0.55 + Math.random() * 0.45); }
+      } else { BUD.dir = dx > 0 ? 1 : -1; BUD.x += Math.sign(dx) * Math.min(Math.abs(dx), 0.55 * dt / 16); moving = true; }
+    }
+    pe.classList.toggle("walking", moving);
+    keepInside(); placeBuddy();
+    BUD.raf = requestAnimationFrame(buddyTick);
+  }
+  window.addEventListener("resize", () => { if (!$("#buddy").hidden) { keepInside(); placeBuddy(); } });
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) renderBuddy(); });
+  function buddyHop() { const pe = $("#buddy-pet"); pe.classList.remove("hop"); void pe.offsetWidth; pe.classList.add("hop"); setTimeout(() => pe.classList.remove("hop"), 550); }
+  let budT = null;
+  function buddySay(text, action) {
+    const b = $("#buddy-bubble"); $("#buddy-say").textContent = text; const btn = $("#buddy-act");
+    if (action) { btn.hidden = false; btn.textContent = action.label; btn.onclick = () => { b.hidden = true; action.run(); }; } else { btn.hidden = true; btn.onclick = null; }
+    b.hidden = false; placeBubble(); clearTimeout(budT); budT = setTimeout(() => { b.hidden = true; }, action ? 8000 : 3500);
+  }
+  // Wherever Mochi is right now (on screen, or in his yard when he's switched off)
+  const onScreen = () => !$("#buddy").hidden;
+  function anySay(t, a) { if (onScreen()) buddySay(t, a); else if (S.view === "home") petSay(t, a); }
+  function anyHop() { if (onScreen()) buddyHop(); else if (S.view === "home") petHop(); }
+  const inside = (ev, r) => ev.clientX >= r.left && ev.clientX <= r.right && ev.clientY >= r.top && ev.clientY <= r.bottom;
+  function goHome(ev) {
+    S.petLoc = "home"; const r = $("#yard-area").getBoundingClientRect();
+    PET.x = clamp(ev.clientX - r.left - 52, 0, Math.max(0, r.width - 104)); PET.y = clamp(r.bottom - ev.clientY - 52, 0, Math.max(0, r.height - 116)); PET.vy = 0; PET.pause = 1500;
+    renderAll(); setFace("cuddle"); petSay(pick(["Home sweet home!", "Ahh, my house!", "Back home. Comfy!"])); setTimeout(() => setFace(null), 1400);
+  }
+  function goOut(ev) {
+    S.petLoc = "out"; BUD.init = true; BUD.parked = true;
+    const bb = bBounds(); BUD.x = clamp(ev.clientX - BSIZE / 2, bb.minX, bb.maxX); BUD.y = clamp(ev.clientY - BSIZE / 2, bb.minY, bb.maxY);
+    renderAll(); buddyHop(); buddySay(pick(["Let's go on an adventure!", "I'm coming with you!", "Wheee, out we go!"]));
+  }
+  attachPlay($("#pet"), PET, { dropped: ev => { if (isNight() || !goalsOf(S.me).buddy) return false; if (inside(ev, $("#yard-area").getBoundingClientRect())) return false; goOut(ev); return true; }, bounds: () => ({ maxX: Math.max(0, $("#yard-area").clientWidth - 104), maxY: Math.max(0, $("#yard-area").clientHeight - 116) }), place: placePet, say: petSay, hop: petHop });
+  attachPlay($("#buddy-pet"), BUD, { free: true, dropped: ev => { if (S.view !== "home" || $("#yard").hidden) return false; if (!inside(ev, $("#yard-area").getBoundingClientRect())) return false; goHome(ev); return true; }, bounds: bBounds, place: placeBuddy, say: buddySay, hop: buddyHop });
+  $$("[data-buddy]").forEach(b => b.addEventListener("click", () => saveGoals({ buddy: b.dataset.buddy === "1" })));
+
+
+  // ---------- Water ----------
+  const GLASS_ML = 250;
+  function setWater(v) {
+    const before = n((entry(S.me, TODAY) || {}).water) || 0; v = clamp(Math.round(v), 0, 40);
+    if (!change(TODAY, { water: v })) return;
+    if (v > before) {
+      const g = goalsOf(S.me).waterGoal;
+      PET.state = ""; anyHop();
+      anySay(v >= g && before < g ? "Water goal done! I feel so fresh!" : pick(["Gulp gulp! Refreshing!", "Ahh, cool water!", `${v} glass${v === 1 ? "" : "es"}! Keep sipping.`]));
+    }
+  }
+  function waterGlasses(v, goal) {
+    const box = el("div", "glasses"); box.setAttribute("role", "group"); box.setAttribute("aria-label", "Glasses of water today");
+    const count = Math.min(16, Math.max(goal, v + 1));
+    for (let i = 0; i < count; i++) {
+      const full = i < v, extra = i >= goal;
+      const b = el("button", "glass"); b.type = "button"; b.setAttribute("aria-label", `${i + 1} glass${i ? "es" : ""}`); b.setAttribute("aria-pressed", String(full));
+      const svg = sv("svg", { viewBox: "0 0 30 38", "aria-hidden": "true" });
+      svg.append(sv("path", { d: "M3 3h24l-3 31a2 2 0 0 1-2 1.8H8A2 2 0 0 1 6 34z", fill: full ? "#2E86DE" : "var(--sunk)", stroke: full ? "#2E86DE" : (extra ? "var(--line)" : "var(--muted)"), "stroke-width": 1.6, "stroke-dasharray": extra && !full ? "3 2" : "none" }));
+      if (full) svg.append(sv("path", { d: "M8 10 Q12 8 15 10 T22 10", fill: "none", stroke: "#fff", "stroke-width": 1.6, opacity: .7 }));
+      b.append(svg); b.addEventListener("click", () => setWater(v === i + 1 ? i : i + 1)); box.append(b);
+    }
+    return box;
+  }
+  function renderWater() {
+    const card = $("#water-card"); if (!S.me || !S.loaded) { card.hidden = true; return; }
+    card.hidden = false; card.textContent = "";
+    const v = n((entry(S.me, TODAY) || {}).water) || 0; const goal = goalsOf(S.me).waterGoal;
+    const top = el("div", "wtop"); top.append(el("h3", null, "Water"));
+    const num = el("div", "wnum num", `${v} `); num.append(el("small", null, `/ ${goal} glasses · ${fmt(v * GLASS_ML / 1000, 2)} L`)); top.append(num); card.append(top);
+    const bar = el("div", "bar"); const bi = el("i"); bi.style.width = clamp(v / goal * 100, 0, 100) + "%"; bar.append(bi); card.append(bar);
+    card.append(waterGlasses(v, goal));
+    const btns = el("div", "wbtns");
+    const add = el("button", "add-water", "+ 1 glass"); add.type = "button"; add.addEventListener("click", () => setWater(v + 1));
+    const minus = el("button", "pill", "−"); minus.type = "button"; minus.setAttribute("aria-label", "One glass less"); minus.disabled = v === 0; minus.addEventListener("click", () => setWater(v - 1));
+    btns.append(add, minus); card.append(btns);
+    const pid = partnerId();
+    if (pid) { const pv = n((entry(pid, TODAY) || {}).water) || 0; card.append(el("div", "partner-w", `${nameOf(pid)}: ${pv} / ${goalsOf(pid).waterGoal} glasses today`)); }
+  }
+
   function sendLove() {
     if (!S.db || !S.me) { toast("Log in to send love"); return; }
     change(TODAY, { love: (n(draft(TODAY).love) || 0) + 1 });
-    burst(18); toast("Love sent to " + nameOf(partnerId()));
+    burst(18); toast("Love sent to " + nameOf(partnerId())); petLove(null);
     if (S.room) S.room.emit("cheer", { to: partnerId() }).catch(() => {});
   }
 
@@ -672,9 +1890,11 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   function clean(d) {
     const s = (v, m) => typeof v === "string" ? v.trim().slice(0, m) : "";
     const meals = mealsOf(d).slice(0, 80).map(m => ({ id: s(m.id, 12) || rid(), name: s(m.name, 40) || "Food", kcal: clamp(Math.round(n(m.kcal) || 0), 0, 5000),
-      protein: clamp(Math.round(n(m.protein) || 0), 0, 500), slot: SLOTS.includes(m.slot) ? m.slot : "Snack", time: /^\d{2}:\d{2}$/.test(m.time) ? m.time : "", ...(validPhoto(m.photo) ? { photo: m.photo } : {}) }));
+      protein: clamp(Math.round(n(m.protein) || 0), 0, 500), slot: SLOTS.includes(m.slot) ? m.slot : "Snack", time: /^\d{2}:\d{2}$/.test(m.time) ? m.time : "", ...(validPhoto(m.photo) ? { photo: m.photo } : {}), ...(typeof m.plan === "string" && /^[A-Za-z0-9_-]{1,12}$/.test(m.plan) ? { plan: m.plan } : {}) }));
     return { date: d.date, meals, water: n(d.water), sleep: n(d.sleep), steps: n(d.steps), weight: n(d.weight), workoutMin: n(d.workoutMin), workout: s(d.workout, 30),
-      mood: n(d.mood), notes: s(d.notes, 500), love: n(d.love) || 0, updatedAt: Date.now() };
+      mood: n(d.mood), notes: s(d.notes, 500), love: n(d.love) || 0,
+      nudges: (Array.isArray(d.nudges) ? d.nudges : []).filter(x => x && typeof x === "object").slice(-20).map(x => ({ to: s(x.to, 64), text: s(x.text, 120), at: n(x.at) || 0 })),
+      updatedAt: Date.now() };
   }
   async function flush(date) {
     if (S.inflight[date]) { scheduleSave(date); return; }
@@ -702,13 +1922,13 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   }
 
   // ---------- Food ----------
-  function slotForTime(t) { const h = toMin(t) / 60; return h < 5 ? "Snack" : h < 11 ? "Breakfast" : h < 15 ? "Lunch" : h >= 17 && h < 21.5 ? "Dinner" : "Snack"; }
   function addMeal(date, name, kcal, protein, portion, time, extra) {
     const p = portion || 1; const d = draft(date);
     const t = time || ($("#m-time").value && /^\d{2}:\d{2}$/.test($("#m-time").value) ? $("#m-time").value : (date === TODAY ? nowTime() : SLOT_TIME[S.slot]));
     const meal = { id: rid(), name: (p !== 1 ? p + "× " : "") + name, kcal: Math.round(kcal * p), protein: Math.round(protein * p), slot: time ? slotForTime(t) : S.slot, time: t };
     if (extra) Object.assign(meal, extra);
-    if (change(date, { meals: mealsOf(d).concat([meal]) })) { toast(`Added ${meal.name.toLowerCase()} · ${meal.kcal} kcal`); if (!reduceMotion && meal.kcal >= 500) burst(8); }
+    if (change(date, { meals: mealsOf(d).concat([meal]) })) { toast(meal.kcal ? `Added ${meal.name.toLowerCase()} · ${meal.kcal} kcal` : `${meal.name} marked. Nice!`); if (!reduceMotion && meal.kcal >= 500) burst(8); setTimeout(() => petChomp(meal), 0); return meal; }
+    return null;
   }
   function removeMeal(date, id) {
     const d = draft(date); const gone = mealsOf(d).find(m => m.id === id);
@@ -808,7 +2028,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   }
   (function buildFood() {
     const sb = $("#slots");
-    SLOTS.forEach(s => { const b = el("button", "pill", s); b.type = "button"; b.dataset.slot = s; b.addEventListener("click", () => { S.slot = s; S.timeEdited = false; syncFoodControls(); }); sb.append(b); });
+    SLOTS.forEach(s => { const b = el("button", "pill", s); b.type = "button"; b.dataset.slot = s; b.addEventListener("click", () => { S.slot = s; S.slotAuto = false; S.timeEdited = false; const t = $("#m-time"); t.value = fitTime(s, t.value, S.sel === TODAY); syncFoodControls(); toast(s === "Snack" ? "Snack: any time" : `${s}: ${WINDOW_LABEL[s]}`); }); sb.append(b); });
     $("#m-time").addEventListener("input", e => { S.timeEdited = true; if (/^\d{2}:\d{2}$/.test(e.target.value)) { S.slot = slotForTime(e.target.value); syncFoodControls(); } });
     $("#m-now").addEventListener("click", () => { $("#m-time").value = nowTime(); S.slot = slotForTime($("#m-time").value); S.timeEdited = true; syncFoodControls(); });
     const pb = $("#portions");
@@ -824,8 +2044,8 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     });
     const mb = $("#modes");
     Object.entries(MODES).forEach(([k, m]) => { const b = el("button", "pill", m.label); b.type = "button"; b.dataset.mode = k;
-      b.addEventListener("click", () => saveGoals({ mode: k, kcalGoal: m.kcal, proteinGoal: m.protein })); mb.append(b); });
-    $("#g-kcal").addEventListener("change", e => { const v = n(e.target.value); if (v >= 800) saveGoals({ kcalGoal: Math.round(v) }); });
+      b.addEventListener("click", () => saveGoals({ mode: k, kcalGoal: m.kcal, proteinGoal: m.protein, kcalSet: false })); mb.append(b); });
+    $("#g-kcal").addEventListener("change", e => { const v = n(e.target.value); if (v >= 800) saveGoals({ kcalGoal: Math.round(v), kcalSet: true }); });
     $("#g-protein").addEventListener("change", e => { const v = n(e.target.value); if (v >= 10) saveGoals({ proteinGoal: Math.round(v) }); });
     $("#g-start").addEventListener("change", e => { const v = n(e.target.value); saveGoals({ startWeight: v && v > 0 ? v : null }); });
     $("#g-target").addEventListener("change", e => { const v = n(e.target.value); saveGoals({ targetWeight: v && v > 0 ? v : null }); });
@@ -838,47 +2058,27 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     return b;
   }
   function syncFoodControls() {
-    if (!S.timeEdited && document.activeElement !== $("#m-time")) $("#m-time").value = S.sel === TODAY && S.slot === slotForNow() ? nowTime() : SLOT_TIME[S.slot];
+    if (!S.timeEdited && document.activeElement !== $("#m-time")) $("#m-time").value = S.sel === TODAY && S.slotAuto ? nowTime() : fitTime(S.slot, $("#m-time").value, S.sel === TODAY);
+    $$("[data-slot]").forEach(b => { b.title = WINDOW_LABEL[b.dataset.slot]; });
     $$("[data-slot]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.slot === S.slot)));
     $$("[data-portion]").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.portion) === S.portion)));
     $$("#quick .food span").forEach((s, i) => { const q = QUICK[i]; s.textContent = `${Math.round(q[1] * S.portion)} kcal · ${Math.round(q[2] * S.portion)}g protein`; });
   }
-  function renderFood() {
-    renderDates(); syncFoodControls(); renderSnap();
-    if (!S.me) { $("#fuel").textContent = ""; $("#fuel").append(el("p", "muted", "Log in to start logging food.")); }
-    const g = goalsOf(S.me); const e = entry(S.me, S.sel) || {}; const t = totals(e);
-    // Fuel card
-    if (S.me) {
-      const fuel = $("#fuel"); fuel.textContent = "";
-      const ring = ringSvg(t.kcal / g.kcalGoal, "var(--red)", { size: 150, stroke: 16, center: (s, c) => {
-        const t1 = sv("text", { x: c, y: c + 2, "text-anchor": "middle", "font-size": 30, "font-weight": 700, fill: "var(--ink)", "font-family": "Fredoka, Inter, sans-serif" }); t1.textContent = Math.round(clamp(t.kcal / g.kcalGoal, 0, 9.99) * 100) + "%";
-        const t2 = sv("text", { x: c, y: c + 22, "text-anchor": "middle", "font-size": 12, fill: "var(--muted)", "font-family": "Inter, sans-serif" }); t2.textContent = "of calories";
-        s.append(t1, t2); } });
-      ring.setAttribute("class", "big-ring"); fuel.append(ring);
-      const left = el("div", "left");
-      left.append(el("span", "mode-tag", g.mode === "gain" ? "Bulk mode" : MODES[g.mode].label));
-      const k = el("div", "kcal num", fmt(t.kcal) + " "); k.append(el("small", null, "/ " + fmt(g.kcalGoal) + " kcal")); left.append(k);
-      const leftK = g.kcalGoal - t.kcal;
-      left.append(el("div", null, leftK > 0 ? (g.mode === "lose" ? `${fmt(leftK)} kcal left today` : `Eat ${fmt(leftK)} more kcal ${S.sel === TODAY ? "today" : "that day"}`) : (g.mode === "gain" ? `Goal beaten by ${fmt(-leftK)} kcal. Great eating!` : `${fmt(-leftK)} kcal over goal`)));
-      const pl = el("div", "row between"); pl.append(el("span", null, "Protein"), el("span", "num", `${fmt(t.protein)} / ${fmt(g.proteinGoal)} g`)); left.append(pl);
-      const bar = el("div", "bar"); const bi = el("i"); bi.style.width = clamp(t.protein / g.proteinGoal * 100, 0, 100) + "%"; bar.append(bi); left.append(bar);
-      if (S.sel === TODAY && g.mode === "gain" && leftK > 0) {
-        const pace = paceNow(g); const behind = pace - t.kcal;
-        left.append(el("div", "muted", behind > 150 ? `By now you'd usually be near ${fmt(pace)} kcal. Grab something!` : "You're on pace. Keep it going."));
-      }
-      fuel.append(left);
-    }
-    // Recent custom foods
-    const quickNames = new Set(QUICK.map(q => q[0].toLowerCase()));
-    const recent = []; const seen = new Set();
+  function recentFoods() {
+    const quickNames = new Set(QUICK.map(q => q[0].toLowerCase())); const out = []; const seen = new Set();
     const src = Object.values(S.drafts).concat(S.days[S.me] || []);
     src.forEach(d => mealsOf(d).slice().reverse().forEach(m => { const base = String(m.name || "").replace(/^[\d.]+× /, ""); const key = base.toLowerCase();
-      if (!base || quickNames.has(key) || seen.has(key) || recent.length >= 8) return; seen.add(key);
+      if (!base || base === "Photo meal" || quickNames.has(key) || seen.has(key) || out.length >= 8) return; seen.add(key);
       const mult = /^([\d.]+)× /.exec(String(m.name)); const f = mult ? Number(mult[1]) || 1 : 1;
-      recent.push([base, Math.round((n(m.kcal) || 0) / f), Math.round((n(m.protein) || 0) / f)]); }));
+      out.push([base, Math.round((n(m.kcal) || 0) / f), Math.round((n(m.protein) || 0) / f)]); }));
+    return out;
+  }
+  function renderFood() {
+    renderDates(); syncFoodControls(); renderSnap(); renderUsuals(); renderMarks($("#mark-btns"), S.sel);
+    const g = goalsOf(S.me); const e = entry(S.me, S.sel) || {}; const t = totals(e);
+    const recent = recentFoods();
     const rb = $("#recent"); rb.textContent = ""; $("#recent-wrap").hidden = !recent.length;
     recent.forEach(([nm, kc, pr]) => rb.append(foodBtn(nm, kc, pr)));
-    // Meals list
     const box = $("#meals"); box.textContent = ""; const ms = mealsOf(e);
     $("#meal-count").textContent = ms.length ? `${ms.length} item${ms.length === 1 ? "" : "s"} · ${fmt(t.kcal)} kcal` : "";
     if (!ms.length) { const i = el("div", "invite"); i.append(el("strong", null, S.sel === TODAY ? "Nothing eaten yet today" : "Nothing logged for this day"), el("span", null, "Tap a food above to add it. It lands in the meal you picked.")); box.append(i); }
@@ -886,14 +2086,22 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       const list = ms.filter(m => (SLOTS.includes(m.slot) ? m.slot : "Snack") === slot).sort((a, b) => toMin(mealTime(a)) - toMin(mealTime(b)));
       if (!list.length) return;
       const sec = el("div", "slot"); const h = el("h3", null, slot);
-      h.append(el("span", "num", `${fmt(list.reduce((a, m) => a + (n(m.kcal) || 0), 0))} kcal`)); sec.append(h);
+      const hr = el("span", "num"); hr.append(document.createTextNode(`${fmt(list.reduce((a, m) => a + (n(m.kcal) || 0), 0))} kcal `));
+      const su = el("button", "link", "Save as usual"); su.type = "button"; su.style.marginLeft = "8px"; su.addEventListener("click", () => { S.savingSlot = S.savingSlot === slot ? null : slot; renderFood(); const i = $("#usual-name"); if (i) i.focus(); });
+      hr.append(su); h.append(hr); sec.append(h);
+      if (S.savingSlot === slot) {
+        const f = el("form", "save-usual"); const inp = el("input"); inp.type = "text"; inp.id = "usual-name"; inp.maxLength = 30; inp.value = `My usual ${slot.toLowerCase()}`; inp.setAttribute("aria-label", "Name for this usual meal");
+        const b = el("button", "cta dark", "Save"); b.type = "submit"; f.append(inp, b);
+        f.addEventListener("submit", e => { e.preventDefault(); saveUsual(inp.value.trim() || `My usual ${slot.toLowerCase()}`, slot, list); });
+        sec.append(f);
+      }
       list.forEach(m => {
         const r = el("div", "meal" + (validPhoto(m.photo) ? " has-photo" : "")); const nm = el("div", "nm", String(m.name || "Food"));
         if (validPhoto(m.photo)) r.append(thumbBtn(m.photo, String(m.name || "Food")));
         const sm = el("small"); const ti = el("input", "t-in"); ti.type = "time"; ti.value = mealTime(m); ti.setAttribute("aria-label", "Time you ate " + String(m.name || "this"));
         ti.addEventListener("change", () => { if (!/^\d{2}:\d{2}$/.test(ti.value)) return; const d = draft(S.sel); change(S.sel, { meals: mealsOf(d).map(x => x.id === m.id ? Object.assign({}, x, { time: ti.value, slot: slotForTime(ti.value) }) : x) }); });
         sm.append(ti, document.createTextNode(` · ${fmt(n(m.protein) || 0)}g protein`)); nm.append(sm);
-        r.append(nm, el("span", "kc num", fmt(n(m.kcal) || 0) + " kcal"));
+        r.append(nm, el("span", "kc num", kcalLabel(m)));
         const acts = el("div", "acts");
         const again = el("button", "icon-btn"); again.type = "button"; again.setAttribute("aria-label", "Eat this again"); again.title = "Eat this again"; again.append(icon("M12 5v14M5 12h14"));
         again.addEventListener("click", () => { const base = String(m.name || "Food").replace(/^[\d.]+× /, ""); const mult = /^([\d.]+)× /.exec(String(m.name)); const f = mult ? Number(mult[1]) || 1 : 1;
@@ -908,11 +2116,13 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       });
       box.append(sec);
     });
-    // Weight goal card
+  }
+  function renderGoals() {
+    const g = goalsOf(S.me);
     const wg = $("#wgoal"); wg.textContent = "";
     const head = el("div", "row between"); head.append(el("h3", null, "Weight goal")); wg.append(head);
     const wi = S.me ? weightInfo(S.me) : null;
-    if (!wi) { wg.append(el("p", "muted", "Log your weight on the Body tab and set a target below to track your progress.")); }
+    if (!wi) { wg.append(el("p", "muted", "Log your weight below and set a target in My food goals to track your progress.")); }
     else {
       const nums = el("div", "wg-nums");
       [["Start", wi.start], ["Now", wi.latest], ["Target", wi.target]].forEach(([l, v]) => { const d = el("div"); d.append(el("b", "num", v ? fmt(v, 1) : "–"), el("span", null, l + " · " + wi.unit)); nums.append(d); });
@@ -927,6 +2137,10 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     // Settings
     $$("[data-mode]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === g.mode)));
     $("#mode-help").textContent = MODES[g.mode].help;
+    $$("[data-buddy]").forEach(b => b.setAttribute("aria-pressed", String((b.dataset.buddy === "1") === g.buddy)));
+    $$("[data-simple]").forEach(b => b.setAttribute("aria-pressed", String((b.dataset.simple === "1") === g.simple)));
+    $$("[data-ron]").forEach(b => b.setAttribute("aria-pressed", String((b.dataset.ron === "1") === g.remindOn)));
+    $$("[data-rh]").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.rh) === g.remindHours)));
     $$("[data-unit]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.unit === g.unit)));
     setVal("g-kcal", g.kcalGoal); setVal("g-protein", g.proteinGoal); setVal("g-start", g.startWeight); setVal("g-target", g.targetWeight);
   }
@@ -982,7 +2196,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   function setVal(id, v) { const i = $("#" + id); if (document.activeElement !== i) i.value = v == null ? (i.type === "range" ? 0 : "") : v; }
   function hint(id, text, win) { const h = $("#" + id); h.textContent = text; h.classList.toggle("win", !!win); }
   function renderLog() {
-    renderDates();
+    renderDates(); renderGoals();
     const e = (S.me && entry(S.me, S.sel)) || {}; const g = goalsOf(S.me);
     const water = n(e.water), sleep = n(e.sleep), steps = n(e.steps), wk = n(e.workoutMin), w = n(e.weight);
     $("#weight-out").firstChild.textContent = fmt(w, 1) + " "; $("#weight-out").lastChild.textContent = g.unit; setVal("weight", w);
@@ -1014,6 +2228,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   $("#wk-next").addEventListener("click", () => { if (S.weekOffset < 0) { S.weekOffset++; S.weekTip = null; S.weekOpen = null; renderWeek(); } });
   function stat(k, v, s) { const c = el("div", "stat"); c.append(el("span", "k", k), el("span", "v num", v)); if (s) c.append(el("span", "s", s)); return c; }
   function renderWeek() {
+    renderRecap(S.weekOffset);
     const ids = personIds();
     const who = S.weekWho && ids.includes(S.weekWho) ? S.weekWho : S.me;
     const wb = $("#week-who"); wb.textContent = "";
@@ -1095,7 +2310,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       const h = el("div", "row between"); h.append(el("h3", null, fromYmd(open.date).toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })), el("span", "num muted", `${fmt(open.tot.kcal)} kcal · ${fmt(open.tot.protein)}g protein`)); dd.append(h);
       if (!open.ms.length) dd.append(el("p", "muted", "Nothing logged this day."));
       open.ms.forEach(({ m, t }) => { const it = el("div", "it"); const nm = el("span", "nm", String(m.name || "Food")); nm.append(el("small", null, " · " + (SLOTS.includes(m.slot) ? m.slot : "Snack")));
-        it.append(el("span", "t", fmtTime(t)), nm, el("span", "num", fmt(n(m.kcal) || 0) + " kcal")); dd.append(it);
+        it.append(el("span", "t", fmtTime(t)), nm, el("span", "num", kcalLabel(m))); dd.append(it);
         if (validPhoto(m.photo)) { const ph = thumbBtn(m.photo, `${String(m.name || "Food")} · ${fmtTime(t)}`, "pic"); ph.style.width = "140px"; ph.style.margin = "2px 0 6px 86px"; dd.append(ph); } });
       if (open.e && typeof open.e.notes === "string" && open.e.notes.trim()) dd.append(el("p", "note", "“" + open.e.notes.trim() + "”"));
       const wkAgo = fromYmd(TODAY); wkAgo.setDate(wkAgo.getDate() - 6);
@@ -1106,8 +2321,9 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     }
   }
   function renderAll() {
-    renderWho();
-    if (S.view === "today") renderToday();
+    renderWho(); renderBuddy();
+    if (S.view === "home") renderHome();
+    if (S.view === "plan") renderPlan();
     if (S.view === "food") renderFood();
     if (S.view === "log") renderLog();
     if (S.view === "week") renderWeek();
@@ -1118,6 +2334,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     if (S.subs[id]) return;
     S.subs[id] = S.db.collection("logs/" + id + "/days").orderBy("date", "desc").limit(90).onSnapshot(snap => {
       S.days[id] = snap.docs.map(d => d.data()).filter(Boolean);
+      if (id !== S.me) setTimeout(checkNudges, 0); else setTimeout(checkAlarm, 1500);
       if (id === S.me) Object.keys(S.drafts).forEach(date => { if (!S.pending[date] && !S.inflight[date]) delete S.drafts[date]; });
       renderAll();
     }, () => {});
@@ -1130,6 +2347,14 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     S.db = db; S.user = user; S.me = await user.id();
     if (!S.me) { offline(); return; }
     renderAll(); subscribeDays(S.me);
+    db.collection("shared").onSnapshot(snap => {
+      snap.docs.forEach(d => { if (!d.id.startsWith("care-")) return; const uid = d.id.slice(5); if (uid === S.me && S.careBusy) return; S.care[uid] = cleanCare(d.data() || {}); });
+      if (S.view === "home") renderPetStats();
+    }, () => {});
+    db.doc("shared/pet").onSnapshot(snap => { const d = snap.exists ? snap.data() : null; if (d && n(d.at)) PET.namedAt = n(d.at); const nm = d && typeof d.name === "string" ? d.name.trim().slice(0, 16) : ""; if (nm && nm !== PET.name) { PET.name = nm; if (S.view === "home") renderPet(); } }, () => {});
+    db.collection("logs/" + S.me + "/usuals").onSnapshot(snap => {
+      S.usuals = snap.docs.map(d => cleanUsual(d.id, d.data() || {})).sort((a, b) => a.name.localeCompare(b.name)); renderAll();
+    }, () => {});
     const timer = setTimeout(() => status("Can't reach your shared log yet. What you see may be out of date."), 10000);
     db.collection("logs").onSnapshot(snap => {
       if (!snap.metadata || !snap.metadata.fromCache) { clearTimeout(timer); status(""); }
@@ -1140,6 +2365,11 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       renderAll(); if (newcomer) refreshNames();
     }, () => { clearTimeout(timer); S.loaded = true; status("Lost connection to your shared log. Reload the page to reconnect."); renderAll(); });
     refreshNames();
+    db.collection("plans").orderBy("date", "desc").limit(300).onSnapshot(snap => {
+      const next = {}; snap.docs.forEach(d => { const v = d.data(); if (v) next[d.id] = v; });
+      Object.keys(S.planLocal).forEach(k => { if (S.planBusy[k]) next[k] = S.planLocal[k]; });
+      notePartnerPlans(next); S.plans = next; renderAll();
+    }, () => {});
     Promise.all([c.use("assets").catch(() => null), c.use("sample").catch(() => null)]).then(async ([assets, sample]) => {
       S.assets = assets || null;
       if (sample) { const lim = await sample.limits().catch(() => null); S.sample = sample; S.canGuess = !!(lim && lim.images); }
@@ -1147,13 +2377,18 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     });
     c.use("room").then(room => {
       if (!room) return; S.room = room;
-      room.on("cheer", msg => { if (msg.isMe) return; burst(36, innerHeight * 0.7); toast((msg.by ? nameOf(msg.by) : "Your partner") + " just sent you love"); });
+      room.on("nudge", msg => {
+        if (msg.isMe) return; const d = msg.data && typeof msg.data === "object" ? msg.data : {};
+        if (d.to !== S.me) return; const at = n(d.at) || Date.now(); if (at <= Math.max(seenAt(), S.nudgeSeen || 0)) return; markSeen(at);
+        showAlert(`${msg.by ? nameOf(msg.by) : "Your partner"} says`, `"${typeof d.text === "string" ? d.text.slice(0, 120) : "Time to eat!"}"`, true);
+      });
+      room.on("cheer", msg => { if (msg.isMe) return; burst(36, innerHeight * 0.7); toast((msg.by ? nameOf(msg.by) : "Your partner") + " just sent you love"); petLove(msg.by ? nameOf(msg.by) : "Your partner"); });
       room.onPeers(ch => { S.online = new Set(ch.peers.filter(p => !p.isMe && p.by).map(p => p.by)); renderWho(); });
     }).catch(() => {});
   }
   function offline() { S.loaded = true; status("Can't reach the app right now. Check your connection and reload."); renderAll(); }
 
-  go(location.hash.slice(1) || "food");
+  go(location.hash.slice(1) || "home");
   init().catch(() => offline());
 })();
 </script>

@@ -13,8 +13,8 @@ const store = {
   async set(k, data, o = {}) { mem.set(k, { data, metadata: o.metadata || {} }); },
   async delete(k) { mem.delete(k); },
 };
-const api = createHandler({ store, passcode: process.env.APP_PASSCODE || "test" });
-const types = { ".html": "text/html", ".js": "text/javascript", ".svg": "image/svg+xml", ".png": "image/png", ".webmanifest": "application/manifest+json" };
+const api = createHandler({ store, passcode: process.env.APP_PASSCODE || "test", env: k => process.env[k] });
+const types = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".webmanifest": "application/manifest+json" };
 
 http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://localhost");
