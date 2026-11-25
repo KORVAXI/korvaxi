@@ -242,6 +242,23 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; c
 .life-row.due span { color: var(--red); font-weight: 600; }
 .life-row .badges { gap: 4px; }
 .life-row .badge { padding: 2px 8px; font-size: .72rem; }
+/* Big hello */
+.hello { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; text-align: center; color: #fff; cursor: pointer;
+  background: radial-gradient(circle at 50% 35%, #FF5A6B 0%, #E0182D 45%, #8E0F22 100%);
+  padding: calc(24px + env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)); }
+.hello.out { animation: hello-out .45s ease-in forwards; }
+.hello-in { display: flex; flex-direction: column; align-items: center; gap: 14px; max-width: 520px; }
+.hello-pet { width: min(62vw, 280px); aspect-ratio: 1; animation: hello-pop .9s cubic-bezier(.2, 1.6, .4, 1) both, hello-bob 2.4s ease-in-out .9s infinite; }
+.hello-pet { border-radius: 50%; background: radial-gradient(circle at 50% 55%, rgba(255,255,255,.75) 0 38%, rgba(255,255,255,.25) 55%, transparent 70%); }
+.hello-pet svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 18px 24px rgba(0,0,0,.25)); }
+.hello h1 { font-family: var(--display); font-size: clamp(2.3rem, 11vw, 4.2rem); line-height: 1; color: #fff; margin: 0; text-wrap: balance; animation: hello-up .7s ease-out .35s both; }
+.hello p { font-size: clamp(1.05rem, 4.5vw, 1.35rem); max-width: 30ch; opacity: .95; margin: 0; animation: hello-up .7s ease-out .6s both; }
+.hello-go { margin-top: 10px; border: 0; border-radius: 999px; padding: 15px 34px; background: #fff; color: #9E0F22; font: 700 1.2rem var(--display); cursor: pointer; animation: hello-up .7s ease-out .85s both; }
+@keyframes hello-pop { 0% { transform: scale(.2) translateY(60px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes hello-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes hello-up { 0% { transform: translateY(24px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes hello-out { to { opacity: 0; transform: scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .hello-pet, .hello h1, .hello p, .hello-go, .hello.out { animation: none !important; } }
 /* Pet that follows you */
 .buddy { position: fixed; inset: 0; z-index: 18; pointer-events: none; }
 .buddy .buddy-pet { position: absolute; left: 0; top: 0; width: 84px; height: 84px; pointer-events: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,.18)); }
@@ -660,6 +677,14 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
 
 <nav class="tabs" aria-label="Sections"><div class="tabbar" id="tabs"></div></nav>
 <div class="toast" id="toast" role="status" hidden></div>
+<div class="hello" id="hello" role="dialog" aria-modal="true" aria-labelledby="hello-title" aria-describedby="hello-msg" hidden>
+  <div class="hello-in">
+    <div class="hello-pet"><svg id="hello-svg" viewBox="0 0 100 100" aria-hidden="true"></svg></div>
+    <h1 id="hello-title"></h1>
+    <p id="hello-msg"></p>
+    <button class="hello-go" type="button" id="hello-go">Let's go!</button>
+  </div>
+</div>
 <div class="buddy" id="buddy" hidden>
   <div class="bubble buddy-bubble" id="buddy-bubble" role="status" hidden><span id="buddy-say"></span><button class="pill" type="button" id="buddy-act" hidden></button></div>
   <button class="pet buddy-pet" type="button" id="buddy-pet" aria-label="Your pet"><svg id="buddy-svg" viewBox="0 0 100 100" aria-hidden="true"></svg></button>
@@ -1254,7 +1279,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
 
   // Own timer alarm
   function checkAlarm() {
-    if (!S.me || !S.loaded || !S.days[S.me] || !$("#alert").hidden) return;
+    if (!S.me || !S.loaded || !S.days[S.me] || !$("#alert").hidden || !$("#hello").hidden) return;
     const st = hungerState(S.me); if (!st.on || !st.due) { if (!st.due) S.alarmKey = null; return; }
     const key = st.last ? st.last.m.id : "none-" + TODAY;
     if (S.alarmKey === key && Date.now() - S.alarmAt < 60 * 60000) return;
@@ -1541,7 +1566,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
         '<ellipse cx="' + (44 - w * 0.25).toFixed(1) + '" cy="40" rx="5" ry="3" fill="#fff" opacity=".35"/>' +
         eyes + '<ellipse cx="34" cy="60" rx="4.5" ry="2.8" fill="#FF9AA6"/><ellipse cx="66" cy="60" rx="4.5" ry="2.8" fill="#FF9AA6"/>' + mouth + drip + hats +
       '</g>' + zzz + (sk >= 2 ? '<g transform="translate(70 4)"><g class="streak-flame"><path d="M12 30c6 0 10-4 10-10 0-5-4-9-6-12-.6 3-2 4.6-3.6 5 .3-4-1.4-8.6-5-11.4.3 4.8-2.3 8-4.3 10.8C1.6 15.5 2 18 2 20.5 2 26 6 30 12 30z" fill="#FF7A1A"/><path d="M12 29c3 0 5-2 5-5 0-2.6-1.8-4.4-2.8-6-.3 1.6-1.2 2.5-2.2 2.8 0-2-.8-4-2.4-5.3 0 2.6-1.5 4.2-2.4 5.6-.7 1-.6 2-.6 2.9 0 3 2.3 5 5.4 5z" fill="#FFD23F"/><text x="12" y="27" text-anchor="middle" font-size="9.5" font-weight="800" fill="#7A1E00" font-family="Fredoka, sans-serif">' + sk + '</text></g></g>' : '');
-    $("#pet-svg").innerHTML = markup; $("#buddy-svg").innerHTML = markup;
+    $("#pet-svg").innerHTML = markup; $("#buddy-svg").innerHTML = markup; $("#hello-svg").innerHTML = markup;
     const p = $("#pet"); p.setAttribute("aria-label", `${PET.name} is ${mood === "sleep" ? "asleep" : mood}`);
   }
   function renderPet() {
@@ -1838,9 +1863,23 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     let msg = yt.kcal >= g.kcalGoal ? `Yesterday you hit your goal with ${fmt(yt.kcal)} kcal. So proud of you!` : yt.kcal > 0 ? `Yesterday you ate ${fmt(yt.kcal)} kcal. Let's beat it today!` : "I missed you! Let's eat well today.";
     const pid = partnerId(); const pc = pid && S.care[pid];
     if (pc && pc.day === TODAY && pc.today.cuddles > 0) msg += ` ${nameOf(pid)} already cuddled me today!`;
-    const text = `${hi}, ${S.names[S.me] || "friend"}! ${msg}`;
-    setTimeout(() => { anyHop(); anySay(text); }, 900);
+    showHello(`${h >= 22 || h < 4 ? "Good night" : hi}, ${S.names[S.me] || "friend"}!`, msg);
   }
+  let helloT = null;
+  function showHello(title, msg) {
+    const o = $("#hello"); $("#hello-title").textContent = title; $("#hello-msg").textContent = msg;
+    setFace(isNight() ? "cuddle" : "giggle");
+    o.classList.remove("out"); o.hidden = false; $("#hello-go").focus();
+    if (!reduceMotion) { setTimeout(() => burst(30, innerHeight * 0.45), 500); setTimeout(() => burst(20, innerHeight * 0.4), 1300); }
+    clearTimeout(helloT); helloT = setTimeout(hideHello, 9000);
+  }
+  function hideHello() {
+    const o = $("#hello"); if (o.hidden) return; clearTimeout(helloT);
+    const done = () => { o.hidden = true; o.classList.remove("out"); setFace(null); anyHop(); };
+    if (reduceMotion) done(); else { o.classList.add("out"); setTimeout(done, 430); }
+  }
+  $("#hello").addEventListener("click", hideHello);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#hello").hidden) hideHello(); });
 
   // ---------- Mochi on screen (one Mochi, on every tab) ----------
   const BSIZE = 84;
