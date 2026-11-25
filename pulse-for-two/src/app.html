@@ -120,6 +120,13 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; c
 @keyframes ring { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-12deg); } 40% { transform: rotate(12deg); } 60% { transform: rotate(-6deg); } 80% { transform: rotate(6deg); } }
 .streak-flame { transform-box: fill-box; transform-origin: center; }
 .pet[data-dir="-1"] .streak-flame { transform: scaleX(-1); }
+.partner .info .p-ctl { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: nowrap; }
+.partner .info .p-ctl > span:first-child { flex: 1 1 auto; min-width: 0; }
+.partner .info .mini-btns { display: inline-flex; gap: 6px; flex: none; }
+.partner .info .mini { display: inline-grid; place-items: center; width: 36px; height: 32px; min-height: 32px; font-size: 1.1rem; line-height: 1; color: var(--ink); }
+.mini-btns { display: inline-flex; gap: 6px; }
+.mini { width: 34px; height: 30px; border-radius: 10px; border: 1px solid var(--line); background: var(--sunk); color: var(--ink); font: 600 1.05rem var(--display); cursor: pointer; padding: 0; }
+.mini:disabled { opacity: .4; cursor: default; }
 .partner .info .p-water { color: #2E86DE; font-weight: 600; }
 .water-bar i { background: #2E86DE; }
 .partner .info .p-sleep { color: #6C5CE7; font-weight: 600; }
@@ -744,7 +751,30 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     return g;
   }
   function stored(id, date) { return (S.days[id] || []).find(e => e.date === date) || null; }
-  function entry(id, date) { return (id === S.me && S.drafts[date]) ? S.drafts[date] : stored(id, date); }
+  S.ws = {}; const wsId = (uid, date) => `ws-${date}-${uid}`;
+  function entry(id, date) {
+    const base = (id === S.me && S.drafts[date]) ? S.drafts[date] : stored(id, date);
+    const w = S.ws[wsId(id, date)]; if (!w) return base;
+    const out = Object.assign({ date }, base || {});
+    if (n(w.water) != null) out.water = n(w.water);
+    if (n(w.sleep) != null) out.sleep = n(w.sleep);
+    return out;
+  }
+  // Set water and/or sleep for either of you
+  const wsQ = {};
+  function setWS(uid, date, patch) {
+    if (!S.db || !S.me || !uid) { toast("Sign in to claude.ai to save"); return false; }
+    const before = uid === S.me && date === TODAY ? goalsHit(S.me) : null;
+    const cur = entry(uid, date) || {}; const id = wsId(uid, date);
+    const doc = { water: n(cur.water), sleep: n(cur.sleep), by: S.me, at: Date.now() };
+    if ("water" in patch) doc.water = patch.water == null ? null : clamp(Math.round(patch.water), 0, 40);
+    if ("sleep" in patch) doc.sleep = patch.sleep == null ? null : clamp(Math.round(patch.sleep * 4) / 4, 0, 24);
+    S.ws[id] = doc; S.wsBusy = (S.wsBusy || 0) + 1;
+    if (before) { const after = goalsHit(S.me); if (!before.water && after.water) { burst(40); toast("Water goal hit! Nice and hydrated"); } if (!before.sleep && after.sleep) { burst(40); toast("Sleep goal hit! Well rested"); } }
+    saveState("Saving…"); renderAll();
+    wsQ[id] = (wsQ[id] || Promise.resolve()).then(() => S.db.doc("shared/" + id).set(doc)).then(() => saveState("Saved ✓", true)).catch(err => { saveState(errText(err)); toast(errText(err)); }).finally(() => { S.wsBusy--; });
+    return true;
+  }
   function mealsOf(e) { return e && Array.isArray(e.meals) ? e.meals.filter(m => m && typeof m === "object") : []; }
   function totals(e) { const ms = mealsOf(e); return { kcal: Math.round(ms.reduce((a, m) => a + (n(m.kcal) || 0), 0)), protein: Math.round(ms.reduce((a, m) => a + (n(m.protein) || 0), 0)), count: ms.length }; }
   function metricVal(e, key) { if (!e) return null; if (key === "kcal" || key === "protein") { const t = totals(e); return t.count ? t[key] : null; } return n(e[key]); }
@@ -989,10 +1019,18 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       const ph = hungerState(pid); const ps = el("span", "p-since" + (ph.due ? " warn" : ""), sinceText(pid, ph)); ps.id = "p-since"; info.append(ps);
       const bar = el("div", "bar"); const bi = el("i"); bi.style.width = clamp(pt.kcal / pg.kcalGoal * 100, 0, 100) + "%"; bar.append(bi); info.append(bar);
       { const pw = n(pe.water) || 0; const pwg = pg.waterGoal;
-        const wl = el("span", "p-water", `Water: ${pw} of ${pwg} glasses (${fmt(pw * 0.25, 2)} L)`); info.append(wl);
+        const wl = el("div", "p-ctl"); wl.append(el("span", "p-water", `Water: ${pw} of ${pwg} glasses (${fmt(pw * 0.25, 2)} L)`));
+        const wm = el("button", "mini", "−"); wm.type = "button"; wm.setAttribute("aria-label", `One glass less for ${nameOf(pid)}`); wm.disabled = pw === 0; wm.addEventListener("click", () => setWS(pid, TODAY, { water: pw - 1 }));
+        const wp = el("button", "mini", "+"); wp.type = "button"; wp.setAttribute("aria-label", `One more glass for ${nameOf(pid)}`); wp.addEventListener("click", () => setWS(pid, TODAY, { water: pw + 1 }));
+        const wbx = el("span", "mini-btns"); wbx.append(wm, wp); wl.append(wbx); info.append(wl);
         const wb = el("div", "bar water-bar"); const wi = el("i"); wi.style.width = clamp(pw / pwg * 100, 0, 100) + "%"; wb.append(wi); info.append(wb); }
       { const sl = lastSleep(pid); const sg = pg.sleepGoal;
-        info.append(el("span", "p-sleep", sl ? `Sleep: ${fmt(sl.h, 1)} of ${fmt(sg, 1)} hours ${sl.when}` : "Sleep: not logged yet"));
+        const tsl = n((entry(pid, TODAY) || {}).sleep);
+        const sr = el("div", "p-ctl"); sr.append(el("span", "p-sleep", sl ? `Sleep: ${fmt(sl.h, 1)} of ${fmt(sg, 1)} hours ${sl.when}` : "Sleep: not logged yet"));
+        const base = tsl != null && tsl > 0 ? tsl : (sl ? sl.h : sg);
+        const sm = el("button", "mini", "−"); sm.type = "button"; sm.setAttribute("aria-label", `Half an hour less sleep for ${nameOf(pid)}`); sm.addEventListener("click", () => setWS(pid, TODAY, { sleep: Math.max(0, (tsl != null && tsl > 0 ? tsl : base) - 0.5) }));
+        const sp = el("button", "mini", "+"); sp.type = "button"; sp.setAttribute("aria-label", `Half an hour more sleep for ${nameOf(pid)}`); sp.addEventListener("click", () => setWS(pid, TODAY, { sleep: (tsl != null && tsl > 0 ? tsl : base - 0.5) + 0.5 }));
+        const sbx = el("span", "mini-btns"); sbx.append(sm, sp); sr.append(sbx); info.append(sr);
         const sb = el("div", "bar sleep-bar"); const si = el("i"); si.style.width = (sl ? clamp(sl.h / sg * 100, 0, 100) : 0) + "%"; sb.append(si); info.append(sb); }
       const love = el("button", "heart-btn"); love.type = "button"; love.setAttribute("aria-label", "Send love to " + nameOf(pid)); love.append(heartSvg(26, "#fff")); love.addEventListener("click", sendLove);
       pc.append(avatar(pid), info, love);
@@ -1395,6 +1433,13 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       hero.append(el("div", "muted", `${nameOf(pid)}: ${sinceText(pid, ph).toLowerCase()}`));
       { const pv = n((entry(pid, TODAY) || {}).water) || 0; hero.append(el("div", "partner-w", `${nameOf(pid)} drank ${pv} of ${goalsOf(pid).waterGoal} glasses of water today`)); }
       { const sl = lastSleep(pid); hero.append(el("div", "partner-s", sl ? `${nameOf(pid)} slept ${fmt(sl.h, 1)} hours ${sl.when}` : `${nameOf(pid)} hasn't logged sleep yet`)); }
+      { const pv = n((entry(pid, TODAY) || {}).water) || 0; const row = el("div", "duo");
+        const aw = el("button", "add-water", `+ Water for ${nameOf(pid)}`); aw.type = "button"; aw.addEventListener("click", () => setWS(pid, TODAY, { water: pv + 1 }));
+        const as = el("button", "cta dark", `Set ${nameOf(pid)}'s sleep`); as.type = "button"; as.addEventListener("click", () => { S.sleepPick = !S.sleepPick; renderHome(); });
+        row.append(aw, as); hero.append(row);
+        if (S.sleepPick) { const chips = el("div", "row"); chips.style.justifyContent = "center";
+          [5, 6, 7, 7.5, 8, 9, 10].forEach(h => { const c = el("button", "pill", h + "h"); c.type = "button"; c.addEventListener("click", () => { S.sleepPick = false; setWS(pid, TODAY, { sleep: h }); toast(`${nameOf(pid)}'s sleep set to ${h} hours`); }); chips.append(c); });
+          hero.append(chips); } }
       const duo2 = el("div", "duo");
       const rem = el("button", "cta", `Remind ${nameOf(pid)}`); rem.type = "button"; rem.addEventListener("click", () => { S.nudgeOpen = !S.nudgeOpen; renderHome(); });
       const love = el("button", "cta dark love-btn"); love.type = "button"; love.append(heartSvg(20, "currentColor"), document.createTextNode("Send love")); love.addEventListener("click", sendLove);
@@ -1848,7 +1893,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   const GLASS_ML = 250;
   function setWater(v) {
     const before = n((entry(S.me, TODAY) || {}).water) || 0; v = clamp(Math.round(v), 0, 40);
-    if (!change(TODAY, { water: v })) return;
+    if (!setWS(S.me, TODAY, { water: v })) return;
     if (v > before) {
       const g = goalsOf(S.me).waterGoal;
       PET.state = ""; anyHop();
@@ -2179,8 +2224,8 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     WORKOUTS.forEach(w => { const b = el("button", "pill", w); b.type = "button"; b.dataset.wk = w; b.setAttribute("aria-pressed", "false");
       b.addEventListener("click", () => { const d = draft(S.sel); const on = d.workout === w; change(S.sel, { workout: on ? "" : w, workoutMin: on ? n(d.workoutMin) : (n(d.workoutMin) || 45) }); }); wt.append(b); });
     const sq = $("#sleep-quick");
-    [6, 7, 8, 9].forEach(h => { const b = el("button", "pill", h + "h"); b.type = "button"; b.addEventListener("click", () => change(S.sel, { sleep: h })); sq.append(b); });
-    $("#sleep").addEventListener("input", e => change(S.sel, { sleep: n(e.target.value) }));
+    [6, 7, 8, 9].forEach(h => { const b = el("button", "pill", h + "h"); b.type = "button"; b.addEventListener("click", () => setWS(S.me, S.sel, { sleep: h })); sq.append(b); });
+    let slT = null; $("#sleep").addEventListener("input", e => { const v = n(e.target.value); $("#sleep-out").firstChild.textContent = fmt(v, 1) + " "; clearTimeout(slT); slT = setTimeout(() => setWS(S.me, S.sel, { sleep: v }), 400); });
     $("#steps").addEventListener("input", e => { const v = n(e.target.value); change(S.sel, { steps: v == null ? null : Math.max(0, Math.round(v)) }); });
     $("#wk-min").addEventListener("input", e => change(S.sel, { workoutMin: n(e.target.value) }));
     $("#weight").addEventListener("input", e => { const v = n(e.target.value); change(S.sel, { weight: v && v > 0 ? v : null }); });
@@ -2213,7 +2258,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       s.append(sv("path", { d: "M3 3h24l-3 31a2 2 0 0 1-2 1.8H8A2 2 0 0 1 6 34z", fill: full ? "var(--red)" : "var(--sunk)", stroke: full ? "var(--red)" : (extra ? "var(--line)" : "var(--muted)"), "stroke-width": 1.6, "stroke-dasharray": extra && !full ? "3 2" : "none" }));
       if (full) s.append(sv("path", { d: "M8 10 Q12 8 15 10 T22 10", fill: "none", stroke: "#fff", "stroke-width": 1.6, opacity: .7 }));
       b.append(s);
-      b.addEventListener("click", () => change(S.sel, { water: water === i + 1 ? i : i + 1 }));
+      b.addEventListener("click", () => setWS(S.me, S.sel, { water: water === i + 1 ? i : i + 1 }));
       box.append(b);
     }
     if (focusIdx != null) { const f = box.querySelector(`[data-glass="${focusIdx}"]`); if (f) f.focus(); }
@@ -2373,7 +2418,18 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     if (!S.me) { offline(); return; }
     renderAll(); subscribeDays(S.me);
     db.collection("shared").onSnapshot(snap => {
-      snap.docs.forEach(d => { if (!d.id.startsWith("care-")) return; const uid = d.id.slice(5); if (uid === S.me && S.careBusy) return; S.care[uid] = cleanCare(d.data() || {}); });
+      snap.docs.forEach(d => {
+        if (d.id.startsWith("ws-")) {
+          if (S.wsBusy) return; const v = d.data() || {}; const prev = S.ws[d.id]; S.ws[d.id] = { water: n(v.water), sleep: n(v.sleep), by: typeof v.by === "string" ? v.by : "", at: n(v.at) || 0 };
+          const mineToday = d.id === wsId(S.me, TODAY);
+          if (mineToday && S.wsSeeded && v.by && v.by !== S.me && (!prev || (n(v.at) || 0) > (prev.at || 0))) {
+            const parts = []; if (!prev || n(prev.water) !== n(v.water)) parts.push(`water to ${n(v.water) || 0} glasses`); if (!prev || n(prev.sleep) !== n(v.sleep)) parts.push(`sleep to ${fmt(n(v.sleep) || 0, 1)} hours`);
+            if (parts.length) { toast(`${nameOf(v.by)} set your ${parts.join(" and ")}`); anyHop(); }
+          }
+          return;
+        }
+        if (!d.id.startsWith("care-")) return; const uid = d.id.slice(5); if (uid === S.me && S.careBusy) return; S.care[uid] = cleanCare(d.data() || {}); });
+      S.wsSeeded = true; renderAll();
       if (S.view === "home") renderPetStats();
     }, () => {});
     db.doc("shared/pet").onSnapshot(snap => { const d = snap.exists ? snap.data() : null; if (d && n(d.at)) PET.namedAt = n(d.at); const nm = d && typeof d.name === "string" ? d.name.trim().slice(0, 16) : ""; if (nm && nm !== PET.name) { PET.name = nm; if (S.view === "home") renderPet(); } }, () => {});
