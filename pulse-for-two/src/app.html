@@ -243,10 +243,20 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; c
 .life-row .badges { gap: 4px; }
 .life-row .badge { padding: 2px 8px; font-size: .72rem; }
 /* Big hello */
-.hello { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; text-align: center; color: #fff; cursor: pointer;
-  background: radial-gradient(circle at 50% 35%, #FF5A6B 0%, #E0182D 45%, #8E0F22 100%);
+.hello { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; text-align: center; color: #fff; cursor: pointer; isolation: isolate;
   padding: calc(24px + env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)); }
+.hello::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(circle at 50% 35%, #FF5A6B 0%, #E0182D 45%, #8E0F22 100%); transition: opacity .6s ease; }
+.hello.night::before { background: radial-gradient(circle at 50% 30%, #4A2150 0%, #2A0F2E 55%, #14060F 100%); }
+.hello.night::after { content: ""; position: absolute; top: 14%; right: 16%; width: 46px; height: 46px; border-radius: 50%; box-shadow: -12px -6px 0 0 #F4EAD5; z-index: -1; }
+.hello.clear::before, .hello.clear::after { opacity: 0; }
+.hello.clear h1 { opacity: 0; transition: opacity .3s ease; }
+.hello.clear .hello-pet { background: none; }
 .hello.out { animation: hello-out .45s ease-in forwards; }
+.hello-pet { position: relative; }
+.hello-paw { display: none; position: absolute; right: 4%; top: 44%; width: 17%; aspect-ratio: 1; border-radius: 50% 50% 45% 45%; background: #FF5A6B; box-shadow: inset 0 -4px 0 rgba(224,24,45,.35); transform-origin: 20% 90%; }
+.hello.night .hello-paw { display: block; animation: wave .45s ease-in-out 6 alternate; }
+.hello.night .hello-paw.done { animation: none; transform: rotate(40deg) translateY(30%); opacity: 0; transition: opacity .3s, transform .3s; }
+@keyframes wave { from { transform: rotate(-25deg); } to { transform: rotate(35deg); } }
 .hello-in { display: flex; flex-direction: column; align-items: center; gap: 14px; max-width: 520px; }
 .hello-pet { width: min(62vw, 280px); aspect-ratio: 1; animation: hello-pop .9s cubic-bezier(.2, 1.6, .4, 1) both, hello-bob 2.4s ease-in-out .9s infinite; }
 .hello-pet { border-radius: 50%; background: radial-gradient(circle at 50% 55%, rgba(255,255,255,.75) 0 38%, rgba(255,255,255,.25) 55%, transparent 70%); }
@@ -679,10 +689,9 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
 <div class="toast" id="toast" role="status" hidden></div>
 <div class="hello" id="hello" role="dialog" aria-modal="true" aria-labelledby="hello-title" aria-describedby="hello-msg" hidden>
   <div class="hello-in">
-    <div class="hello-pet"><svg id="hello-svg" viewBox="0 0 100 100" aria-hidden="true"></svg></div>
+    <div class="hello-pet"><svg id="hello-svg" viewBox="0 0 100 100" aria-hidden="true"></svg><span class="hello-paw" aria-hidden="true"></span></div>
     <h1 id="hello-title"></h1>
-    <p id="hello-msg"></p>
-    <button class="hello-go" type="button" id="hello-go">Let's go!</button>
+    <p id="hello-msg" hidden></p>
   </div>
 </div>
 <div class="buddy" id="buddy" hidden>
@@ -1300,7 +1309,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     S.nudgeOpen = false; toast(`Reminder sent to ${nameOf(pid)}`); renderHome();
   }
   function checkNudges() {
-    const pid = partnerId(); if (!pid || !S.me) return;
+    const pid = partnerId(); if (!pid || !S.me || !$("#hello").hidden) return;
     const e = stored(pid, TODAY); const seen = Math.max(seenAt(), S.nudgeSeen || 0);
     const list = (e && Array.isArray(e.nudges) ? e.nudges : []).filter(x => x && x.to === S.me && n(x.at) > seen && n(x.at) > Date.now() - 12 * 3600000);
     if (!list.length) return;
@@ -1863,20 +1872,39 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     let msg = yt.kcal >= g.kcalGoal ? `Yesterday you hit your goal with ${fmt(yt.kcal)} kcal. So proud of you!` : yt.kcal > 0 ? `Yesterday you ate ${fmt(yt.kcal)} kcal. Let's beat it today!` : "I missed you! Let's eat well today.";
     const pid = partnerId(); const pc = pid && S.care[pid];
     if (pc && pc.day === TODAY && pc.today.cuddles > 0) msg += ` ${nameOf(pid)} already cuddled me today!`;
-    showHello(`${h >= 22 || h < 4 ? "Good night" : hi}, ${S.names[S.me] || "friend"}!`, msg);
+    const night = h >= 22 || h < 4;
+    showHello(`${night ? "Good night" : hi}, ${S.names[S.me] || "friend"}!`, msg, night);
   }
-  let helloT = null;
-  function showHello(title, msg) {
-    const o = $("#hello"); $("#hello-title").textContent = title; $("#hello-msg").textContent = msg;
-    setFace(isNight() ? "cuddle" : "giggle");
-    o.classList.remove("out"); o.hidden = false; $("#hello-go").focus();
-    if (!reduceMotion) { setTimeout(() => burst(30, innerHeight * 0.45), 500); setTimeout(() => burst(20, innerHeight * 0.4), 1300); }
-    clearTimeout(helloT); helloT = setTimeout(hideHello, 9000);
+  let helloT = null, helloMsg = "", helloNight = false, helloLeaving = false;
+  function showHello(title, msg, night) {
+    const o = $("#hello"); $("#hello-title").textContent = title; helloMsg = msg; helloNight = !!night; helloLeaving = false;
+    o.classList.toggle("night", helloNight); o.classList.remove("out", "clear");
+    const pet = o.querySelector(".hello-pet"); pet.style.animation = ""; pet.style.transform = ""; o.querySelector(".hello-paw").classList.remove("done");
+    setFace(helloNight ? "cuddle" : "giggle");
+    o.hidden = false; o.focus && o.setAttribute("tabindex", "-1"); o.focus();
+    if (!reduceMotion && !helloNight) { setTimeout(() => burst(30, innerHeight * 0.45), 500); }
+    clearTimeout(helloT);
+    if (helloNight) helloT = setTimeout(() => { o.querySelector(".hello-paw").classList.add("done"); setFace("sleep"); helloT = setTimeout(hideHello, 1100); }, 2900);
+    else helloT = setTimeout(hideHello, 2600);
   }
+  // Mochi flies from the big greeting down to wherever he lives, then talks in his bubble
   function hideHello() {
-    const o = $("#hello"); if (o.hidden) return; clearTimeout(helloT);
-    const done = () => { o.hidden = true; o.classList.remove("out"); setFace(null); anyHop(); };
-    if (reduceMotion) done(); else { o.classList.add("out"); setTimeout(done, 430); }
+    const o = $("#hello"); if (o.hidden || helloLeaving) return; helloLeaving = true; clearTimeout(helloT);
+    const finish = () => {
+      o.hidden = true; o.classList.remove("out", "clear"); helloLeaving = false; setTimeout(checkNudges, 2500);
+      if (helloNight) { setFace("sleep"); PET.state = ""; setTimeout(() => { setFace(null); }, 400); return; }
+      setFace(null); anyHop(); if (helloMsg) setTimeout(() => anySay(helloMsg), 250);
+    };
+    const pet = o.querySelector(".hello-pet");
+    const target = onScreen() ? $("#buddy-pet") : (S.view === "home" && !$("#yard").hidden && !$("#pet").hidden ? $("#pet") : null);
+    if (reduceMotion || !target || !pet.animate) { if (reduceMotion) finish(); else { o.classList.add("out"); setTimeout(finish, 430); } return; }
+    if (target === $("#pet")) $("#pet").scrollIntoView({ block: "center", behavior: "instant" });
+    const a = pet.getBoundingClientRect(), b = target.getBoundingClientRect();
+    const dx = (b.left + b.width / 2) - (a.left + a.width / 2), dy = (b.top + b.height / 2) - (a.top + a.height / 2), sc = b.width / a.width;
+    pet.style.animation = "none"; o.classList.add("clear");
+    const anim = pet.animate([{ transform: "translate(0,0) scale(1)" }, { transform: `translate(${dx}px, ${dy}px) scale(${sc})` }], { duration: helloNight ? 900 : 750, easing: "cubic-bezier(.5,0,.3,1)", fill: "forwards" });
+    target.style.visibility = "hidden";
+    anim.onfinish = () => { target.style.visibility = ""; finish(); };
   }
   $("#hello").addEventListener("click", hideHello);
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#hello").hidden) hideHello(); });
