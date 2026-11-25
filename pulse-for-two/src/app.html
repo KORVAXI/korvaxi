@@ -1625,7 +1625,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
         '<path d="M' + (50 - w * 0.7).toFixed(1) + ' 78 Q50 92 ' + (50 + w * 0.7).toFixed(1) + ' 78 Q50 86 ' + (50 - w * 0.7).toFixed(1) + ' 78z" fill="#E0182D" opacity=".5"/>' +
         '<ellipse cx="' + (44 - w * 0.25).toFixed(1) + '" cy="40" rx="5" ry="3" fill="#fff" opacity=".35"/>' +
         eyes + '<ellipse cx="34" cy="60" rx="4.5" ry="2.8" fill="#FF9AA6"/><ellipse cx="66" cy="60" rx="4.5" ry="2.8" fill="#FF9AA6"/>' + mouth + drip + hats + gear +
-      '</g>' + zzz + (sk >= 2 ? '<g transform="translate(70 4)"><g class="streak-flame"><path d="M12 30c6 0 10-4 10-10 0-5-4-9-6-12-.6 3-2 4.6-3.6 5 .3-4-1.4-8.6-5-11.4.3 4.8-2.3 8-4.3 10.8C1.6 15.5 2 18 2 20.5 2 26 6 30 12 30z" fill="#FF7A1A"/><path d="M12 29c3 0 5-2 5-5 0-2.6-1.8-4.4-2.8-6-.3 1.6-1.2 2.5-2.2 2.8 0-2-.8-4-2.4-5.3 0 2.6-1.5 4.2-2.4 5.6-.7 1-.6 2-.6 2.9 0 3 2.3 5 5.4 5z" fill="#FFD23F"/><text x="12" y="27" text-anchor="middle" font-size="9.5" font-weight="800" fill="#7A1E00" font-family="Fredoka, sans-serif">' + sk + '</text></g></g>' : '');
+      '</g>' + zzz + (sk >= 2 ? '<g transform="translate(70 4)"><g class="streak-flame"><path d="M12 30c6 0 10-4 10-10 0-5-4-9-6-12-.6 3-2 4.6-3.6 5 .3-4-1.4-8.6-5-11.4.3 4.8-2.3 8-4.3 10.8C1.6 15.5 2 18 2 20.5 2 26 6 30 12 30z" fill="#FF7A1A"/><path d="M12 29c3 0 5-2 5-5 0-2.6-1.8-4.4-2.8-6-.3 1.6-1.2 2.5-2.2 2.8 0-2-.8-4-2.4-5.3 0 2.6-1.5 4.2-2.4 5.6-.7 1-.6 2-.6 2.9 0 3 2.3 5 5.4 5z" fill="#FFD23F"/></g></g>' : '');
     $("#pet-svg").innerHTML = markup; $("#buddy-svg").innerHTML = markup; $("#hello-svg").innerHTML = markup;
     const p = $("#pet"); p.setAttribute("aria-label", `${PET.name} is ${mood === "sleep" ? "asleep" : mood}`);
   }
@@ -1658,16 +1658,6 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     t.append(el("span", null, txt));
     const tb = el("div", "bar"); const ti = el("i"); ti.style.width = clamp(h.since / h.limit * 100, 0, 100) + "%"; tb.append(ti); t.append(tb);
     box.append(t);
-    // Streak together
-    const sk = togetherStreak(); const pid = partnerId();
-    const next = BADGES.find(b => b > sk.n);
-    const r = el("div", "life-row");
-    let line = sk.n ? `${sk.n}-day streak${sk.both ? " together" : ""}` : (sk.both ? "No streak yet" : "No streak yet");
-    if (sk.both) { const a = hasFood(S.me, TODAY), b = hasFood(pid, TODAY); line += a && b ? " · both logged today" : a ? ` · waiting on ${nameOf(pid)}` : b ? " · your turn today" : " · log today to keep it"; }
-    if (next) line += ` · next badge at ${next}`;
-    r.append(el("span", null, line));
-    const bd = el("div", "badges"); BADGES.forEach(b => bd.append(el("span", "badge" + (sk.n >= b ? " got" : ""), `${b}`))); r.append(bd);
-    box.append(r);
   }
   function renderPetStats() { if (!$("#yard").hidden) { const old = $("#bond-row"); if (old) old.remove(); renderBondRow(); renderPetLife(); } }
   function renderBondRow() {
@@ -1736,7 +1726,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     if (g.mode === "gain" && g.kcalGoal - t.kcal > 250) { const bo = BOOSTERS[Math.floor(Math.random() * BOOSTERS.length)];
       tips.push({ text: `Easy boost: ${bo[0].toLowerCase()} adds ${bo[1]} kcal with hardly any effort.`, action: { label: `Add +${bo[1]}`, run: () => addMeal(TODAY, bo[0], bo[1], bo[2], 1, nowTime()) } }); }
     if (!me.due && me.last && me.active) tips.push({ text: `You last ate ${String(me.last.m.name || "food").toLowerCase()} ${fmtDur(me.since)} ago. Eat again by ${me.nextAt.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}!` });
-    const sk = togetherStreak(); if (sk.n >= 2) tips.push({ text: `We're on a ${sk.n}-day streak${sk.both ? " together" : ""}. Don't let me down!` });
+    const sk = togetherStreak(); if (sk.n >= 2) { const nb = BADGES.find(b => b > sk.n); tips.push({ text: `We're on a ${sk.n}-day streak${sk.both ? " together" : ""}!` + (nb ? ` Next badge at ${nb} days. Don't let me down!` : " You've got every badge!") }); }
     const lv = petLevel(); if (lv.next) tips.push({ text: `${lv.next - lv.d} more day${lv.next - lv.d === 1 ? "" : "s"} of you both logging and I grow into a ${PET_LEVELS[lv.i + 1][1]} ${PET.name}!` });
     if (pid) tips.push({ text: `Psst... ${nameOf(pid)} would love a heart right now.`, action: { label: "Send love", run: sendLove } });
     tips.push({ text: ["You two make a great team.", "Water counts too! Have a glass.", "Snap a photo of your next meal, I love looking at food.", "Protein helps you build. Eggs, chicken, yogurt!"][Math.floor(Math.random() * 4)] });
