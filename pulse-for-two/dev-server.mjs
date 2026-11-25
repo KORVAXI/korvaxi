@@ -13,7 +13,13 @@ const store = {
   async set(k, data, o = {}) { mem.set(k, { data, metadata: o.metadata || {} }); },
   async delete(k) { mem.delete(k); },
 };
-const api = createHandler({ store, passcode: process.env.APP_PASSCODE || "test", env: k => process.env[k] });
+// WEATHER_STUB=rain|snow|clear|storm|fog fakes the weather service for offline testing.
+const stub = process.env.WEATHER_STUB;
+const codes = { clear: 0, rain: 63, snow: 73, storm: 95, fog: 45, cloudy: 3 };
+const fetchImpl = stub ? async url => ({ ok: true, json: async () => String(url).includes("geocoding")
+  ? { results: [{ name: "London", admin1: "England", country_code: "GB", latitude: 51.5085, longitude: -0.1257 }] }
+  : { current: { temperature_2m: stub === "snow" ? -2 : stub === "clear" ? 27 : 7, weather_code: codes[stub] ?? 3, is_day: 1, wind_speed_10m: 12 } } }) : undefined;
+const api = createHandler({ store, passcode: process.env.APP_PASSCODE || "test", env: k => process.env[k], ...(fetchImpl ? { fetchImpl } : {}) });
 const types = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".webmanifest": "application/manifest+json" };
 
 http.createServer(async (req, res) => {

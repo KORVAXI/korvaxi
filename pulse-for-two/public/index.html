@@ -294,6 +294,29 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; c
 .note-for .chips .pill { font-size: .82rem; padding: 5px 10px; }
 .note-btn { border: 1px dashed var(--red); background: none; color: var(--red); border-radius: 12px; padding: 9px 12px; font-weight: 600; cursor: pointer; }
 .simple .note-for { text-align: left; }
+/* Weather */
+.wx-chip { align-self: flex-start; border: 1px solid var(--line); background: var(--sunk); color: var(--ink); border-radius: 999px; padding: 6px 12px; font: 600 .9rem var(--body); cursor: pointer; }
+.wx-chip b { font-family: var(--display); font-size: 1.05rem; }
+.wx-set { display: flex; flex-direction: column; gap: 8px; background: var(--sunk); border-radius: 14px; padding: 12px; }
+.wx { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.yard-area.wx-grey { background: linear-gradient(#D9D3D6, var(--surface)); }
+.yard-area.night.wx-grey { background: linear-gradient(#2A2028, #3A2A33); }
+.wx .cloud { position: absolute; height: 26px; border-radius: 20px; background: #fff; opacity: .92; box-shadow: 18px -10px 0 4px #fff, 40px 0 0 0 #fff; animation: drift linear infinite; }
+.wx-grey .wx .cloud, .yard-area.night .wx .cloud { background: #B9B2B6; box-shadow: 18px -10px 0 4px #B9B2B6, 40px 0 0 0 #B9B2B6; }
+.wx .drop { position: absolute; top: -12px; width: 2px; height: 12px; border-radius: 2px; background: #5DA9E9; opacity: .8; animation: fall linear infinite; }
+.wx .flake { position: absolute; top: -8px; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 2px rgba(0,0,0,.2); animation: snow linear infinite; }
+.wx .star { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #FFF6D8; animation: twinkle 2.4s ease-in-out infinite; }
+.wx .flash { position: absolute; inset: 0; background: #fff; opacity: 0; animation: flash 6s infinite; }
+.wx .fog { position: absolute; left: -20%; right: -20%; height: 30px; border-radius: 30px; background: rgba(255,255,255,.55); filter: blur(6px); animation: drift2 14s ease-in-out infinite alternate; }
+.wx .rays { position: absolute; top: -8px; right: -8px; width: 74px; height: 74px; border-radius: 50%; background: repeating-conic-gradient(rgba(245,185,50,.35) 0 12deg, transparent 12deg 30deg); animation: spin 18s linear infinite; }
+@keyframes drift { from { transform: translateX(-120px); } to { transform: translateX(460px); } }
+@keyframes drift2 { from { transform: translateX(-30px); } to { transform: translateX(30px); } }
+@keyframes fall { to { transform: translate(-14px, 220px); } }
+@keyframes snow { 0% { transform: translate(0, 0); } 50% { transform: translate(10px, 110px); } 100% { transform: translate(-6px, 220px); } }
+@keyframes twinkle { 50% { opacity: .2; } }
+@keyframes flash { 0%, 89%, 93%, 100% { opacity: 0; } 90%, 92% { opacity: .75; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .wx * { animation: none !important; } }
 /* Pet that follows you */
 .buddy { position: fixed; inset: 0; z-index: 18; pointer-events: none; }
 .buddy .buddy-pet { position: absolute; left: 0; top: 0; width: 84px; height: 84px; pointer-events: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,.18)); }
@@ -532,9 +555,17 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
         <div><b id="pet-name">Mochi</b> <span class="muted" id="pet-title"></span></div>
         <button class="link" type="button" id="pet-rename">Rename</button>
       </div>
+      <button class="wx-chip" type="button" id="wx-chip" hidden></button>
+      <div class="wx-set" id="wx-set" hidden>
+        <b>Weather for Mochi's yard</b>
+        <button class="cta" type="button" id="wx-here">Use my location</button>
+        <form class="save-usual" id="wx-city-form"><input type="text" id="wx-city" maxlength="60" placeholder="Or type a town or city" aria-label="Town or city"><button class="cta dark" type="submit">Set</button></form>
+        <span class="muted" id="wx-msg" role="status"></span>
+      </div>
       <form class="save-usual" id="pet-name-form" hidden><input type="text" id="pet-name-in" maxlength="16" aria-label="Pet name"><button class="cta dark" type="submit">Save</button></form>
       <div class="yard-area" id="yard-area">
         <div class="sky" id="sky" aria-hidden="true"></div>
+        <div class="wx" id="wx-layer" aria-hidden="true"></div>
         <svg class="house" viewBox="0 0 120 112" aria-hidden="true">
           <path d="M8 46L60 8l52 38z" fill="var(--red)"/><path d="M56 12h8v8h-8z" fill="var(--red-deep)"/>
           <rect x="16" y="44" width="88" height="66" rx="4" fill="var(--surface)" stroke="var(--red-soft)" stroke-width="3"/>
@@ -1566,7 +1597,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   function drawPet() {
     const mood = PET.face || petMood(); const lv = petLevel().i; const full = petFullness();
     const sk = togetherStreak().n;
-    const key = mood + lv + Math.round(full * 10) + "s" + sk; if (PET.state === key) return; PET.state = key;
+    const key = mood + lv + Math.round(full * 10) + "s" + sk + "w" + (S.wx ? S.wx.kind + Math.round(S.wx.temp) : ""); if (PET.state === key) return; PET.state = key;
     const w = 30 + full * 9, h = 27 + full * 3; // gets chubbier as you eat
     const FACE_EYES = {
       held: '<circle cx="41" cy="51" r="6.5" fill="#fff"/><circle cx="59" cy="51" r="6.5" fill="#fff"/><circle cx="41" cy="52" r="3.6" fill="#2B0C10"/><circle cx="59" cy="52" r="3.6" fill="#2B0C10"/>',
@@ -1594,6 +1625,11 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       '<path d="M37 37l4-12 9 7 9-7 4 12z" fill="#F5B932" stroke="#C98A0B" stroke-width="1.5" stroke-linejoin="round"/><circle cx="50" cy="31" r="2.2" fill="#E0182D"/>',
       '<path d="M35 38l4-14 11 8 11-8 4 14z" fill="#F5B932" stroke="#C98A0B" stroke-width="1.5" stroke-linejoin="round"/><circle cx="43" cy="31" r="2" fill="#E0182D"/><circle cx="57" cy="31" r="2" fill="#E0182D"/><circle cx="50" cy="28" r="2.4" fill="#4FA3F7"/>',
     ][lv];
+    const wxk = S.wx ? S.wx.kind : ""; const wxt = S.wx ? S.wx.temp : null;
+    const gear = mood === "sleep" ? "" : (wxk === "rain" || wxk === "storm") ?
+      '<g><path d="M78 40q-16-20-32 0q8-4 16 0q8-4 16 0z" fill="#2E86DE"/><path d="M62 40v34q0 5 5 5" stroke="#24335F" stroke-width="2.4" fill="none" stroke-linecap="round"/></g>'
+      : (wxt != null && wxt <= 8) ? '<path d="M28 74q22 10 44 0v6q-22 10-44 0z" fill="#2E86DE"/><path d="M60 78l4 14h6l-3-15z" fill="#2E86DE"/><path d="M34 77v5M42 79v5M50 80v5M58 79v5M66 77v5" stroke="#fff" stroke-width="1.6"/>'
+      : (wxt != null && wxt >= 24 && wxk === "clear" && S.wx.isDay) ? '<g><rect x="33" y="47" width="14" height="9" rx="4" fill="#1B1B1F"/><rect x="53" y="47" width="14" height="9" rx="4" fill="#1B1B1F"/><path d="M47 50h6" stroke="#1B1B1F" stroke-width="2"/></g>' : "";
     const zzz = mood === "sleep" ? '<text x="70" y="30" font-size="12" font-weight="700" fill="var(--muted)" font-family="Fredoka, sans-serif">z</text><text x="78" y="20" font-size="15" font-weight="700" fill="var(--muted)" font-family="Fredoka, sans-serif">Z</text>' : "";
     const drip = mood === "hungry" ? '<path d="M56 68q2 6 0 8q-3-2 0-8z" fill="#9FD3FF"/>' : "";
     const markup =
@@ -1603,7 +1639,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
         '<path d="M' + (50 - w) + ' 70 Q' + (50 - w) + ' ' + (60 - h * 1.1).toFixed(1) + ' 50 ' + (60 - h * 1.15).toFixed(1) + ' Q' + (50 + w) + ' ' + (60 - h * 1.1).toFixed(1) + ' ' + (50 + w) + ' 70 Q' + (50 + w) + ' 90 50 90 Q' + (50 - w) + ' 90 ' + (50 - w) + ' 70z" fill="#FF5A6B"/>' +
         '<path d="M' + (50 - w * 0.7).toFixed(1) + ' 78 Q50 92 ' + (50 + w * 0.7).toFixed(1) + ' 78 Q50 86 ' + (50 - w * 0.7).toFixed(1) + ' 78z" fill="#E0182D" opacity=".5"/>' +
         '<ellipse cx="' + (44 - w * 0.25).toFixed(1) + '" cy="40" rx="5" ry="3" fill="#fff" opacity=".35"/>' +
-        eyes + '<ellipse cx="34" cy="60" rx="4.5" ry="2.8" fill="#FF9AA6"/><ellipse cx="66" cy="60" rx="4.5" ry="2.8" fill="#FF9AA6"/>' + mouth + drip + hats +
+        eyes + '<ellipse cx="34" cy="60" rx="4.5" ry="2.8" fill="#FF9AA6"/><ellipse cx="66" cy="60" rx="4.5" ry="2.8" fill="#FF9AA6"/>' + mouth + drip + hats + gear +
       '</g>' + zzz + (sk >= 2 ? '<g transform="translate(70 4)"><g class="streak-flame"><path d="M12 30c6 0 10-4 10-10 0-5-4-9-6-12-.6 3-2 4.6-3.6 5 .3-4-1.4-8.6-5-11.4.3 4.8-2.3 8-4.3 10.8C1.6 15.5 2 18 2 20.5 2 26 6 30 12 30z" fill="#FF7A1A"/><path d="M12 29c3 0 5-2 5-5 0-2.6-1.8-4.4-2.8-6-.3 1.6-1.2 2.5-2.2 2.8 0-2-.8-4-2.4-5.3 0 2.6-1.5 4.2-2.4 5.6-.7 1-.6 2-.6 2.9 0 3 2.3 5 5.4 5z" fill="#FFD23F"/><text x="12" y="27" text-anchor="middle" font-size="9.5" font-weight="800" fill="#7A1E00" font-family="Fredoka, sans-serif">' + sk + '</text></g></g>' : '');
     $("#pet-svg").innerHTML = markup; $("#buddy-svg").innerHTML = markup; $("#hello-svg").innerHTML = markup;
     const p = $("#pet"); p.setAttribute("aria-label", `${PET.name} is ${mood === "sleep" ? "asleep" : mood}`);
@@ -1620,7 +1656,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     const b = el("div"); b.append(document.createTextNode(lv.next ? `${lv.d} days together · grows at ${lv.next}` : `${lv.d} days together · fully grown!`));
     const bb = el("div", "bar"); const bi = el("i"); const prev = PET_LEVELS[lv.i][0]; bi.style.width = (lv.next ? clamp((lv.d - prev) / (lv.next - prev), 0, 1) : 1) * 100 + "%"; bb.append(bi); b.append(bb);
     st.append(a, b);
-    renderBondRow(); renderPetLife(); renderNoteFor(); renderJourney(); maybeGreet(); setTimeout(maybeCelebrateStreak, 1800);
+    renderBondRow(); renderPetLife(); renderNoteFor(); renderJourney(); renderWeather(); if (WX_ON && !S.wxStarted && S.loaded) { S.wxStarted = true; loadWeather(); } maybeGreet(); setTimeout(maybeCelebrateStreak, 1800);
     drawPet(); startPet();
   }
   function renderPetLife() {
@@ -1711,6 +1747,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     if (pid) { const ph = hungerState(pid); if (ph.due) tips.push({ text: `${nameOf(pid)} hasn't eaten in a while (${ph.last ? fmtDur(ph.since) : "nothing today"}). Shall I nag?`, action: { label: `Remind ${nameOf(pid)}`, run: () => sendNudge(`${PET.name} says: time to eat!`) } }); }
     const next = planOf(S.me, TODAY).sort(byTime).find(i => !isEaten(S.me, TODAY, i));
     if (next) tips.push({ text: `Next on your plan: ${next.name} at ${fmtTime(next.time)}.`, action: { label: "Ate it", run: () => eatPlanned(TODAY, next) } });
+    if (S.wx) tips.push({ text: weatherLine() });
     if (g.mode === "gain" && g.kcalGoal - t.kcal > 250) { const bo = BOOSTERS[Math.floor(Math.random() * BOOSTERS.length)];
       tips.push({ text: `Easy boost: ${bo[0].toLowerCase()} adds ${bo[1]} kcal with hardly any effort.`, action: { label: `Add +${bo[1]}`, run: () => addMeal(TODAY, bo[0], bo[1], bo[2], 1, nowTime()) } }); }
     if (!me.due && me.last && me.active) tips.push({ text: `You last ate ${String(me.last.m.name || "food").toLowerCase()} ${fmtDur(me.since)} ago. Eat again by ${me.nextAt.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}!` });
@@ -1902,8 +1939,76 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     let msg = yt.kcal >= g.kcalGoal ? `Yesterday you hit your goal with ${fmt(yt.kcal)} kcal. So proud of you!` : yt.kcal > 0 ? `Yesterday you ate ${fmt(yt.kcal)} kcal. Let's beat it today!` : "I missed you! Let's eat well today.";
     const pid = partnerId(); const pc = pid && S.care[pid];
     if (pc && pc.day === TODAY && pc.today.cuddles > 0) msg += ` ${nameOf(pid)} already cuddled me today!`;
+    if (S.wx) msg = weatherLine() + " " + msg;
     const night = h >= 22 || h < 4;
     showHello(`${night ? "Good night" : hi}, ${S.names[S.me] || "friend"}!`, msg, night);
+  }
+
+
+  // ---------- Weather (standalone site only: needs window.pulseWeather from backend.js) ----------
+  S.wx = null;
+  const WX_ON = typeof window.pulseWeather === "function";
+  function wxKind(code) {
+    if (code === 0) return "clear"; if (code <= 2) return "partly"; if (code === 3) return "cloudy"; if (code === 45 || code === 48) return "fog";
+    if (code >= 51 && code <= 67) return "rain"; if (code >= 71 && code <= 77) return "snow"; if (code >= 80 && code <= 82) return "rain";
+    if (code === 85 || code === 86) return "snow"; if (code >= 95) return "storm"; return "cloudy";
+  }
+  const WX_WORD = { clear: "Clear", partly: "Partly cloudy", cloudy: "Cloudy", fog: "Foggy", rain: "Rainy", snow: "Snowy", storm: "Stormy" };
+  function wxPlace() { const p = S.people[S.me] || {}; const w = p.weather; return w && typeof w === "object" && Number.isFinite(w.lat) && Number.isFinite(w.lon) ? w : null; }
+  async function loadWeather() {
+    if (!WX_ON || !S.me) return; const pl = wxPlace(); if (!pl) { renderWeather(); return; }
+    try { const r = await window.pulseWeather({ lat: pl.lat, lon: pl.lon });
+      if (r && Number.isFinite(r.temp)) { S.wx = { temp: r.temp, code: r.code, kind: wxKind(r.code), isDay: !!r.isDay, wind: r.wind, place: pl.place || "", at: Date.now() }; PET.state = ""; drawPet(); renderWeather(); } }
+    catch (_) { /* keep the last weather */ }
+  }
+  function renderWeather() {
+    if (!WX_ON) return;
+    const chip = $("#wx-chip"); chip.hidden = !S.me; chip.textContent = "";
+    if (S.wx) { chip.append(el("b", null, `${Math.round(S.wx.temp)}°C`), document.createTextNode(` · ${WX_WORD[S.wx.kind]}${S.wx.place ? " · " + S.wx.place : ""}`)); }
+    else chip.textContent = wxPlace() ? "Getting the weather…" : "Set the weather for Mochi's yard";
+    const layer = $("#wx-layer"); const area = $("#yard-area"); if (!layer || !area) return;
+    const key = S.wx ? S.wx.kind + (isNight() ? "n" : "d") : "none"; if (layer.dataset.key === key) return; layer.dataset.key = key; layer.textContent = "";
+    area.classList.toggle("wx-grey", !!S.wx && ["cloudy", "rain", "storm", "fog", "snow"].includes(S.wx.kind));
+    if (!S.wx) return;
+    const k = S.wx.kind, night = isNight() || !S.wx.isDay;
+    const add = (cls, style) => { const e = el("i", cls); Object.assign(e.style, style); layer.append(e); return e; };
+    if (k === "clear" && night) for (let i = 0; i < 14; i++) add("star", { left: Math.random() * 100 + "%", top: Math.random() * 55 + "%", animationDelay: (Math.random() * 2.4).toFixed(2) + "s" });
+    if (k === "clear" && !night) add("rays", {});
+    const clouds = { partly: 2, cloudy: 4, rain: 4, storm: 5, fog: 1, snow: 3 }[k] || 0;
+    for (let i = 0; i < clouds; i++) add("cloud", { width: 46 + Math.random() * 30 + "px", top: 10 + Math.random() * 40 + "px", animationDuration: 26 + Math.random() * 20 + "s", animationDelay: -(Math.random() * 30).toFixed(1) + "s" });
+    if (k === "rain" || k === "storm") for (let i = 0; i < 40; i++) add("drop", { left: Math.random() * 110 + "%", animationDuration: (0.55 + Math.random() * 0.4).toFixed(2) + "s", animationDelay: -(Math.random() * 1).toFixed(2) + "s" });
+    if (k === "snow") for (let i = 0; i < 30; i++) add("flake", { left: Math.random() * 100 + "%", animationDuration: (3 + Math.random() * 3).toFixed(1) + "s", animationDelay: -(Math.random() * 6).toFixed(1) + "s", transform: `scale(${(0.5 + Math.random()).toFixed(2)})` });
+    if (k === "storm") add("flash", {});
+    if (k === "fog") for (let i = 0; i < 3; i++) add("fog", { top: 40 + i * 40 + "px", animationDelay: -(i * 4) + "s" });
+  }
+  function weatherLine() {
+    if (!S.wx) return ""; const t = Math.round(S.wx.temp), k = S.wx.kind;
+    if (k === "rain" || k === "storm") return `It's ${t}°C and ${k === "storm" ? "stormy" : "rainy"} out. Take an umbrella!`;
+    if (k === "snow") return `It's ${t}°C and snowing! Wrap up warm.`;
+    if (t <= 8) return `It's ${t}°C outside. Wear a coat!`;
+    if (t >= 24) return `It's ${t}°C! Drink lots of water today.`;
+    return `It's ${t}°C and ${WX_WORD[k].toLowerCase()} outside.`;
+  }
+  async function setWeatherPlace(place) {
+    S.people[S.me] = Object.assign({}, S.people[S.me] || {}, { weather: place });
+    try { await S.db.doc("logs/" + S.me).set({ weather: place }); } catch (err) { toast(errText(err)); }
+    $("#wx-set").hidden = true; S.wx = null; renderWeather(); loadWeather();
+  }
+  if (WX_ON) {
+    $("#wx-chip").addEventListener("click", () => { const b = $("#wx-set"); b.hidden = !b.hidden; $("#wx-msg").textContent = ""; });
+    $("#wx-here").addEventListener("click", () => {
+      if (!navigator.geolocation) { $("#wx-msg").textContent = "This phone can't share its location. Type a city instead."; return; }
+      $("#wx-msg").textContent = "Finding you…";
+      navigator.geolocation.getCurrentPosition(pos => setWeatherPlace({ lat: Math.round(pos.coords.latitude * 100) / 100, lon: Math.round(pos.coords.longitude * 100) / 100, place: "" }),
+        () => { $("#wx-msg").textContent = "Location is off. Type a city instead."; }, { timeout: 12000, maximumAge: 3600000 });
+    });
+    $("#wx-city-form").addEventListener("submit", async e => {
+      e.preventDefault(); const q = $("#wx-city").value.trim(); if (!q) return; $("#wx-msg").textContent = "Looking it up…";
+      try { const r = await window.pulseWeather({ city: q }); if (!r || !r.place) { $("#wx-msg").textContent = "Couldn't find that place. Try another spelling."; return; }
+        setWeatherPlace({ lat: r.lat, lon: r.lon, place: r.place }); }
+      catch (_) { $("#wx-msg").textContent = "Couldn't look that up right now."; }
+    });
+    setInterval(() => { if (document.visibilityState === "visible") loadWeather(); }, 30 * 60000);
   }
 
   // ---------- Morning notes: Mochi reads your note at your partner's next good morning ----------
@@ -1978,7 +2083,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     const finish = () => {
       o.hidden = true; o.classList.remove("out", "clear"); helloLeaving = false; S.helloDoneAt = Date.now();
       if (helloNight) { setFace("sleep"); PET.state = ""; setTimeout(() => { setFace(null); }, 400); setTimeout(checkNudges, 2500); return; }
-      setFace(null); anyHop(); if (helloMsg) setTimeout(() => anySay(helloMsg), 250);
+      setFace(null); anyHop(); if (helloMsg) setTimeout(() => anySay((S.wx && helloMsg.indexOf("°C") < 0 ? weatherLine() + " " : "") + helloMsg), 250);
       const hadNote = deliverNote(); setTimeout(checkNudges, hadNote ? 11000 : 2500);
     };
     const pet = o.querySelector(".hello-pet");

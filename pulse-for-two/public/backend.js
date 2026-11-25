@@ -123,6 +123,13 @@
     async delete(id) { await api("/api/photo/" + encodeURIComponent(id), { method: "DELETE" }); return { ok: true }; },
   };
 
+  // Weather for Mochi's yard (the app turns this feature on when it finds this function)
+  window.pulseWeather = async ({ lat, lon, city }) => {
+    const q = city ? "city=" + encodeURIComponent(city) : `lat=${lat}&lon=${lon}`;
+    const r = await api("/api/weather?" + q); if (!r.ok) throw new Error("weather");
+    return r.json();
+  };
+
   window.claude = { use: async name => { if (name === "db" || name === "user" || name === "assets") { await ready; return { db, user, assets }[name]; } return null; } };
 
   // ---------- Phone notifications ----------

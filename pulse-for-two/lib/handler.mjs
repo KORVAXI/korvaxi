@@ -167,7 +167,30 @@ export async function runReminders(store, env) {
   return out;
 }
 
-export function createHandler({ store, passcode, env = () => undefined }) {
+// ---------- Weather (Open-Meteo, free, no key) ----------
+async function weather(url, fetchImpl, store) {
+  const city = (url.searchParams.get("city") || "").trim().slice(0, 60);
+  if (city) {
+    const r = await fetchImpl("https://geocoding-api.open-meteo.com/v1/search?count=1&language=en&format=json&name=" + encodeURIComponent(city));
+    if (!r.ok) return json({ error: "lookup_failed" }, 502);
+    const g = ((await r.json()).results || [])[0];
+    if (!g) return json({ place: null });
+    return json({ place: [g.name, g.admin1 && g.admin1 !== g.name ? g.admin1 : null, g.country_code].filter(Boolean).join(", "), lat: Math.round(g.latitude * 100) / 100, lon: Math.round(g.longitude * 100) / 100 });
+  }
+  const lat = num(url.searchParams.get("lat")), lon = num(url.searchParams.get("lon"));
+  if (lat == null || lon == null || Math.abs(lat) > 90 || Math.abs(lon) > 180) return json({ error: "bad_request" }, 400);
+  const key = `wxcache/${lat.toFixed(1)}_${lon.toFixed(1)}`;
+  const cached = await store.get(key, { type: "json" });
+  if (cached && Date.now() - cached.at < 20 * 60000) return json(cached);
+  const r = await fetchImpl(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,is_day,wind_speed_10m&timezone=auto`);
+  if (!r.ok) return cached ? json(cached) : json({ error: "weather_failed" }, 502);
+  const c = (await r.json()).current || {};
+  const out = { temp: num(c.temperature_2m), code: num(c.weather_code), isDay: c.is_day === 1, wind: num(c.wind_speed_10m), at: Date.now() };
+  await store.setJSON(key, out);
+  return json(out);
+}
+
+export function createHandler({ store, passcode, env = () => undefined, fetchImpl = (...a) => fetch(...a) }) {
   return async function handle(req) {
     const url = new URL(req.url);
     const parts = url.pathname.replace(/^\/api\/?/, "").split("/").filter(Boolean);
@@ -236,6 +259,10 @@ export function createHandler({ store, passcode, env = () => undefined }) {
     if (req.method === "DELETE" && parts[0] === "photo" && PHOTO.test(parts[1] || "")) {
       await store.delete("photo/" + parts[1]);
       return json({ ok: true });
+    }
+
+    if (req.method === "GET" && parts[0] === "weather") {
+      try { return await weather(url, fetchImpl, store); } catch (e) { return json({ error: "weather_failed" }, 502); }
     }
 
     // Notifications
