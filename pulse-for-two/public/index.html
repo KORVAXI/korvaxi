@@ -1925,7 +1925,6 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       const head = el("div", "nf-head"); head.append(el("b", null, `Note for ${nameOf(pid)}'s morning`)); box.append(head);
       const ta = el("textarea"); ta.id = "note-text"; ta.maxLength = 200; ta.placeholder = `${PET.name} will read this to ${nameOf(pid)} after good morning`;
       ta.setAttribute("aria-label", `Note for ${nameOf(pid)}`); ta.value = keep != null ? keep : (mineIsMine && !mine.readAt ? mine.text : ""); box.append(ta); if (hadFocus) setTimeout(() => ta.focus(), 0);
-      const chips = el("div", "chips"); NOTE_IDEAS.forEach(t => { const c = el("button", "pill", t); c.type = "button"; c.addEventListener("click", () => { ta.value = ta.value.trim() ? ta.value.trim() + " " + t : t; ta.focus(); }); chips.append(c); }); box.append(chips);
       const row = el("div", "row");
       const save = el("button", "cta", "Save note"); save.type = "button"; save.addEventListener("click", () => { if (!ta.value.trim()) { toast("Write something first"); return; } saveNote(ta.value); });
       const cancel = el("button", "pill", "Cancel"); cancel.type = "button"; cancel.addEventListener("click", () => { S.noteEditing = false; renderAll(); });
