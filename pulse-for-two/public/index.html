@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pulse for Two</title>
+<meta name="theme-color" content="#E0182D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pulse for Two">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}</style>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: app shell — header, one view at a time (Eat / Week / Us / Body), floating bottom tab bar. Food is the main job: eat enough to build weight. */
+:root {
+  --bg: #FFF4F4; --surface: #FFFFFF; --sunk: #FDE8E9; --ink: #2B0C10; --muted: #84585D; --line: #F4D3D6;
+  --red: #E0182D; --red-deep: #9E0F22; --red-soft: #FFD9DC;
+  --p1: #E0182D; --p2: #8C1028;
+  --display: "Fredoka", "Inter", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --shadow: 0 6px 20px -10px rgba(158, 15, 34, 0.35);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #16080A; --surface: #22100F; --sunk: #2D1416; --ink: #FBE9EA; --muted: #C3989C; --line: #3D1D20;
+  --red: #FF4558; --red-deep: #B3132A; --red-soft: #4A171D; --p1: #FF4558; --p2: #FFA3AE;
+  --shadow: 0 6px 20px -10px rgba(0, 0, 0, 0.7); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #16080A; --surface: #22100F; --sunk: #2D1416; --ink: #FBE9EA; --muted: #C3989C; --line: #3D1D20;
+  --red: #FF4558; --red-deep: #B3132A; --red-soft: #4A171D; --p1: #FF4558; --p2: #FFA3AE;
+  --shadow: 0 6px 20px -10px rgba(0, 0, 0, 0.7); color-scheme: dark }
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 22px 120px; }
+.wrap { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; font-weight: 600; }
+h2 { font-size: 1.35rem; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; border-radius: 8px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.between { justify-content: space-between; }
+
+/* Header */
+header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand svg { width: 38px; height: 38px; flex: none; }
+.brand h1 { font-size: 1.7rem; line-height: 1; color: var(--red); }
+.brand .date { font-size: 0.85rem; color: var(--muted); }
+.who { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px 5px 6px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 0.86rem; font-weight: 500; }
+.av { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 0.72rem; font-weight: 700; font-family: var(--display); flex: none; }
+.online { width: 8px; height: 8px; border-radius: 50%; background: #2BB673; box-shadow: 0 0 0 3px rgba(43,182,115,.2); }
+.status { background: var(--red-soft); color: var(--ink); padding: 10px 14px; border-radius: 12px; font-size: 0.9rem; }
+
+/* Generic */
+.view { display: flex; flex-direction: column; gap: 18px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 18px; box-shadow: var(--shadow); min-width: 0; }
+.pill { border: 1px solid var(--line); background: var(--sunk); border-radius: 999px; padding: 7px 14px; font-weight: 500; }
+.pill[aria-pressed="true"] { background: var(--red); color: #fff; border-color: var(--red); }
+.cta { border: 0; border-radius: 14px; padding: 12px 18px; background: var(--red); color: #fff; font-weight: 600; font-family: var(--display); font-size: 1.02rem; transition: transform .12s ease; }
+.cta:active { transform: scale(0.96); }
+.cta.dark { background: var(--ink); color: var(--bg); }
+.cta:disabled { opacity: .5; cursor: default; }
+input[type="range"] { width: 100%; accent-color: var(--red); height: 28px; }
+input[type="number"], input[type="text"], input[type="time"], textarea { font: inherit; color: var(--ink); background: var(--sunk); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; width: 100%; min-width: 0; }
+textarea { resize: vertical; min-height: 80px; }
+label.f { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; color: var(--muted); font-weight: 600; min-width: 0; }
+.bar { height: 10px; border-radius: 6px; background: var(--sunk); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--red); border-radius: 6px; transition: width .5s ease; }
+.invite { border: 2px dashed var(--line); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 6px; justify-content: center; color: var(--muted); }
+.invite strong { color: var(--ink); font-family: var(--display); font-size: 1.15rem; font-weight: 600; }
+
+/* Together hero */
+.together { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; background: linear-gradient(135deg, var(--red), var(--red-deep)); color: #fff; border: 0; }
+.together .big-heart { width: 104px; height: 104px; }
+.together h2 { font-size: 1.5rem; color: #fff; }
+.together p { margin-top: 4px; opacity: 0.92; }
+.together .pips { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.pip { font-size: 0.78rem; padding: 3px 9px; border-radius: 999px; background: rgba(255,255,255,0.18); }
+.pip.done { background: #fff; color: #9E0F22; font-weight: 600; }
+@media (max-width: 460px) { .together { grid-template-columns: 1fr; justify-items: start; } .together .big-heart { width: 84px; height: 84px; } }
+
+/* Person cards */
+.people { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.person { display: flex; flex-direction: column; gap: 14px; }
+.p-head { display: flex; align-items: center; gap: 10px; }
+.p-head .av { width: 38px; height: 38px; font-size: 1rem; }
+.p-head h3 { font-size: 1.2rem; line-height: 1.1; }
+.p-head .sub { font-size: 0.8rem; color: var(--muted); }
+.p-head .mood { margin-left: auto; width: 40px; height: 40px; }
+.rings { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; text-align: center; }
+.ring { display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 0; }
+.ring svg { width: 66px; height: 66px; max-width: 100%; }
+.ring svg circle { transition: stroke-dashoffset .6s ease; }
+.ring .lbl { font-size: 0.74rem; color: var(--muted); }
+.ring .v { font-size: 0.78rem; font-weight: 600; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; }
+.fact { font-size: 0.84rem; padding: 4px 10px; border-radius: 999px; background: var(--sunk); }
+.nudge { background: var(--red-soft); border-radius: 14px; padding: 10px 12px; font-size: 0.9rem; display: flex; flex-direction: column; gap: 8px; }
+.nudge b { font-family: var(--display); font-weight: 600; font-size: 1rem; }
+.p-note { font-size: 0.9rem; color: var(--muted); font-style: italic; overflow-wrap: anywhere; }
+.love-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.love-btn svg { width: 20px; height: 20px; }
+.love-line { font-size: 0.86rem; color: var(--red); font-weight: 600; }
+
+/* Date strip */
+.dates { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.dates button { flex: none; border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 8px 12px; text-align: center; min-width: 64px; }
+.dates button b { display: block; font-family: var(--display); font-size: 1.1rem; font-weight: 600; }
+.dates button span { font-size: 0.74rem; color: var(--muted); }
+.dates button[aria-pressed="true"] { background: var(--red); border-color: var(--red); color: #fff; }
+.dates button[aria-pressed="true"] span { color: #fff; }
+.dates button .tick { display: block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; margin: 3px auto 0; opacity: .7; }
+.save-state { font-size: 0.84rem; padding: 5px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); }
+.save-state.ok { color: var(--red); }
+
+/* Food view */
+.fuel { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
+.fuel .big-ring { width: 150px; height: 150px; }
+.fuel .left { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.fuel .kcal { font-family: var(--display); font-size: 2.2rem; font-weight: 700; color: var(--red); line-height: 1; }
+.fuel .kcal small { font-size: 1rem; color: var(--muted); font-weight: 500; }
+.mode-tag { align-self: flex-start; font-size: 0.75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: var(--red); color: #fff; padding: 3px 10px; border-radius: 999px; }
+@media (max-width: 480px) { .fuel { grid-template-columns: 1fr; justify-items: center; text-align: center; } .fuel .left { align-items: center; width: 100%; } .fuel .left .bar { width: 100%; } .mode-tag { align-self: center; } }
+.foods { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.food { border: 1px solid var(--line); background: var(--sunk); border-radius: 14px; padding: 10px 12px; text-align: left; display: flex; flex-direction: column; gap: 2px; transition: transform .12s ease; min-width: 0; }
+.food:active { transform: scale(0.95); }
+.food b { font-weight: 600; font-size: 0.92rem; overflow-wrap: anywhere; }
+.food span { font-size: 0.78rem; color: var(--muted); }
+.food.pop { animation: pop .35s ease; }
+@keyframes pop { 50% { transform: scale(1.06); background: var(--red-soft); } }
+.custom { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 8px; align-items: end; }
+@media (max-width: 560px) { .custom { grid-template-columns: 1fr 1fr; } .custom .name { grid-column: 1 / -1; } .custom .cta { grid-column: 1 / -1; } }
+.meals { display: flex; flex-direction: column; gap: 14px; }
+.slot h3 { font-size: 1rem; display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.slot h3 span { font-family: var(--body); font-size: 0.82rem; color: var(--muted); font-weight: 500; }
+.meal { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+.meal .nm { min-width: 0; overflow-wrap: anywhere; }
+.meal .nm small { display: block; color: var(--muted); font-size: 0.78rem; }
+.meal .kc { font-weight: 600; font-family: var(--display); }
+.meal .acts { display: flex; gap: 4px; }
+.meal.has-photo { grid-template-columns: 52px 1fr auto auto; }
+.thumb { width: 52px; height: 52px; border-radius: 12px; object-fit: cover; background: var(--sunk); border: 0; padding: 0; display: block; cursor: zoom-in; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; display: block; }
+/* Photo capture */
+.snap { display: flex; flex-direction: column; gap: 12px; background: linear-gradient(135deg, var(--red), var(--red-deep)); color: #fff; border: 0; }
+.snap h3 { color: #fff; font-size: 1.15rem; }
+.snap .sub { opacity: .9; font-size: .88rem; }
+.snap-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #fff; color: #9E0F22; border-radius: 16px; padding: 14px 18px; font-family: var(--display); font-weight: 600; font-size: 1.1rem; cursor: pointer; border: 0; }
+.snap-btn svg { width: 26px; height: 26px; }
+.snap-btn:focus-within { outline: 3px solid #fff; outline-offset: 3px; }
+.vh { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+.photo-panel { background: var(--surface); color: var(--ink); border-radius: 16px; padding: 14px; display: grid; grid-template-columns: 120px 1fr; gap: 14px; align-items: start; }
+.photo-panel img { width: 120px; height: 120px; object-fit: cover; border-radius: 12px; display: block; }
+.photo-panel .fields { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.photo-panel .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.photo-panel .est { font-size: .8rem; color: var(--muted); min-height: 1.2em; }
+@media (max-width: 460px) { .photo-panel { grid-template-columns: 1fr; } .photo-panel img { width: 100%; height: 200px; } }
+.pics { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+.pic { position: relative; border: 0; padding: 0; background: var(--sunk); border-radius: 12px; overflow: hidden; aspect-ratio: 1; max-width: 100%; cursor: zoom-in; }
+.pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pic span { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 6px 4px; font-size: .7rem; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.65)); text-align: left; }
+.lb { position: fixed; inset: 0; z-index: 50; background: rgba(10,2,4,.88); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.lb img { max-width: 100%; max-height: 78vh; border-radius: 14px; object-fit: contain; }
+.lb p { color: #fff; text-align: center; font-weight: 500; }
+.lb button { background: #fff; color: #2B0C10; border: 0; border-radius: 999px; padding: 10px 22px; font-weight: 600; font-family: var(--display); }
+.icon-btn { border: 1px solid var(--line); background: var(--sunk); border-radius: 10px; width: 34px; height: 34px; display: grid; place-items: center; padding: 0; }
+.icon-btn svg { width: 16px; height: 16px; }
+.weight-goal { display: flex; flex-direction: column; gap: 10px; }
+.wg-nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+.wg-nums div { background: var(--sunk); border-radius: 12px; padding: 8px 4px; }
+.wg-nums b { display: block; font-family: var(--display); font-size: 1.3rem; font-weight: 600; }
+.wg-nums span { font-size: 0.75rem; color: var(--muted); }
+.settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 14px; }
+details summary { cursor: pointer; font-family: var(--display); font-weight: 600; font-size: 1.05rem; }
+
+/* Log view */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.tile { display: flex; flex-direction: column; gap: 12px; }
+.tile-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.tile-head h3 { font-size: 1.1rem; }
+.readout { font-family: var(--display); font-size: 1.9rem; font-weight: 600; color: var(--red); line-height: 1; }
+.readout small { font-size: 0.9rem; color: var(--muted); font-weight: 500; }
+.hint { font-size: 0.84rem; color: var(--muted); min-height: 1.3em; }
+.hint.win { color: var(--red); font-weight: 600; }
+.glasses { display: flex; flex-wrap: wrap; gap: 6px; }
+.glass { width: 38px; height: 46px; border: 0; background: none; padding: 0; transition: transform .12s ease; }
+.glass:active { transform: scale(0.88); }
+.glass svg { width: 100%; height: 100%; }
+.faces { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.face { border: 2px solid transparent; background: var(--sunk); border-radius: 16px; padding: 8px 4px 6px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.74rem; transition: transform .12s ease; }
+.face svg { width: 38px; height: 38px; }
+.face:active { transform: scale(0.92); }
+.face[aria-pressed="true"] { border-color: var(--red); background: var(--red-soft); font-weight: 600; }
+
+/* Week diary */
+.week-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.week-nav h3 { font-size: 1.15rem; text-align: center; flex: 1; }
+.week-nav .sub { display: block; font-family: var(--body); font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.stat { background: var(--sunk); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.stat .k { font-size: 0.78rem; color: var(--muted); }
+.stat .v { font-family: var(--display); font-size: 1.35rem; font-weight: 600; }
+.stat .s { font-size: 0.76rem; color: var(--muted); }
+.insight { background: var(--red-soft); border-radius: 14px; padding: 12px 14px; font-size: 0.92rem; }
+.insight b { font-family: var(--display); font-weight: 600; }
+.tl { display: flex; flex-direction: column; }
+.tl-row { display: grid; grid-template-columns: 52px 1fr 62px; gap: 8px; align-items: center; min-height: 48px; border-top: 1px solid var(--line); }
+.tl-row.head { min-height: 22px; border-top: 0; }
+.tl-row.future { opacity: .4; }
+.tl-row.today .tl-day b { color: var(--red); }
+.tl-day { border: 0; background: none; padding: 4px 0; text-align: left; line-height: 1.15; }
+.tl-day b { display: block; font-family: var(--display); font-weight: 600; font-size: 0.95rem; }
+.tl-day span { font-size: 0.74rem; color: var(--muted); }
+.tl-track { position: relative; height: 40px; min-width: 0; }
+.tl-track .hr { position: absolute; top: 4px; bottom: 4px; width: 1px; background: var(--line); }
+.tl-track .base { position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: var(--sunk); border-radius: 1px; }
+.tl-hours { position: relative; height: 16px; min-width: 0; }
+.tl-hours span { position: absolute; transform: translateX(-50%); font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
+.dot { position: absolute; top: 50%; transform: translate(-50%, -50%); border-radius: 50%; border: 2px solid var(--surface); padding: 0; transition: transform .12s ease; }
+.dot:hover, .dot[aria-pressed="true"] { transform: translate(-50%, -50%) scale(1.25); z-index: 2; box-shadow: 0 0 0 3px var(--red-soft); }
+.tl-total { text-align: right; font-size: 0.8rem; line-height: 1.2; }
+.tl-total b { display: block; font-family: var(--display); font-weight: 600; font-size: 0.95rem; }
+.mini { height: 5px; border-radius: 3px; background: var(--sunk); overflow: hidden; margin-top: 3px; }
+.mini i { display: block; height: 100%; background: var(--red); }
+.tip { min-height: 1.4em; font-size: 0.9rem; font-weight: 500; padding-top: 8px; }
+.day-detail { display: flex; flex-direction: column; gap: 2px; }
+.day-detail .it { display: grid; grid-template-columns: 76px 1fr auto; gap: 10px; padding: 7px 0; border-top: 1px solid var(--line); align-items: baseline; }
+.day-detail .it .t { font-weight: 600; font-variant-numeric: tabular-nums; }
+.day-detail .it .nm { min-width: 0; overflow-wrap: anywhere; }
+.day-detail .it .nm small { color: var(--muted); }
+.day-detail .note { color: var(--muted); font-style: italic; padding-top: 8px; overflow-wrap: anywhere; }
+.t-in { width: auto !important; padding: 2px 6px !important; font-size: 0.8rem !important; border-radius: 8px !important; }
+/* Bottom nav */
+nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; justify-content: center;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); pointer-events: none; }
+nav.tabs .tabbar { pointer-events: auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 6px; box-shadow: 0 10px 30px -12px rgba(0,0,0,.35); width: 100%; max-width: 500px; }
+nav.tabs button { border: 0; background: none; border-radius: 16px; padding: 8px 2px 6px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.72rem; font-weight: 600; color: var(--muted); }
+nav.tabs button svg { width: 22px; height: 22px; }
+nav.tabs button[aria-current="page"] { background: var(--red); color: #fff; }
+
+/* Toast + effects */
+.toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 30; background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 600; font-family: var(--display); max-width: calc(100% - 32px); text-align: center; }
+canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="var(--red)" d="M12 21.6C5.4 16.3 1.5 12.6 1.5 8.4 1.5 5.4 3.9 3 6.9 3c1.9 0 3.7.9 5.1 2.5C13.4 3.9 15.2 3 17.1 3c3 0 5.4 2.4 5.4 5.4 0 4.2-3.9 7.9-10.5 13.2z"/><path fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M5 11h3l1.5-3 2.5 6 2-4 1 1h4"/></svg>
+      <div><h1>Pulse for Two</h1><div class="date" id="today-label"></div></div>
+    </div>
+    <div class="who" id="who"></div>
+  </header>
+  <div class="status" id="status" hidden></div>
+
+  <!-- TODAY -->
+  <section class="view" id="v-today" aria-label="Today">
+    <div class="card together" id="together"></div>
+    <div class="people" id="people"></div>
+  </section>
+
+  <!-- FOOD -->
+  <section class="view" id="v-food" aria-label="Food" hidden>
+    <div class="row between"><h2>What did you eat?</h2><span class="save-state" data-save role="status">Saves automatically</span></div>
+    <div class="dates" data-dates role="group" aria-label="Pick a day"></div>
+    <div class="card fuel" id="fuel"></div>
+    <div class="card snap" id="snap" hidden>
+      <div><h3>Snap your food</h3><div class="sub" id="snap-sub">Take a photo and it's saved to the day you picked, at the time above.</div></div>
+      <label class="snap-btn" id="snap-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>Take a photo<input type="file" id="photo-in" class="vh" accept="image/*" capture="environment"></label>
+      <div class="photo-panel" id="photo-panel" hidden>
+        <img id="photo-prev" alt="Your food photo">
+        <div class="fields">
+          <label class="f">What is it?<input type="text" id="ph-name" maxlength="40" placeholder="e.g. Steak and chips"></label>
+          <div class="two"><label class="f">Calories<input type="number" id="ph-kcal" min="0" max="5000" inputmode="numeric" placeholder="optional"></label><label class="f">Protein (g)<input type="number" id="ph-protein" min="0" max="500" inputmode="numeric" placeholder="optional"></label></div>
+          <div class="est" id="ph-est" role="status"></div>
+          <div class="row"><button class="pill" type="button" id="ph-guess" hidden>Guess calories</button><button class="cta" type="button" id="ph-save">Save to day</button><button class="pill" type="button" id="ph-cancel">Cancel</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;gap:14px">
+      <div class="row between"><h3>Add food</h3><div class="seg" id="slots" role="group" aria-label="Which meal"></div></div>
+      <div class="row"><label class="muted" for="m-time" style="font-size:.85rem">Eaten at</label><input type="time" id="m-time" style="width:auto"><button class="pill" type="button" id="m-now">Now</button></div>
+      <div class="row"><span class="muted" style="font-size:.85rem">Portion</span><div class="seg" id="portions" role="group" aria-label="Portion size"></div></div>
+      <div class="foods" id="quick"></div>
+      <div id="recent-wrap" hidden><div class="muted" style="font-size:.85rem;margin-bottom:6px">Your foods</div><div class="foods" id="recent"></div></div>
+      <form class="custom" id="custom" novalidate>
+        <label class="f name">Something else<input type="text" id="c-name" maxlength="40" placeholder="e.g. Mum's lasagne"></label>
+        <label class="f">Calories<input type="number" id="c-kcal" min="0" max="5000" inputmode="numeric" placeholder="kcal"></label>
+        <label class="f">Protein (g)<input type="number" id="c-protein" min="0" max="500" inputmode="numeric" placeholder="g"></label>
+        <button class="cta dark" type="submit">Add</button>
+      </form>
+      <p class="muted" style="font-size:.8rem">Quick-add values are typical portions. For exact numbers, check the label and use "Something else".</p>
+    </div>
+    <div class="card"><div class="row between" style="margin-bottom:8px"><h3>Meals</h3><span class="muted num" id="meal-count"></span></div><div class="meals" id="meals"></div></div>
+    <div class="card weight-goal" id="wgoal"></div>
+    <details class="card" id="food-settings">
+      <summary>My food goals</summary>
+      <div class="row" style="margin-top:14px" id="modes" role="group" aria-label="What's your goal"></div>
+      <p class="muted" id="mode-help" style="font-size:.85rem;margin-top:8px"></p>
+      <div class="settings-grid">
+        <label class="f">Daily calories<input type="number" id="g-kcal" min="800" max="8000" step="50" inputmode="numeric"></label>
+        <label class="f">Daily protein (g)<input type="number" id="g-protein" min="20" max="400" step="5" inputmode="numeric"></label>
+        <label class="f">Starting weight<input type="number" id="g-start" min="20" max="700" step="0.1" inputmode="decimal" placeholder="auto"></label>
+        <label class="f">Target weight<input type="number" id="g-target" min="20" max="700" step="0.1" inputmode="decimal" placeholder="e.g. 75"></label>
+        <label class="f">Weight unit<span class="row" id="g-unit"><button class="pill" type="button" data-unit="kg">kg</button><button class="pill" type="button" data-unit="lb">lb</button></span></label>
+      </div>
+    </details>
+  </section>
+
+  <!-- LOG -->
+  <section class="view" id="v-log" aria-label="Log your day" hidden>
+    <div class="row between"><h2>Rest of your day</h2><span class="save-state" data-save role="status">Saves automatically</span></div>
+    <div class="dates" data-dates role="group" aria-label="Pick a day"></div>
+    <div class="tiles">
+      <div class="card tile">
+        <div class="tile-head"><h3>Weight</h3><div class="readout num" id="weight-out">– <small>kg</small></div></div>
+        <input type="number" id="weight" min="0" max="700" step="0.1" inputmode="decimal" placeholder="Weigh in (same time each day is best)" aria-label="Weight">
+        <div class="hint" id="weight-hint"></div>
+      </div>
+      <div class="card tile">
+        <div class="tile-head"><h3>Water</h3><div class="readout num" id="water-out">0 <small>glasses</small></div></div>
+        <div class="glasses" id="glasses" role="group" aria-label="Tap a glass to set how many you drank"></div>
+        <div class="hint" id="water-hint"></div>
+      </div>
+      <div class="card tile">
+        <div class="tile-head"><h3>Sleep</h3><div class="readout num" id="sleep-out">– <small>hours</small></div></div>
+        <input type="range" id="sleep" min="0" max="12" step="0.5" value="0" aria-label="Hours of sleep">
+        <div class="row" id="sleep-quick"></div>
+        <div class="hint" id="sleep-hint"></div>
+      </div>
+      <div class="card tile">
+        <div class="tile-head"><h3>Workout</h3><div class="readout num" id="wk-out">0 <small>min</small></div></div>
+        <div class="row" id="wk-types" role="group" aria-label="Workout type"></div>
+        <input type="range" id="wk-min" min="0" max="120" step="5" value="0" aria-label="Workout minutes">
+      </div>
+      <div class="card tile">
+        <div class="tile-head"><h3>How do you feel?</h3></div>
+        <div class="faces" id="faces" role="group" aria-label="Mood"></div>
+      </div>
+      <div class="card tile">
+        <div class="tile-head"><h3>Steps</h3><div class="readout num" id="steps-out">– <small>steps</small></div></div>
+        <input type="number" id="steps" min="0" max="100000" inputmode="numeric" placeholder="Steps from your phone" aria-label="Steps">
+        <div class="tile-head"><h3>Note for the day</h3></div>
+        <textarea id="notes" maxlength="500" placeholder="How was today? Anything your partner should know?" aria-label="Note for the day"></textarea>
+      </div>
+    </div>
+    <details class="card">
+      <summary>My other goals</summary>
+      <div class="settings-grid">
+        <label class="f">Water (glasses)<input type="number" id="g-water" min="1" max="20" inputmode="numeric"></label>
+        <label class="f">Sleep (hours)<input type="number" id="g-sleep" min="1" max="14" step="0.5" inputmode="decimal"></label>
+      </div>
+    </details>
+  </section>
+
+  <!-- WEEK -->
+  <section class="view" id="v-week" aria-label="Week" hidden>
+    <div class="row between"><h2>Food this week</h2><div class="seg" id="week-who" role="group" aria-label="Whose week"></div></div>
+    <div class="card week-nav">
+      <button class="icon-btn" type="button" id="wk-prev" aria-label="Previous week"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <h3 id="wk-label"></h3>
+      <button class="icon-btn" type="button" id="wk-next" aria-label="Next week"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div class="stats" id="wk-stats"></div>
+    <div class="insight" id="wk-insight" hidden></div>
+    <div class="card">
+      <div class="row between" style="margin-bottom:6px"><h3>When you ate</h3><span class="muted" style="font-size:.8rem">Bigger dot = more calories</span></div>
+      <div class="tl" id="timeline"></div>
+      <div class="tip" id="wk-tip">Tap a dot to see what it was. Tap a day for the full list.</div>
+    </div>
+    <div class="card day-detail" id="day-detail" hidden></div>
+    <div class="card" id="wk-pics-card" hidden><h3 style="margin-bottom:10px">Photos this week</h3><div class="pics" id="wk-pics"></div></div>
+  </section>
+
+</div>
+
+<nav class="tabs" aria-label="Sections"><div class="tabbar" id="tabs"></div></nav>
+<div class="toast" id="toast" role="status" hidden></div>
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Food photo" hidden><img id="lb-img" alt=""><p id="lb-cap"></p><button type="button" id="lb-close">Close</button></div>
+<canvas class="fx" id="fx" aria-hidden="true"></canvas>
+
+<script src="/backend.js"></script>
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const $$ = s => document.querySelectorAll(s);
+  const HEART = "M12 21.6C5.4 16.3 1.5 12.6 1.5 8.4 1.5 5.4 3.9 3 6.9 3c1.9 0 3.7.9 5.1 2.5C13.4 3.9 15.2 3 17.1 3c3 0 5.4 2.4 5.4 5.4 0 4.2-3.9 7.9-10.5 13.2z";
+  const MOODS = [[1, "Rough"], [2, "Meh"], [3, "Okay"], [4, "Good"], [5, "Great"]];
+  const WORKOUTS = ["Gym", "Run", "Walk", "Yoga", "Sport", "Other"];
+  const SLOTS = ["Breakfast", "Lunch", "Dinner", "Snack"];
+  const QUICK = [
+    ["Protein shake", 250, 30], ["Mass gainer shake", 700, 35], ["3 eggs", 220, 19], ["Peanut butter toast", 380, 14],
+    ["Oats with milk", 380, 15], ["Chicken & rice", 650, 45], ["Pasta bowl", 700, 25], ["Burger", 650, 30],
+    ["Pizza slice", 285, 12], ["Greek yogurt", 150, 15], ["Glass of whole milk", 150, 8], ["Handful of nuts", 200, 6],
+    ["Banana", 105, 1], ["Granola bar", 200, 5],
+  ];
+  const MODES = {
+    gain: { label: "Build weight", kcal: 3000, protein: 150, help: "Eat more than you burn. A common start is 300–500 calories a day above what you eat now, with plenty of protein. Aim to gain slowly, around 0.25–0.5 kg a week." },
+    maintain: { label: "Stay the same", kcal: 2200, protein: 110, help: "Eat about what you burn. Keep an eye on the weight trend and adjust if it drifts." },
+    lose: { label: "Lose weight", kcal: 1800, protein: 120, help: "Eat a little less than you burn and keep protein high. Slow and steady works best." },
+  };
+  const DEFAULT_GOALS = { mode: "gain", kcalGoal: 3000, proteinGoal: 150, waterGoal: 8, sleepGoal: 8, stepsGoal: 8000, unit: "kg", targetWeight: null, startWeight: null };
+  const S = { db: null, user: null, room: null, me: null, people: {}, days: {}, subs: {}, names: {}, online: new Set(),
+    loaded: false, sel: null, drafts: {}, pending: {}, inflight: {}, timers: {}, metric: "kcal", range: 7, tip: null, view: "food",
+    goalsFilled: false, slot: null, portion: 1 };
+
+  const z = x => String(x).padStart(2, "0");
+  const ymd = d => d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate());
+  const TODAY = ymd(new Date()); S.sel = TODAY;
+  const fromYmd = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+  const shortDate = s => fromYmd(s).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  const n = v => { if (v === "" || v == null) return null; const x = typeof v === "number" ? v : parseFloat(v); return Number.isFinite(x) ? x : null; };
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const fmt = (v, d = 0) => v == null ? "–" : v.toLocaleString(undefined, { maximumFractionDigits: d });
+  const rid = () => Math.random().toString(36).slice(2, 10);
+  const nowTime = () => { const d = new Date(); return z(d.getHours()) + ":" + z(d.getMinutes()); };
+  const slotForNow = () => { const h = new Date().getHours(); return h < 5 ? "Snack" : h < 11 ? "Breakfast" : h < 15 ? "Lunch" : h >= 17 && h < 21 ? "Dinner" : "Snack"; };
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const sv = (tag, attrs) => { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  S.slot = slotForNow();
+
+  $("#today-label").textContent = fromYmd(TODAY).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+
+  // ---------- People & numbers ----------
+  function personIds() { const ids = new Set(Object.keys(S.people)); if (S.me) ids.add(S.me); return [...ids].sort(); }
+  function partnerId() { return personIds().find(i => i !== S.me) || null; }
+  function colorOf(id) { return personIds().indexOf(id) % 2 === 0 ? "var(--p1)" : "var(--p2)"; }
+  function nameOf(id) { return S.names[id] || (id === S.me ? "You" : "Your partner"); }
+  function initial(id) { return (S.names[id] || (id === S.me ? "Me" : "P")).trim().charAt(0).toUpperCase(); }
+  function goalsOf(id) {
+    const p = S.people[id] || {}; const mode = MODES[p.mode] ? p.mode : "gain";
+    const g = Object.assign({}, DEFAULT_GOALS, { mode, kcalGoal: MODES[mode].kcal, proteinGoal: MODES[mode].protein });
+    ["kcalGoal", "proteinGoal", "waterGoal", "sleepGoal", "stepsGoal", "targetWeight", "startWeight"].forEach(k => { const v = n(p[k]); if (v && v > 0) g[k] = v; });
+    if (p.unit === "lb" || p.unit === "kg") g.unit = p.unit; return g;
+  }
+  function stored(id, date) { return (S.days[id] || []).find(e => e.date === date) || null; }
+  function entry(id, date) { return (id === S.me && S.drafts[date]) ? S.drafts[date] : stored(id, date); }
+  function mealsOf(e) { return e && Array.isArray(e.meals) ? e.meals.filter(m => m && typeof m === "object") : []; }
+  function totals(e) { const ms = mealsOf(e); return { kcal: Math.round(ms.reduce((a, m) => a + (n(m.kcal) || 0), 0)), protein: Math.round(ms.reduce((a, m) => a + (n(m.protein) || 0), 0)), count: ms.length }; }
+  function metricVal(e, key) { if (!e) return null; if (key === "kcal" || key === "protein") { const t = totals(e); return t.count ? t[key] : null; } return n(e[key]); }
+  function avatar(id, size) { const a = el("span", "av", initial(id)); a.style.background = colorOf(id); if (size) { a.style.width = a.style.height = size + "px"; } return a; }
+  function kcalHit(id, t, g) { return g.mode === "lose" ? (t.kcal >= g.kcalGoal * 0.85 && t.kcal <= g.kcalGoal) : g.mode === "maintain" ? Math.abs(t.kcal - g.kcalGoal) <= g.kcalGoal * 0.1 : t.kcal >= g.kcalGoal; }
+  function goalsHit(id) {
+    const e = entry(id, TODAY) || {}; const g = goalsOf(id); const t = totals(e);
+    return { kcal: kcalHit(id, t, g), protein: t.protein >= g.proteinGoal, water: (n(e.water) || 0) >= g.waterGoal, sleep: (n(e.sleep) || 0) >= g.sleepGoal };
+  }
+  function streak(id) {
+    const has = d => { const e = entry(id, d); return !!e && (totals(e).count > 0 || n(e.water) || n(e.sleep) || n(e.weight) != null); };
+    const d = fromYmd(TODAY); if (!has(TODAY)) d.setDate(d.getDate() - 1);
+    let c = 0; while (c < 400 && has(ymd(d))) { c++; d.setDate(d.getDate() - 1); } return c;
+  }
+  function weights(id) {
+    const out = []; const seen = new Set();
+    const src = (S.days[id] || []).slice(); if (id === S.me) Object.values(S.drafts).forEach(d => src.unshift(d));
+    src.forEach(e => { if (!e || seen.has(e.date)) return; seen.add(e.date); const w = n(e.weight); if (w != null && w > 0) out.push({ date: e.date, w }); });
+    return out.sort((a, b) => a.date < b.date ? -1 : 1);
+  }
+  function weightInfo(id) {
+    const ws = weights(id); const g = goalsOf(id); if (!ws.length) return null;
+    const latest = ws[ws.length - 1]; const start = g.startWeight || ws[0].w;
+    const weekAgo = fromYmd(latest.date); weekAgo.setDate(weekAgo.getDate() - 7);
+    const prior = ws.filter(x => x.date <= ymd(weekAgo)).pop();
+    let rate = null; if (prior) { const days = (fromYmd(latest.date) - fromYmd(prior.date)) / 864e5; if (days > 0) rate = (latest.w - prior.w) / days * 7; }
+    return { start, latest: latest.w, target: g.targetWeight, rate, unit: g.unit };
+  }
+  // Pace: how much you'd usually have eaten by now (spread across 8:00–22:00)
+  function paceNow(g) { const d = new Date(); const h = d.getHours() + d.getMinutes() / 60; return Math.round(g.kcalGoal * clamp((h - 8) / 14, 0, 1)); }
+  function suggestFood(need) {
+    if (need <= 0) return null;
+    let best = null; QUICK.forEach(q => { const diff = Math.abs(q[1] - need); if (q[1] <= need + 150 && (!best || diff < best.diff)) best = { q, diff }; });
+    return best ? best.q : QUICK.slice().sort((a, b) => b[1] - a[1])[0];
+  }
+  async function refreshNames() {
+    if (!S.user) return;
+    try { const ids = personIds(); const ps = await S.user.profiles(ids);
+      ids.forEach(id => { const p = ps && ps[id]; S.names[id] = (p && p.name) ? p.name.split(" ")[0] : (S.names[id] || ""); });
+      renderAll(); } catch (_) {}
+  }
+
+  // ---------- Drawings ----------
+  function heartSvg(size, fill) { const s = sv("svg", { viewBox: "0 0 24 24", width: size, height: size, "aria-hidden": "true" }); s.append(sv("path", { d: HEART, fill: fill || "currentColor" })); return s; }
+  function faceSvg(mood, color) {
+    const s = sv("svg", { viewBox: "0 0 36 36", "aria-hidden": "true" });
+    s.append(sv("circle", { cx: 18, cy: 18, r: 16, fill: color || "var(--red)" }));
+    s.append(sv("circle", { cx: 12.5, cy: 15, r: 2, fill: "#fff" })); s.append(sv("circle", { cx: 23.5, cy: 15, r: 2, fill: "#fff" }));
+    const cy = { 1: 18, 2: 21.5, 3: 24, 4: 27, 5: 30 }[mood] || 24;
+    if (mood === 5) s.append(sv("path", { d: "M11 22 Q18 31 25 22 Z", fill: "#fff" }));
+    else s.append(sv("path", { d: `M11.5 ${mood === 1 ? 26 : 24} Q18 ${cy} 24.5 ${mood === 1 ? 26 : 24}`, fill: "none", stroke: "#fff", "stroke-width": 2.2, "stroke-linecap": "round" }));
+    return s;
+  }
+  function ringSvg(pct, color, opts = {}) {
+    const size = opts.size || 74, r = size * 0.38, sw = opts.stroke || size * 0.12, c = size / 2;
+    const C = 2 * Math.PI * r; const p = clamp(pct || 0, 0, 1);
+    const s = sv("svg", { viewBox: `0 0 ${size} ${size}`, "aria-hidden": "true" });
+    s.append(sv("circle", { cx: c, cy: c, r, fill: "none", stroke: "var(--sunk)", "stroke-width": sw }));
+    s.append(sv("circle", { cx: c, cy: c, r, fill: "none", stroke: color, "stroke-width": sw, "stroke-linecap": "round",
+      "stroke-dasharray": C.toFixed(2), "stroke-dashoffset": (C * (1 - p)).toFixed(2), transform: `rotate(-90 ${c} ${c})` }));
+    if (opts.center) { opts.center(s, c); }
+    else if (p >= 1) { const k = size / 74; const g = sv("g", { transform: `translate(${c - 10 * k} ${c - 10 * k}) scale(${0.85 * k})` }); g.append(sv("path", { d: HEART, fill: color })); s.append(g); }
+    else { const t = sv("text", { x: c, y: c + 5, "text-anchor": "middle", "font-size": size * 0.19, "font-weight": 600, fill: "var(--ink)", "font-family": "Fredoka, Inter, sans-serif" }); t.textContent = Math.round(p * 100) + "%"; s.append(t); }
+    return s;
+  }
+  function icon(d) { const s = sv("svg", { viewBox: "0 0 24 24", "aria-hidden": "true" }); s.append(sv("path", { d, fill: "none", stroke: "currentColor", "stroke-width": 2.2, "stroke-linecap": "round", "stroke-linejoin": "round" })); return s; }
+
+  // ---------- Tabs ----------
+  const TABS = [
+    ["food", "Eat", "M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 0-3 2-3 5s1 5 3 5v8"],
+    ["week", "Week", "M4 6h16v14H4zM4 10h16M8 3v5M16 3v5M8 14h2M12 14h2M8 17h2"],
+    ["today", "Us", "M12 20.5C6.6 16.2 3.5 13.2 3.5 9.8 3.5 7.4 5.4 5.5 7.8 5.5c1.6 0 3.1.8 4.2 2.1 1.1-1.3 2.6-2.1 4.2-2.1 2.4 0 4.3 1.9 4.3 4.3 0 3.4-3.1 6.4-8.5 10.7z"],
+    ["log", "Body", "M12 5v14M5 12h14"],
+  ];
+  const tabsBox = $("#tabs");
+  TABS.forEach(([id, label, d]) => {
+    const b = el("button"); b.type = "button"; b.dataset.view = id;
+    b.append(icon(d), document.createTextNode(label)); b.addEventListener("click", () => go(id)); tabsBox.append(b);
+  });
+  function go(view) {
+    if (!TABS.some(t => t[0] === view)) view = "food";
+    S.view = view;
+    TABS.forEach(([id]) => { $("#v-" + id).hidden = id !== view; });
+    tabsBox.querySelectorAll("button").forEach(b => { if (b.dataset.view === view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+    if (location.hash.slice(1) !== view) { try { history.replaceState(null, "", "#" + view); } catch (_) {} }
+    renderAll(); window.scrollTo(0, 0);
+  }
+  document.addEventListener("click", e => { const t = e.target.closest("[data-go]"); if (t) go(t.dataset.go); });
+  window.addEventListener("hashchange", () => go(location.hash.slice(1)));
+
+  function status(msg) { const s = $("#status"); s.textContent = msg || ""; s.hidden = !msg; }
+  let toastT; function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2600); }
+
+  // ---------- Floating hearts ----------
+  const fx = $("#fx"); const ctx = fx.getContext("2d"); let parts = []; let raf = 0;
+  const heartPath = new Path2D(HEART);
+  function burst(count, originY) {
+    if (reduceMotion) return;
+    const dpr = window.devicePixelRatio || 1; fx.width = innerWidth * dpr; fx.height = innerHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const cs = getComputedStyle(document.documentElement);
+    const cols = [cs.getPropertyValue("--p1").trim(), cs.getPropertyValue("--p2").trim(), "#FF7A88", "#FFC2C8"];
+    for (let i = 0; i < count; i++) parts.push({ x: innerWidth * (0.2 + Math.random() * 0.6), y: originY ?? innerHeight * 0.6,
+      vx: (Math.random() - 0.5) * 6, vy: -4 - Math.random() * 7, s: 0.6 + Math.random() * 0.9, r: (Math.random() - 0.5) * 0.6, life: 0, c: cols[i % cols.length] });
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+  function tick() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    parts.forEach(p => { p.life++; p.vy += 0.18; p.x += p.vx; p.y += p.vy;
+      ctx.save(); ctx.globalAlpha = Math.max(0, 1 - p.life / 90); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.scale(p.s, p.s); ctx.translate(-12, -12); ctx.fillStyle = p.c; ctx.fill(heartPath); ctx.restore(); });
+    parts = parts.filter(p => p.life < 90 && p.y < innerHeight + 40);
+    raf = parts.length ? requestAnimationFrame(tick) : 0;
+    if (!raf) ctx.clearRect(0, 0, innerWidth, innerHeight);
+  }
+
+  // ---------- Header ----------
+  function renderWho() {
+    const box = $("#who"); box.textContent = "";
+    personIds().forEach(id => {
+      const c = el("span", "chip"); c.append(avatar(id), document.createTextNode(id === S.me ? nameOf(id) + " (you)" : nameOf(id)));
+      if (id !== S.me && S.online.has(id)) { const o = el("span", "online"); o.title = "Here right now"; c.append(o); }
+      box.append(c);
+    });
+  }
+
+  // ---------- Today ----------
+  function renderToday() {
+    const ids = personIds(); const order = [S.me, ...ids.filter(i => i !== S.me)].filter(Boolean);
+    const tg = $("#together"); tg.textContent = "";
+    const hits = order.map(id => ({ id, h: goalsHit(id) }));
+    const total = hits.length * 4; const done = hits.reduce((a, x) => a + x.h.kcal + x.h.protein + x.h.water + x.h.sleep, 0);
+    const pct = total ? done / total : 0;
+    const big = sv("svg", { viewBox: "0 0 24 24", class: "big-heart", role: "img", "aria-label": `${done} of ${total || 4} goals done together` });
+    const defs = sv("defs", {}); const cp = sv("clipPath", { id: "hfill" }); cp.append(sv("rect", { x: 0, y: (21.6 - 18.6 * pct).toFixed(2), width: 24, height: 24 })); defs.append(cp); big.append(defs);
+    big.append(sv("path", { d: HEART, fill: "rgba(255,255,255,0.22)", stroke: "#fff", "stroke-width": 1.2 }));
+    big.append(sv("path", { d: HEART, fill: "#fff", "clip-path": "url(#hfill)" }));
+    tg.append(big);
+    const txt = el("div");
+    txt.append(el("h2", null, total && done === total ? "Every goal done. Amazing team!" : done === 0 ? "Let's fill the heart together" : `${done} of ${total} goals done together`));
+    txt.append(el("p", null, "Calories, protein, water and sleep for both of you. Every goal you hit fills the heart a little more."));
+    const pips = el("div", "pips");
+    hits.forEach(x => [["kcal", "Calories"], ["protein", "Protein"], ["water", "Water"], ["sleep", "Sleep"]].forEach(([k, l]) => pips.append(el("span", "pip" + (x.h[k] ? " done" : ""), (order.length > 1 ? nameOf(x.id) + " · " : "") + l))));
+    txt.append(pips); tg.append(txt);
+
+    const box = $("#people"); box.textContent = "";
+    if (!S.loaded) { const i = el("div", "invite"); i.append(el("strong", null, "Loading your shared log…"), el("span", null, "Your day and your partner's will appear here side by side.")); box.append(i); return; }
+    order.forEach(id => box.append(personCard(id)));
+    if (order.length < 2) {
+      const i = el("div", "invite");
+      i.append(el("strong", null, "Waiting for your partner"), el("span", null, "Share this page with them from the Share menu and give them edit access. Their card appears here after they log something."));
+      box.append(i);
+    }
+  }
+  function personCard(id) {
+    const e = entry(id, TODAY) || {}; const g = goalsOf(id); const col = colorOf(id); const isMe = id === S.me; const t = totals(e);
+    const card = el("article", "card person"); card.style.borderTop = "5px solid " + col;
+    const head = el("div", "p-head"); head.append(avatar(id));
+    const hn = el("div"); hn.append(el("h3", null, isMe ? nameOf(id) + " (you)" : nameOf(id)));
+    const st = streak(id); hn.append(el("div", "sub", MODES[g.mode].label + " · " + (st > 0 ? `${st}-day streak` : "no streak yet")));
+    head.append(hn);
+    const mood = n(e.mood); if (mood) { const f = faceSvg(mood, col); f.setAttribute("class", "mood"); f.setAttribute("role", "img"); f.setAttribute("aria-label", "Mood: " + MOODS[mood - 1][1]); head.append(f); }
+    card.append(head);
+    const rings = el("div", "rings");
+    [["Calories", t.kcal, g.kcalGoal, "", 0], ["Protein", t.protein, g.proteinGoal, "g", 0], ["Water", n(e.water), g.waterGoal, "", 0], ["Sleep", n(e.sleep), g.sleepGoal, "h", 1]].forEach(([l, v, goal, u, d]) => {
+      const r = el("div", "ring"); r.append(ringSvg((v || 0) / goal, col));
+      r.append(el("span", "v num", (v ? fmt(v, d) : "0") + u + "/" + (goal >= 1000 ? fmt(goal / 1000, 1) + "k" : fmt(goal) + u))); r.append(el("span", "lbl", l)); rings.append(r);
+    });
+    card.append(rings);
+    // Eating nudge
+    if (g.mode === "gain" && TODAY === ymd(new Date())) {
+      const pace = paceNow(g); const behind = pace - t.kcal; const left = g.kcalGoal - t.kcal;
+      const nd = el("div", "nudge");
+      if (left <= 0) nd.append(el("b", null, isMe ? "Calorie goal smashed today!" : `${nameOf(id)} hit their calorie goal!`));
+      else if (behind > 150) {
+        nd.append(el("b", null, isMe ? `You're ${fmt(behind)} kcal behind pace` : `${nameOf(id)} is ${fmt(behind)} kcal behind pace`));
+        const sug = suggestFood(Math.min(left, behind));
+        nd.append(el("span", null, isMe ? (sug ? `Time to eat. A ${sug[0].toLowerCase()} (${sug[1]} kcal) would help.` : "Time for a snack.") : "Maybe remind them to grab a snack."));
+        if (isMe && sug) { const b = el("button", "cta", `Add ${sug[0].toLowerCase()}`); b.type = "button"; b.addEventListener("click", () => { addMeal(TODAY, sug[0], sug[1], sug[2], 1, nowTime()); }); nd.append(b); }
+      } else nd.append(el("b", null, `${fmt(left)} kcal to go${isMe ? ". You're on pace" : ""}`));
+      card.append(nd);
+    }
+    const facts = el("div", "facts");
+    if (t.count) { const last = mealsOf(e).slice().sort((a, b) => String(a.time || "") < String(b.time || "") ? -1 : 1).pop(); facts.append(el("span", "fact", `${t.count} item${t.count === 1 ? "" : "s"} eaten · last: ${String(last.name || "food").slice(0, 30)}`)); }
+    else facts.append(el("span", "fact", isMe ? "No food logged yet today" : "No food logged yet today"));
+    const wi = weightInfo(id);
+    if (wi) facts.append(el("span", "fact", `${fmt(wi.latest, 1)} ${wi.unit}` + (wi.target ? ` · ${fmt(Math.abs(wi.target - wi.latest), 1)} to target` : "")));
+    const wk = n(e.workoutMin); if (wk) facts.append(el("span", "fact", `${fmt(wk)} min ${typeof e.workout === "string" && e.workout ? e.workout.toLowerCase() : "workout"}`));
+    card.append(facts);
+    const todays = mealsOf(e).filter(m => validPhoto(m.photo));
+    if (todays.length) { const pg = el("div", "pics"); todays.slice(-4).forEach(m => { const b = thumbBtn(m.photo, `${String(m.name || "Food")} · ${fmtTime(mealTime(m))}`, "pic"); b.append(el("span", null, fmtTime(mealTime(m)))); pg.append(b); }); card.append(pg); }
+    if (typeof e.notes === "string" && e.notes.trim()) card.append(el("p", "p-note", "“" + e.notes.trim() + "”"));
+    const love = n(e.love) || 0;
+    if (isMe) {
+      if (love) card.append(el("div", "love-line", `You sent ${love} heart${love === 1 ? "" : "s"} today`));
+      const b = el("button", "cta dark", "Log food"); b.type = "button"; b.dataset.go = "food"; card.append(b);
+    } else {
+      if (love) card.append(el("div", "love-line", `${nameOf(id)} sent you ${love} heart${love === 1 ? "" : "s"} today`));
+      const b = el("button", "cta love-btn"); b.type = "button"; b.append(heartSvg(20, "#fff"), document.createTextNode("Send love")); b.addEventListener("click", sendLove); card.append(b);
+    }
+    return card;
+  }
+  function sendLove() {
+    if (!S.db || !S.me) { toast("Log in to send love"); return; }
+    change(TODAY, { love: (n(draft(TODAY).love) || 0) + 1 });
+    burst(18); toast("Love sent to " + nameOf(partnerId()));
+    if (S.room) S.room.emit("cheer", { to: partnerId() }).catch(() => {});
+  }
+
+  // ---------- Saving ----------
+  function draft(date) { if (!S.drafts[date]) S.drafts[date] = JSON.parse(JSON.stringify(Object.assign({ date }, stored(S.me, date) || {}))); return S.drafts[date]; }
+  function change(date, patch) {
+    if (!S.db || !S.me) { toast("Log in to save"); return false; }
+    const d = draft(date); const before = date === TODAY ? goalsHit(S.me) : null;
+    Object.assign(d, patch, { date, updatedAt: Date.now() });
+    S.pending[date] = true;
+    if (before) { const after = goalsHit(S.me);
+      const msgs = { kcal: "Calorie goal hit! Fuelled up", protein: "Protein goal hit! Muscles say thanks", water: "Water goal hit! Nice and hydrated", sleep: "Sleep goal hit! Well rested" };
+      Object.keys(msgs).forEach(k => { if (!before[k] && after[k]) { burst(40); toast(msgs[k]); } }); }
+    saveState("Saving…"); scheduleSave(date); renderAll(); return true;
+  }
+  function scheduleSave(date) { clearTimeout(S.timers[date]); S.timers[date] = setTimeout(() => flush(date), 700); }
+  function clean(d) {
+    const s = (v, m) => typeof v === "string" ? v.trim().slice(0, m) : "";
+    const meals = mealsOf(d).slice(0, 80).map(m => ({ id: s(m.id, 12) || rid(), name: s(m.name, 40) || "Food", kcal: clamp(Math.round(n(m.kcal) || 0), 0, 5000),
+      protein: clamp(Math.round(n(m.protein) || 0), 0, 500), slot: SLOTS.includes(m.slot) ? m.slot : "Snack", time: /^\d{2}:\d{2}$/.test(m.time) ? m.time : "", ...(validPhoto(m.photo) ? { photo: m.photo } : {}) }));
+    return { date: d.date, meals, water: n(d.water), sleep: n(d.sleep), steps: n(d.steps), weight: n(d.weight), workoutMin: n(d.workoutMin), workout: s(d.workout, 30),
+      mood: n(d.mood), notes: s(d.notes, 500), love: n(d.love) || 0, updatedAt: Date.now() };
+  }
+  async function flush(date) {
+    if (S.inflight[date]) { scheduleSave(date); return; }
+    S.inflight[date] = true; S.pending[date] = false;
+    try {
+      if (!S.people[S.me]) { const g = Object.assign({}, DEFAULT_GOALS); await S.db.doc("logs/" + S.me).set(g); S.people[S.me] = g; }
+      await S.db.doc("logs/" + S.me + "/days/" + date).set(clean(S.drafts[date]));
+      if (!S.pending[date]) saveState("Saved ✓", true);
+    } catch (err) { S.pending[date] = true; saveState(errText(err)); toast(errText(err)); }
+    finally { S.inflight[date] = false; }
+  }
+  function errText(err) {
+    const c = err && err.code;
+    if (c === "quota_exceeded") return "The log is full. Delete some old days to keep saving.";
+    if (c === "revoked" || c === "not_granted") return "You need edit access to this page to save.";
+    if (c === "invalid_argument") return "That couldn't be saved. Check the numbers.";
+    return "Couldn't save. Check your connection, then change any value to retry.";
+  }
+  function saveState(msg, ok) { $$("[data-save]").forEach(s => { s.textContent = msg; s.classList.toggle("ok", !!ok); }); }
+  let goalT;
+  function saveGoals(patch) {
+    if (!S.db || !S.me) { toast("Log in to save"); return; }
+    S.people[S.me] = Object.assign(goalsOf(S.me), patch); renderAll();
+    clearTimeout(goalT); goalT = setTimeout(async () => { try { await S.db.doc("logs/" + S.me).set(goalsOf(S.me)); toast("Goals saved"); } catch (err) { toast(errText(err)); } }, 800);
+  }
+
+  // ---------- Food ----------
+  function slotForTime(t) { const h = toMin(t) / 60; return h < 5 ? "Snack" : h < 11 ? "Breakfast" : h < 15 ? "Lunch" : h >= 17 && h < 21.5 ? "Dinner" : "Snack"; }
+  function addMeal(date, name, kcal, protein, portion, time, extra) {
+    const p = portion || 1; const d = draft(date);
+    const t = time || ($("#m-time").value && /^\d{2}:\d{2}$/.test($("#m-time").value) ? $("#m-time").value : (date === TODAY ? nowTime() : SLOT_TIME[S.slot]));
+    const meal = { id: rid(), name: (p !== 1 ? p + "× " : "") + name, kcal: Math.round(kcal * p), protein: Math.round(protein * p), slot: time ? slotForTime(t) : S.slot, time: t };
+    if (extra) Object.assign(meal, extra);
+    if (change(date, { meals: mealsOf(d).concat([meal]) })) { toast(`Added ${meal.name.toLowerCase()} · ${meal.kcal} kcal`); if (!reduceMotion && meal.kcal >= 500) burst(8); }
+  }
+  function removeMeal(date, id) {
+    const d = draft(date); const gone = mealsOf(d).find(m => m.id === id);
+    change(date, { meals: mealsOf(d).filter(m => m.id !== id) });
+    if (gone && validPhoto(gone.photo) && S.assets) S.assets.delete(gone.photo).catch(() => {});
+  }
+
+  // ---------- Photos ----------
+  const validPhoto = v => typeof v === "string" && /^[A-Za-z0-9_-]{8,64}$/.test(v);
+  const photoUrl = id => "/api/photo/" + id;
+  S.assets = null; S.sample = null; S.canGuess = false; S.photoBlob = null; S.attachTo = null; S.photoChecked = false;
+  function photoImg(id, alt) { const i = el("img"); i.src = photoUrl(id); i.alt = alt || "Food photo"; i.loading = "lazy"; i.decoding = "async"; return i; }
+  function openPhoto(id, caption) { $("#lb-img").src = photoUrl(id); $("#lb-img").alt = caption || "Food photo"; $("#lb-cap").textContent = caption || ""; $("#lb").hidden = false; $("#lb-close").focus(); }
+  function closePhoto() { $("#lb").hidden = true; $("#lb-img").removeAttribute("src"); }
+  $("#lb-close").addEventListener("click", closePhoto);
+  $("#lb").addEventListener("click", e => { if (e.target.id === "lb") closePhoto(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#lb").hidden) closePhoto(); });
+  function thumbBtn(id, caption, cls) { const b = el("button", cls || "thumb"); b.type = "button"; b.setAttribute("aria-label", "Open photo: " + (caption || "food")); b.append(photoImg(id, caption)); b.addEventListener("click", () => openPhoto(id, caption)); return b; }
+  async function shrink(file) {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+      const sc = Math.min(1, 1280 / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(img.naturalWidth * sc)); c.height = Math.max(1, Math.round(img.naturalHeight * sc));
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      const blob = await new Promise(r => c.toBlob(r, "image/jpeg", 0.82));
+      if (!blob) throw new Error("encode"); return blob;
+    } finally { URL.revokeObjectURL(url); }
+  }
+  function photoErr(err) {
+    const c = err && err.code;
+    if (c === "quota_or_state") return "Photo storage is full. Remove some old photos first.";
+    if (c === "too_large") return "That photo is too big. Try another one.";
+    if (c === "unsupported_type") return "That file type can't be saved. Use a normal photo.";
+    if (c === "rate_limited") return "Too many photos at once. Wait a moment and try again.";
+    if (c === "not_granted") return "You need edit access to this page to save photos.";
+    return "Couldn't save the photo. Check your connection and try again.";
+  }
+  async function uploadPhoto(blob) {
+    if (!S.assets) { toast("Photos aren't available for you here"); return null; }
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try { const r = await S.assets.upload(blob, { type: "image/jpeg" }); return r && validPhoto(r.id) ? r.id : null; }
+      catch (err) { if (err && err.code === "store_unavailable" && attempt === 0) { await new Promise(r => setTimeout(r, 800 + Math.random() * 600)); continue; } toast(photoErr(err)); return null; }
+    }
+    return null;
+  }
+  let prevUrl = null;
+  function closePanel() { $("#photo-panel").hidden = true; S.photoBlob = null; if (prevUrl) { URL.revokeObjectURL(prevUrl); prevUrl = null; } }
+  $("#photo-in").addEventListener("change", async e => {
+    const f = e.target.files && e.target.files[0]; e.target.value = ""; if (!f) { S.attachTo = null; return; }
+    let blob; try { blob = await shrink(f); } catch (_) { toast("Couldn't read that photo. Try another one."); S.attachTo = null; return; }
+    if (S.attachTo) {
+      const { id, date } = S.attachTo; S.attachTo = null; toast("Saving photo…");
+      const aid = await uploadPhoto(blob); if (!aid) return;
+      const d = draft(date); change(date, { meals: mealsOf(d).map(x => x.id === id ? Object.assign({}, x, { photo: aid }) : x) }); toast("Photo added");
+      return;
+    }
+    closePanel(); S.photoBlob = blob; prevUrl = URL.createObjectURL(blob); $("#photo-prev").src = prevUrl;
+    $("#ph-name").value = ""; $("#ph-kcal").value = ""; $("#ph-protein").value = ""; $("#ph-est").textContent = "";
+    $("#ph-guess").hidden = !S.canGuess; $("#photo-panel").hidden = false; $("#ph-name").focus();
+  });
+  $("#ph-cancel").addEventListener("click", closePanel);
+  $("#ph-save").addEventListener("click", async () => {
+    if (!S.photoBlob) return;
+    const b = $("#ph-save"); b.disabled = true; b.textContent = "Saving…";
+    try {
+      const aid = await uploadPhoto(S.photoBlob); if (!aid) return;
+      const name = $("#ph-name").value.trim().slice(0, 40) || "Photo meal";
+      addMeal(S.sel, name, clamp(n($("#ph-kcal").value) || 0, 0, 5000), clamp(n($("#ph-protein").value) || 0, 0, 500), 1, null, { photo: aid });
+      closePanel(); if (!reduceMotion) burst(12);
+    } finally { b.disabled = false; b.textContent = "Save to day"; }
+  });
+  $("#ph-guess").addEventListener("click", async () => {
+    if (!S.sample || !S.photoBlob) return;
+    const b = $("#ph-guess"); b.disabled = true; $("#ph-est").textContent = "Claude is looking at your food…";
+    try {
+      const r = await S.sample.json("This is a photo of food someone just ate. Identify the food and estimate the total for everything visible. Reply with only JSON: {\"name\": a short food name of at most 5 words, \"kcal\": whole-number calories, \"protein\": whole-number grams of protein}. If it is not food, reply {\"name\": \"\", \"kcal\": 0, \"protein\": 0}.", { images: [S.photoBlob], modelTier: "quick" });
+      const name = r && typeof r.name === "string" ? r.name.trim().slice(0, 40) : ""; const kc = n(r && r.kcal); const pr = n(r && r.protein);
+      if (!name) { $("#ph-est").textContent = "Claude couldn't spot food in that photo. Fill it in yourself."; return; }
+      if (!$("#ph-name").value.trim()) $("#ph-name").value = name;
+      if (kc != null) $("#ph-kcal").value = clamp(Math.round(kc), 0, 5000);
+      if (pr != null) $("#ph-protein").value = clamp(Math.round(pr), 0, 500);
+      $("#ph-est").textContent = "Claude's rough estimate. Change it if you know better.";
+    } catch (err) {
+      const c = err && err.code;
+      if (c === "not_granted") { S.canGuess = false; b.hidden = true; $("#ph-est").textContent = "Calorie guessing is turned off. You can still type the numbers."; }
+      else $("#ph-est").textContent = c === "rate_limited" ? "Too many guesses for now. Try again in a minute." : "Couldn't get a guess right now. Type the numbers instead.";
+    } finally { b.disabled = false; }
+  });
+  function renderSnap() {
+    const card = $("#snap");
+    if (!S.photoChecked) { card.hidden = true; return; }
+    card.hidden = false;
+    $("#snap-btn").hidden = !S.assets;
+    const day = S.sel === TODAY ? "today" : fromYmd(S.sel).toLocaleDateString(undefined, { weekday: "long" });
+    $("#snap-sub").textContent = S.assets ? `Take a photo and it's saved to ${day} at the time you set below.` : "Photos need edit access to this page. Ask the owner to give you edit access.";
+  }
+  (function buildFood() {
+    const sb = $("#slots");
+    SLOTS.forEach(s => { const b = el("button", "pill", s); b.type = "button"; b.dataset.slot = s; b.addEventListener("click", () => { S.slot = s; S.timeEdited = false; syncFoodControls(); }); sb.append(b); });
+    $("#m-time").addEventListener("input", e => { S.timeEdited = true; if (/^\d{2}:\d{2}$/.test(e.target.value)) { S.slot = slotForTime(e.target.value); syncFoodControls(); } });
+    $("#m-now").addEventListener("click", () => { $("#m-time").value = nowTime(); S.slot = slotForTime($("#m-time").value); S.timeEdited = true; syncFoodControls(); });
+    const pb = $("#portions");
+    [[0.5, "½"], [1, "1×"], [1.5, "1½"], [2, "2×"]].forEach(([v, l]) => { const b = el("button", "pill", l); b.type = "button"; b.dataset.portion = v; b.setAttribute("aria-label", `${v} portion`); b.addEventListener("click", () => { S.portion = v; syncFoodControls(); }); pb.append(b); });
+    const qb = $("#quick");
+    QUICK.forEach(([nm, kc, pr]) => { const b = foodBtn(nm, kc, pr); qb.append(b); });
+    $("#custom").addEventListener("submit", e => {
+      e.preventDefault();
+      const nm = $("#c-name").value.trim(); const kc = n($("#c-kcal").value); const pr = n($("#c-protein").value) || 0;
+      if (!nm || kc == null || kc < 0) { toast("Add a name and calories"); return; }
+      addMeal(S.sel, nm.slice(0, 40), clamp(kc, 0, 5000), clamp(pr, 0, 500), 1);
+      $("#c-name").value = ""; $("#c-kcal").value = ""; $("#c-protein").value = ""; $("#c-name").focus();
+    });
+    const mb = $("#modes");
+    Object.entries(MODES).forEach(([k, m]) => { const b = el("button", "pill", m.label); b.type = "button"; b.dataset.mode = k;
+      b.addEventListener("click", () => saveGoals({ mode: k, kcalGoal: m.kcal, proteinGoal: m.protein })); mb.append(b); });
+    $("#g-kcal").addEventListener("change", e => { const v = n(e.target.value); if (v >= 800) saveGoals({ kcalGoal: Math.round(v) }); });
+    $("#g-protein").addEventListener("change", e => { const v = n(e.target.value); if (v >= 10) saveGoals({ proteinGoal: Math.round(v) }); });
+    $("#g-start").addEventListener("change", e => { const v = n(e.target.value); saveGoals({ startWeight: v && v > 0 ? v : null }); });
+    $("#g-target").addEventListener("change", e => { const v = n(e.target.value); saveGoals({ targetWeight: v && v > 0 ? v : null }); });
+    $$("[data-unit]").forEach(b => b.addEventListener("click", () => saveGoals({ unit: b.dataset.unit })));
+  })();
+  function foodBtn(nm, kc, pr) {
+    const b = el("button", "food"); b.type = "button";
+    b.append(el("b", null, nm), el("span", null, `${kc} kcal · ${pr}g protein`));
+    b.addEventListener("click", () => { addMeal(S.sel, nm, kc, pr, S.portion); b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); });
+    return b;
+  }
+  function syncFoodControls() {
+    if (!S.timeEdited && document.activeElement !== $("#m-time")) $("#m-time").value = S.sel === TODAY && S.slot === slotForNow() ? nowTime() : SLOT_TIME[S.slot];
+    $$("[data-slot]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.slot === S.slot)));
+    $$("[data-portion]").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.portion) === S.portion)));
+    $$("#quick .food span").forEach((s, i) => { const q = QUICK[i]; s.textContent = `${Math.round(q[1] * S.portion)} kcal · ${Math.round(q[2] * S.portion)}g protein`; });
+  }
+  function renderFood() {
+    renderDates(); syncFoodControls(); renderSnap();
+    if (!S.me) { $("#fuel").textContent = ""; $("#fuel").append(el("p", "muted", "Log in to start logging food.")); }
+    const g = goalsOf(S.me); const e = entry(S.me, S.sel) || {}; const t = totals(e);
+    // Fuel card
+    if (S.me) {
+      const fuel = $("#fuel"); fuel.textContent = "";
+      const ring = ringSvg(t.kcal / g.kcalGoal, "var(--red)", { size: 150, stroke: 16, center: (s, c) => {
+        const t1 = sv("text", { x: c, y: c + 2, "text-anchor": "middle", "font-size": 30, "font-weight": 700, fill: "var(--ink)", "font-family": "Fredoka, Inter, sans-serif" }); t1.textContent = Math.round(clamp(t.kcal / g.kcalGoal, 0, 9.99) * 100) + "%";
+        const t2 = sv("text", { x: c, y: c + 22, "text-anchor": "middle", "font-size": 12, fill: "var(--muted)", "font-family": "Inter, sans-serif" }); t2.textContent = "of calories";
+        s.append(t1, t2); } });
+      ring.setAttribute("class", "big-ring"); fuel.append(ring);
+      const left = el("div", "left");
+      left.append(el("span", "mode-tag", g.mode === "gain" ? "Bulk mode" : MODES[g.mode].label));
+      const k = el("div", "kcal num", fmt(t.kcal) + " "); k.append(el("small", null, "/ " + fmt(g.kcalGoal) + " kcal")); left.append(k);
+      const leftK = g.kcalGoal - t.kcal;
+      left.append(el("div", null, leftK > 0 ? (g.mode === "lose" ? `${fmt(leftK)} kcal left today` : `Eat ${fmt(leftK)} more kcal ${S.sel === TODAY ? "today" : "that day"}`) : (g.mode === "gain" ? `Goal beaten by ${fmt(-leftK)} kcal. Great eating!` : `${fmt(-leftK)} kcal over goal`)));
+      const pl = el("div", "row between"); pl.append(el("span", null, "Protein"), el("span", "num", `${fmt(t.protein)} / ${fmt(g.proteinGoal)} g`)); left.append(pl);
+      const bar = el("div", "bar"); const bi = el("i"); bi.style.width = clamp(t.protein / g.proteinGoal * 100, 0, 100) + "%"; bar.append(bi); left.append(bar);
+      if (S.sel === TODAY && g.mode === "gain" && leftK > 0) {
+        const pace = paceNow(g); const behind = pace - t.kcal;
+        left.append(el("div", "muted", behind > 150 ? `By now you'd usually be near ${fmt(pace)} kcal. Grab something!` : "You're on pace. Keep it going."));
+      }
+      fuel.append(left);
+    }
+    // Recent custom foods
+    const quickNames = new Set(QUICK.map(q => q[0].toLowerCase()));
+    const recent = []; const seen = new Set();
+    const src = Object.values(S.drafts).concat(S.days[S.me] || []);
+    src.forEach(d => mealsOf(d).slice().reverse().forEach(m => { const base = String(m.name || "").replace(/^[\d.]+× /, ""); const key = base.toLowerCase();
+      if (!base || quickNames.has(key) || seen.has(key) || recent.length >= 8) return; seen.add(key);
+      const mult = /^([\d.]+)× /.exec(String(m.name)); const f = mult ? Number(mult[1]) || 1 : 1;
+      recent.push([base, Math.round((n(m.kcal) || 0) / f), Math.round((n(m.protein) || 0) / f)]); }));
+    const rb = $("#recent"); rb.textContent = ""; $("#recent-wrap").hidden = !recent.length;
+    recent.forEach(([nm, kc, pr]) => rb.append(foodBtn(nm, kc, pr)));
+    // Meals list
+    const box = $("#meals"); box.textContent = ""; const ms = mealsOf(e);
+    $("#meal-count").textContent = ms.length ? `${ms.length} item${ms.length === 1 ? "" : "s"} · ${fmt(t.kcal)} kcal` : "";
+    if (!ms.length) { const i = el("div", "invite"); i.append(el("strong", null, S.sel === TODAY ? "Nothing eaten yet today" : "Nothing logged for this day"), el("span", null, "Tap a food above to add it. It lands in the meal you picked.")); box.append(i); }
+    SLOTS.forEach(slot => {
+      const list = ms.filter(m => (SLOTS.includes(m.slot) ? m.slot : "Snack") === slot).sort((a, b) => toMin(mealTime(a)) - toMin(mealTime(b)));
+      if (!list.length) return;
+      const sec = el("div", "slot"); const h = el("h3", null, slot);
+      h.append(el("span", "num", `${fmt(list.reduce((a, m) => a + (n(m.kcal) || 0), 0))} kcal`)); sec.append(h);
+      list.forEach(m => {
+        const r = el("div", "meal" + (validPhoto(m.photo) ? " has-photo" : "")); const nm = el("div", "nm", String(m.name || "Food"));
+        if (validPhoto(m.photo)) r.append(thumbBtn(m.photo, String(m.name || "Food")));
+        const sm = el("small"); const ti = el("input", "t-in"); ti.type = "time"; ti.value = mealTime(m); ti.setAttribute("aria-label", "Time you ate " + String(m.name || "this"));
+        ti.addEventListener("change", () => { if (!/^\d{2}:\d{2}$/.test(ti.value)) return; const d = draft(S.sel); change(S.sel, { meals: mealsOf(d).map(x => x.id === m.id ? Object.assign({}, x, { time: ti.value, slot: slotForTime(ti.value) }) : x) }); });
+        sm.append(ti, document.createTextNode(` · ${fmt(n(m.protein) || 0)}g protein`)); nm.append(sm);
+        r.append(nm, el("span", "kc num", fmt(n(m.kcal) || 0) + " kcal"));
+        const acts = el("div", "acts");
+        const again = el("button", "icon-btn"); again.type = "button"; again.setAttribute("aria-label", "Eat this again"); again.title = "Eat this again"; again.append(icon("M12 5v14M5 12h14"));
+        again.addEventListener("click", () => { const base = String(m.name || "Food").replace(/^[\d.]+× /, ""); const mult = /^([\d.]+)× /.exec(String(m.name)); const f = mult ? Number(mult[1]) || 1 : 1;
+          addMeal(S.sel, base, (n(m.kcal) || 0) / f, (n(m.protein) || 0) / f, f, S.sel === TODAY ? nowTime() : null); });
+        const del = el("button", "icon-btn"); del.type = "button"; del.setAttribute("aria-label", "Remove " + String(m.name || "food")); del.title = "Remove"; del.append(icon("M6 6l12 12M18 6L6 18"));
+        del.addEventListener("click", () => { removeMeal(S.sel, m.id); toast("Removed"); });
+        if (S.assets) { const cam = el("button", "icon-btn"); cam.type = "button"; cam.title = validPhoto(m.photo) ? "Replace photo" : "Add a photo";
+          cam.setAttribute("aria-label", (validPhoto(m.photo) ? "Replace photo of " : "Add a photo of ") + String(m.name || "food"));
+          cam.append(icon("M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"));
+          cam.addEventListener("click", () => { S.attachTo = { id: m.id, date: S.sel }; $("#photo-in").click(); }); acts.prepend(cam); }
+        acts.append(again, del); r.append(acts); sec.append(r);
+      });
+      box.append(sec);
+    });
+    // Weight goal card
+    const wg = $("#wgoal"); wg.textContent = "";
+    const head = el("div", "row between"); head.append(el("h3", null, "Weight goal")); wg.append(head);
+    const wi = S.me ? weightInfo(S.me) : null;
+    if (!wi) { wg.append(el("p", "muted", "Log your weight on the Body tab and set a target below to track your progress.")); }
+    else {
+      const nums = el("div", "wg-nums");
+      [["Start", wi.start], ["Now", wi.latest], ["Target", wi.target]].forEach(([l, v]) => { const d = el("div"); d.append(el("b", "num", v ? fmt(v, 1) : "–"), el("span", null, l + " · " + wi.unit)); nums.append(d); });
+      wg.append(nums);
+      if (wi.target && wi.target !== wi.start) {
+        const p = clamp((wi.latest - wi.start) / (wi.target - wi.start), 0, 1);
+        const bar = el("div", "bar"); const bi = el("i"); bi.style.width = (p * 100).toFixed(0) + "%"; bar.append(bi); wg.append(bar);
+        wg.append(el("p", null, p >= 1 ? "Target reached! Time to set a new one." : `${Math.round(p * 100)}% of the way. ${fmt(Math.abs(wi.target - wi.latest), 1)} ${wi.unit} to go.`));
+      } else wg.append(el("p", "muted", "Set a target weight in My food goals to see your progress bar."));
+      if (wi.rate != null) wg.append(el("p", "muted", `Last week: ${wi.rate >= 0 ? "+" : ""}${fmt(wi.rate, 2)} ${wi.unit} per week`));
+    }
+    // Settings
+    $$("[data-mode]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === g.mode)));
+    $("#mode-help").textContent = MODES[g.mode].help;
+    $$("[data-unit]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.unit === g.unit)));
+    setVal("g-kcal", g.kcalGoal); setVal("g-protein", g.proteinGoal); setVal("g-start", g.startWeight); setVal("g-target", g.targetWeight);
+  }
+
+  // ---------- Body log ----------
+  (function buildLog() {
+    const faces = $("#faces");
+    MOODS.forEach(([v, l]) => { const b = el("button", "face"); b.type = "button"; b.dataset.mood = v; b.setAttribute("aria-pressed", "false");
+      b.append(faceSvg(v), el("span", null, l)); b.addEventListener("click", () => { const cur = n(draft(S.sel).mood); change(S.sel, { mood: cur === v ? null : v }); if (cur !== v && v >= 4) burst(10); }); faces.append(b); });
+    const wt = $("#wk-types");
+    WORKOUTS.forEach(w => { const b = el("button", "pill", w); b.type = "button"; b.dataset.wk = w; b.setAttribute("aria-pressed", "false");
+      b.addEventListener("click", () => { const d = draft(S.sel); const on = d.workout === w; change(S.sel, { workout: on ? "" : w, workoutMin: on ? n(d.workoutMin) : (n(d.workoutMin) || 45) }); }); wt.append(b); });
+    const sq = $("#sleep-quick");
+    [6, 7, 8, 9].forEach(h => { const b = el("button", "pill", h + "h"); b.type = "button"; b.addEventListener("click", () => change(S.sel, { sleep: h })); sq.append(b); });
+    $("#sleep").addEventListener("input", e => change(S.sel, { sleep: n(e.target.value) }));
+    $("#steps").addEventListener("input", e => { const v = n(e.target.value); change(S.sel, { steps: v == null ? null : Math.max(0, Math.round(v)) }); });
+    $("#wk-min").addEventListener("input", e => change(S.sel, { workoutMin: n(e.target.value) }));
+    $("#weight").addEventListener("input", e => { const v = n(e.target.value); change(S.sel, { weight: v && v > 0 ? v : null }); });
+    $("#notes").addEventListener("input", e => change(S.sel, { notes: e.target.value }));
+    $("#g-water").addEventListener("change", e => { const v = n(e.target.value); if (v > 0) saveGoals({ waterGoal: Math.round(v) }); });
+    $("#g-sleep").addEventListener("change", e => { const v = n(e.target.value); if (v > 0) saveGoals({ sleepGoal: v }); });
+  })();
+  function renderDates() {
+    $$("[data-dates]").forEach(box => {
+      box.textContent = "";
+      for (let i = 0; i < 7; i++) {
+        const d = fromYmd(TODAY); d.setDate(d.getDate() - i); const key = ymd(d);
+        const b = el("button"); b.type = "button"; b.setAttribute("aria-pressed", String(key === S.sel));
+        b.append(el("span", null, i === 0 ? "Today" : i === 1 ? "Yesterday" : d.toLocaleDateString(undefined, { weekday: "short" })), el("b", null, String(d.getDate())));
+        if (S.me && entry(S.me, key)) b.append(el("i", "tick"));
+        b.addEventListener("click", () => { S.sel = key; S.timeEdited = false; renderAll(); });
+        box.append(b);
+      }
+    });
+  }
+  function renderGlasses(e, g) {
+    const box = $("#glasses"); const water = n(e.water) || 0;
+    const focusIdx = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.glass : null;
+    box.textContent = "";
+    const count = Math.min(20, Math.max(g.waterGoal, water + 1));
+    for (let i = 0; i < count; i++) {
+      const full = i < water; const extra = i >= g.waterGoal;
+      const b = el("button", "glass"); b.type = "button"; b.dataset.glass = i; b.setAttribute("aria-label", `${i + 1} glass${i ? "es" : ""}`); b.setAttribute("aria-pressed", String(full));
+      const s = sv("svg", { viewBox: "0 0 30 38", "aria-hidden": "true" });
+      s.append(sv("path", { d: "M3 3h24l-3 31a2 2 0 0 1-2 1.8H8A2 2 0 0 1 6 34z", fill: full ? "var(--red)" : "var(--sunk)", stroke: full ? "var(--red)" : (extra ? "var(--line)" : "var(--muted)"), "stroke-width": 1.6, "stroke-dasharray": extra && !full ? "3 2" : "none" }));
+      if (full) s.append(sv("path", { d: "M8 10 Q12 8 15 10 T22 10", fill: "none", stroke: "#fff", "stroke-width": 1.6, opacity: .7 }));
+      b.append(s);
+      b.addEventListener("click", () => change(S.sel, { water: water === i + 1 ? i : i + 1 }));
+      box.append(b);
+    }
+    if (focusIdx != null) { const f = box.querySelector(`[data-glass="${focusIdx}"]`); if (f) f.focus(); }
+  }
+  function setVal(id, v) { const i = $("#" + id); if (document.activeElement !== i) i.value = v == null ? (i.type === "range" ? 0 : "") : v; }
+  function hint(id, text, win) { const h = $("#" + id); h.textContent = text; h.classList.toggle("win", !!win); }
+  function renderLog() {
+    renderDates();
+    const e = (S.me && entry(S.me, S.sel)) || {}; const g = goalsOf(S.me);
+    const water = n(e.water), sleep = n(e.sleep), steps = n(e.steps), wk = n(e.workoutMin), w = n(e.weight);
+    $("#weight-out").firstChild.textContent = fmt(w, 1) + " "; $("#weight-out").lastChild.textContent = g.unit; setVal("weight", w);
+    const wi = S.me ? weightInfo(S.me) : null;
+    hint("weight-hint", wi && wi.target ? `Target ${fmt(wi.target, 1)} ${g.unit}. ${wi.rate != null ? `Last week ${wi.rate >= 0 ? "+" : ""}${fmt(wi.rate, 2)} ${g.unit}/week.` : ""}` : "Weigh in a few times a week to see your trend.", false);
+    $("#water-out").firstChild.textContent = fmt(water || 0) + " ";
+    renderGlasses(e, g);
+    hint("water-hint", (water || 0) >= g.waterGoal ? "Goal reached! Extra glasses count too." : `${g.waterGoal - (water || 0)} more to reach your goal of ${g.waterGoal}. Tap a glass to fill it.`, (water || 0) >= g.waterGoal);
+    $("#sleep-out").firstChild.textContent = fmt(sleep, 1) + " "; setVal("sleep", sleep);
+    hint("sleep-hint", sleep == null ? "Slide or tap a quick pick. Sleep helps you build muscle." : sleep >= g.sleepGoal ? "Well rested!" : `${fmt(g.sleepGoal - sleep, 1)}h short of your ${g.sleepGoal}h goal`, sleep != null && sleep >= g.sleepGoal);
+    $("#steps-out").firstChild.textContent = fmt(steps) + " "; setVal("steps", steps);
+    $$("[data-mood]").forEach(b => b.setAttribute("aria-pressed", String(n(e.mood) === Number(b.dataset.mood))));
+    $$("[data-wk]").forEach(b => b.setAttribute("aria-pressed", String(e.workout === b.dataset.wk)));
+    $("#wk-out").firstChild.textContent = fmt(wk || 0) + " "; setVal("wk-min", wk);
+    setVal("notes", typeof e.notes === "string" ? e.notes : "");
+    if (!S.goalsFilled && S.loaded) { S.goalsFilled = true; setVal("g-water", g.waterGoal); setVal("g-sleep", g.sleepGoal); }
+  }
+
+  // ---------- Week diary ----------
+  const SLOT_TIME = { Breakfast: "08:00", Lunch: "13:00", Dinner: "19:00", Snack: "16:00" };
+  const DAY_START = 5 * 60, DAY_END = 24 * 60;
+  const toMin = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+  const fmtTime = t => { const [h, m] = t.split(":").map(Number); return new Date(2000, 0, 1, h, m).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }); };
+  const fmtMin = mins => { const m = Math.round(mins); return fmtTime(z(Math.floor(m / 60) % 24) + ":" + z(m % 60)); };
+  function mealTime(m) { return /^\d{2}:\d{2}$/.test(m.time) ? m.time : (SLOT_TIME[m.slot] || "16:00"); }
+  function mondayOf(offset) { const d = fromYmd(TODAY); d.setDate(d.getDate() - (d.getDay() + 6) % 7 + offset * 7); return d; }
+  S.weekOffset = 0; S.weekWho = null; S.weekTip = null; S.weekOpen = null;
+  $("#wk-prev").addEventListener("click", () => { S.weekOffset--; S.weekTip = null; S.weekOpen = null; renderWeek(); });
+  $("#wk-next").addEventListener("click", () => { if (S.weekOffset < 0) { S.weekOffset++; S.weekTip = null; S.weekOpen = null; renderWeek(); } });
+  function stat(k, v, s) { const c = el("div", "stat"); c.append(el("span", "k", k), el("span", "v num", v)); if (s) c.append(el("span", "s", s)); return c; }
+  function renderWeek() {
+    const ids = personIds();
+    const who = S.weekWho && ids.includes(S.weekWho) ? S.weekWho : S.me;
+    const wb = $("#week-who"); wb.textContent = "";
+    if (ids.length > 1) ids.forEach(id => { const b = el("button", "pill", id === S.me ? "Me" : nameOf(id)); b.type = "button"; b.setAttribute("aria-pressed", String(id === who));
+      b.addEventListener("click", () => { S.weekWho = id; S.weekTip = null; renderWeek(); }); wb.append(b); });
+    const mon = mondayOf(S.weekOffset); const days = [];
+    for (let i = 0; i < 7; i++) { const d = new Date(mon); d.setDate(d.getDate() + i); days.push(ymd(d)); }
+    const sun = fromYmd(days[6]);
+    $("#wk-label").textContent = S.weekOffset === 0 ? "This week" : S.weekOffset === -1 ? "Last week" : "Week of " + shortDate(days[0]);
+    $("#wk-label").append(el("span", "sub", `${shortDate(days[0])} – ${sun.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`));
+    $("#wk-next").disabled = S.weekOffset >= 0;
+    const g = goalsOf(who); const col = colorOf(who) || "var(--red)";
+    const info = days.map(date => { const e = who ? entry(who, date) : null; const ms = mealsOf(e).map(m => ({ m, t: mealTime(m) })).sort((a, b) => toMin(a.t) - toMin(b.t)); return { date, e, ms, tot: totals(e) }; });
+    // Stats
+    const logged = info.filter(d => d.ms.length && d.date <= TODAY);
+    const st = $("#wk-stats"); st.textContent = "";
+    const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
+    const avgK = avg(logged.map(d => d.tot.kcal));
+    const hitDays = logged.filter(d => kcalHit(who, d.tot, g)).length;
+    const firsts = logged.map(d => toMin(d.ms[0].t)), lasts = logged.map(d => toMin(d.ms[d.ms.length - 1].t));
+    const gaps = logged.filter(d => d.ms.length > 1).map(d => { let mx = 0; for (let i = 1; i < d.ms.length; i++) mx = Math.max(mx, toMin(d.ms[i].t) - toMin(d.ms[i - 1].t)); return mx; });
+    const avgGap = avg(gaps);
+    st.append(stat("Average a day", avgK == null ? "–" : fmt(avgK) + " kcal", `Goal ${fmt(g.kcalGoal)}`));
+    st.append(stat("Calorie goal hit", `${hitDays} / ${logged.length || 0} days`, logged.length ? "of the days logged" : "nothing logged yet"));
+    st.append(stat("Times you eat a day", avg(logged.map(d => d.ms.length)) == null ? "–" : fmt(avg(logged.map(d => d.ms.length)), 1), "meals and snacks"));
+    st.append(stat("First bite, usually", firsts.length ? fmtMin(avg(firsts)) : "–", lasts.length ? "last around " + fmtMin(avg(lasts)) : ""));
+    // Insight (aimed at eating more)
+    const ins = $("#wk-insight"); ins.textContent = ""; let msg = null;
+    if (logged.length) {
+      if (g.mode === "gain" && avgGap != null && avgGap >= 300) msg = ["Long gaps", `You often go about ${fmt(avgGap / 60, 1)} hours between meals. A snack in the middle is an easy way to eat more.`];
+      else if (g.mode === "gain" && firsts.length && avg(firsts) > 10.5 * 60) msg = ["Late first meal", "Your first meal tends to come late. Eating earlier gives you more of the day to reach your calories."];
+      else if (g.mode === "gain" && hitDays < logged.length) msg = ["Almost there", `You reached your calories on ${hitDays} of ${logged.length} days. One extra shake or snack a day would close the gap.`];
+      else if (hitDays === logged.length) msg = ["Great week", "You hit your calorie goal on every day you logged. Keep it up!"];
+    }
+    if (msg) { ins.append(el("b", null, msg[0] + ". "), document.createTextNode(msg[1])); }
+    ins.hidden = !msg;
+    // Timeline
+    const tl = $("#timeline"); tl.textContent = "";
+    const pos = mins => clamp((mins - DAY_START) / (DAY_END - DAY_START), 0, 1) * 100;
+    const head = el("div", "tl-row head"); head.append(el("span")); const hrs = el("div", "tl-hours");
+    [6, 9, 12, 15, 18, 21].forEach(h => { const s = el("span", null, h === 12 ? "12pm" : h < 12 ? h + "am" : (h - 12) + "pm"); s.style.left = pos(h * 60) + "%"; hrs.append(s); });
+    head.append(hrs, el("span", "tl-total muted", "kcal")); tl.append(head);
+    info.forEach(d => {
+      const day = fromYmd(d.date); const future = d.date > TODAY;
+      const row = el("div", "tl-row" + (future ? " future" : "") + (d.date === TODAY ? " today" : ""));
+      const lb = el("button", "tl-day"); lb.type = "button"; lb.setAttribute("aria-label", "Show everything eaten on " + day.toLocaleDateString(undefined, { weekday: "long" }));
+      lb.append(el("b", null, day.toLocaleDateString(undefined, { weekday: "short" })), el("span", null, String(day.getDate())));
+      lb.addEventListener("click", () => { S.weekOpen = S.weekOpen === d.date ? null : d.date; renderWeek(); });
+      const tr = el("div", "tl-track"); tr.append(el("i", "base"));
+      [6, 9, 12, 15, 18, 21].forEach(h => { const l = el("i", "hr"); l.style.left = pos(h * 60) + "%"; tr.append(l); });
+      d.ms.forEach(({ m, t }) => {
+        const kc = n(m.kcal) || 0; const size = Math.round(12 + Math.min(18, kc / 50));
+        const b = el("button", "dot"); b.type = "button"; b.style.left = pos(toMin(t)) + "%"; b.style.width = b.style.height = size + "px"; b.style.background = col;
+        const key = d.date + "|" + m.id; b.setAttribute("aria-pressed", String(S.weekTip === key));
+        b.setAttribute("aria-label", `${fmtTime(t)}: ${String(m.name || "Food")}, ${fmt(kc)} kcal`);
+        b.addEventListener("click", () => { S.weekTip = S.weekTip === key ? null : key; renderWeek(); });
+        tr.append(b);
+      });
+      const tot = el("div", "tl-total");
+      if (d.ms.length) { tot.append(el("b", "num", fmt(d.tot.kcal))); const mini = el("div", "mini"); const mi = el("i"); mi.style.width = clamp(d.tot.kcal / g.kcalGoal * 100, 0, 100) + "%"; mini.append(mi); tot.append(mini); }
+      else tot.append(el("span", "muted", future ? "" : "–"));
+      row.append(lb, tr, tot); tl.append(row);
+    });
+    // Tip
+    const tip = $("#wk-tip");
+    const found = S.weekTip && info.flatMap(d => d.ms.map(x => ({ d, x }))).find(o => o.d.date + "|" + o.x.m.id === S.weekTip);
+    tip.textContent = found ? `${fromYmd(found.d.date).toLocaleDateString(undefined, { weekday: "long" })} at ${fmtTime(found.x.t)} · ${String(found.x.m.name || "Food")} · ${fmt(n(found.x.m.kcal) || 0)} kcal · ${fmt(n(found.x.m.protein) || 0)}g protein`
+      : (logged.length ? "Tap a dot to see what it was. Tap a day for the full list." : (who === S.me ? "Nothing logged this week yet. Add food on the Eat tab and it shows up here." : `${nameOf(who)} hasn't logged food this week yet.`));
+    // Photos this week
+    const pics = info.flatMap(d => d.ms.filter(x => validPhoto(x.m.photo)).map(x => ({ d, x })));
+    const pb = $("#wk-pics"); pb.textContent = ""; $("#wk-pics-card").hidden = !pics.length;
+    pics.forEach(({ d, x }) => { const cap = `${fromYmd(d.date).toLocaleDateString(undefined, { weekday: "short" })} ${fmtTime(x.t)}`;
+      const b = thumbBtn(x.m.photo, `${String(x.m.name || "Food")} · ${fromYmd(d.date).toLocaleDateString(undefined, { weekday: "long" })} ${fmtTime(x.t)}`, "pic"); b.append(el("span", null, cap)); pb.append(b); });
+    // Day detail
+    const dd = $("#day-detail"); dd.textContent = "";
+    const open = S.weekOpen && info.find(d => d.date === S.weekOpen);
+    dd.hidden = !open;
+    if (open) {
+      const h = el("div", "row between"); h.append(el("h3", null, fromYmd(open.date).toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })), el("span", "num muted", `${fmt(open.tot.kcal)} kcal · ${fmt(open.tot.protein)}g protein`)); dd.append(h);
+      if (!open.ms.length) dd.append(el("p", "muted", "Nothing logged this day."));
+      open.ms.forEach(({ m, t }) => { const it = el("div", "it"); const nm = el("span", "nm", String(m.name || "Food")); nm.append(el("small", null, " · " + (SLOTS.includes(m.slot) ? m.slot : "Snack")));
+        it.append(el("span", "t", fmtTime(t)), nm, el("span", "num", fmt(n(m.kcal) || 0) + " kcal")); dd.append(it);
+        if (validPhoto(m.photo)) { const ph = thumbBtn(m.photo, `${String(m.name || "Food")} · ${fmtTime(t)}`, "pic"); ph.style.width = "140px"; ph.style.margin = "2px 0 6px 86px"; dd.append(ph); } });
+      if (open.e && typeof open.e.notes === "string" && open.e.notes.trim()) dd.append(el("p", "note", "“" + open.e.notes.trim() + "”"));
+      const wkAgo = fromYmd(TODAY); wkAgo.setDate(wkAgo.getDate() - 6);
+      if (who === S.me && open.date >= ymd(wkAgo) && open.date <= TODAY) {
+        const b = el("button", "cta dark", "Edit this day"); b.type = "button"; b.style.alignSelf = "flex-start"; b.style.marginTop = "8px";
+        b.addEventListener("click", () => { S.sel = open.date; go("food"); }); dd.append(b);
+      }
+    }
+  }
+  function renderAll() {
+    renderWho();
+    if (S.view === "today") renderToday();
+    if (S.view === "food") renderFood();
+    if (S.view === "log") renderLog();
+    if (S.view === "week") renderWeek();
+  }
+
+  // ---------- Data ----------
+  function subscribeDays(id) {
+    if (S.subs[id]) return;
+    S.subs[id] = S.db.collection("logs/" + id + "/days").orderBy("date", "desc").limit(90).onSnapshot(snap => {
+      S.days[id] = snap.docs.map(d => d.data()).filter(Boolean);
+      if (id === S.me) Object.keys(S.drafts).forEach(date => { if (!S.pending[date] && !S.inflight[date]) delete S.drafts[date]; });
+      renderAll();
+    }, () => {});
+  }
+  async function init() {
+    const c = window.claude;
+    if (!c || !c.use) { offline(); return; }
+    const [db, user] = await Promise.all([c.use("db"), c.use("user")]);
+    if (!db || !user) { offline(); return; }
+    S.db = db; S.user = user; S.me = await user.id();
+    if (!S.me) { offline(); return; }
+    renderAll(); subscribeDays(S.me);
+    const timer = setTimeout(() => status("Can't reach your shared log yet. What you see may be out of date."), 10000);
+    db.collection("logs").onSnapshot(snap => {
+      if (!snap.metadata || !snap.metadata.fromCache) { clearTimeout(timer); status(""); }
+      const people = {}; snap.docs.forEach(d => { people[d.id] = d.data() || {}; });
+      const newcomer = Object.keys(people).some(id => !(id in S.names));
+      S.people = people; S.loaded = true;
+      Object.keys(people).forEach(subscribeDays);
+      renderAll(); if (newcomer) refreshNames();
+    }, () => { clearTimeout(timer); S.loaded = true; status("Lost connection to your shared log. Reload the page to reconnect."); renderAll(); });
+    refreshNames();
+    Promise.all([c.use("assets").catch(() => null), c.use("sample").catch(() => null)]).then(async ([assets, sample]) => {
+      S.assets = assets || null;
+      if (sample) { const lim = await sample.limits().catch(() => null); S.sample = sample; S.canGuess = !!(lim && lim.images); }
+      S.photoChecked = true; renderAll();
+    });
+    c.use("room").then(room => {
+      if (!room) return; S.room = room;
+      room.on("cheer", msg => { if (msg.isMe) return; burst(36, innerHeight * 0.7); toast((msg.by ? nameOf(msg.by) : "Your partner") + " just sent you love"); });
+      room.onPeers(ch => { S.online = new Set(ch.peers.filter(p => !p.isMe && p.by).map(p => p.by)); renderWho(); });
+    }).catch(() => {});
+  }
+  function offline() { S.loaded = true; status("Can't reach the app right now. Check your connection and reload."); renderAll(); }
+
+  go(location.hash.slice(1) || "food");
+  init().catch(() => offline());
+})();
+</script>
+
+</body>
+</html>
