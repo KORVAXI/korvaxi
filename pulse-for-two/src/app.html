@@ -118,6 +118,10 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; c
 .timer.due .bar i { background: #fff; }
 .timer.due .row .pill { background: #fff; color: #9E0F22; border-color: #fff; font-weight: 600; }
 @keyframes ring { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-12deg); } 40% { transform: rotate(12deg); } 60% { transform: rotate(-6deg); } 80% { transform: rotate(6deg); } }
+.streak-flame { transform-box: fill-box; transform-origin: center; }
+.pet[data-dir="-1"] .streak-flame { transform: scaleX(-1); }
+.partner .p-water { color: #2E86DE; font-weight: 600; }
+.water-bar i { background: #2E86DE; }
 .p-since.warn { color: var(--red); font-weight: 600; }
 .nudge-box { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; background: var(--sunk); border-radius: 14px; padding: 12px; }
 .nudge-box form { display: flex; gap: 8px; }
@@ -238,7 +242,7 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; c
 .water .add-water { border: 0; border-radius: 16px; padding: 13px; background: #2E86DE; color: #fff; font: 600 1.05rem var(--display); cursor: pointer; transition: transform .12s ease; }
 .water .add-water:active { transform: scale(0.96); }
 .water .bar i { background: #2E86DE; }
-.water .partner-w { font-size: .86rem; color: var(--muted); }
+.water .partner-w, .simple .partner-w { font-size: .92rem; color: #2E86DE; font-weight: 600; }
 .simple .add-water { border: 0; border-radius: 16px; padding: 14px; background: #2E86DE; color: #fff; font: 600 1.1rem var(--display); cursor: pointer; }
 /* Plan */
 .plan-sum { display: flex; flex-direction: column; gap: 8px; }
@@ -981,6 +985,9 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       if (last) info.append(el("span", null, `Last: ${String(last.m.name || "food")} at ${fmtTime(last.t)}`));
       const ph = hungerState(pid); const ps = el("span", "p-since" + (ph.due ? " warn" : ""), sinceText(pid, ph)); ps.id = "p-since"; info.append(ps);
       const bar = el("div", "bar"); const bi = el("i"); bi.style.width = clamp(pt.kcal / pg.kcalGoal * 100, 0, 100) + "%"; bar.append(bi); info.append(bar);
+      { const pw = n(pe.water) || 0; const pwg = pg.waterGoal;
+        const wl = el("span", "p-water", `Water: ${pw} of ${pwg} glasses (${fmt(pw * 0.25, 2)} L)`); info.append(wl);
+        const wb = el("div", "bar water-bar"); const wi = el("i"); wi.style.width = clamp(pw / pwg * 100, 0, 100) + "%"; wb.append(wi); info.append(wb); }
       const love = el("button", "heart-btn"); love.type = "button"; love.setAttribute("aria-label", "Send love to " + nameOf(pid)); love.append(heartSvg(26, "#fff")); love.addEventListener("click", sendLove);
       pc.append(avatar(pid), info, love);
       const acts = el("div", "acts2");
@@ -1380,6 +1387,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     if (pid) {
       const ph = hungerState(pid);
       hero.append(el("div", "muted", `${nameOf(pid)}: ${sinceText(pid, ph).toLowerCase()}`));
+      { const pv = n((entry(pid, TODAY) || {}).water) || 0; hero.append(el("div", "partner-w", `${nameOf(pid)} drank ${pv} of ${goalsOf(pid).waterGoal} glasses of water today`)); }
       const duo2 = el("div", "duo");
       const rem = el("button", "cta", `Remind ${nameOf(pid)}`); rem.type = "button"; rem.addEventListener("click", () => { S.nudgeOpen = !S.nudgeOpen; renderHome(); });
       const love = el("button", "cta dark love-btn"); love.type = "button"; love.append(heartSvg(20, "currentColor"), document.createTextNode("Send love")); love.addEventListener("click", sendLove);
@@ -1426,7 +1434,8 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   }
   function drawPet() {
     const mood = PET.face || petMood(); const lv = petLevel().i; const full = petFullness();
-    const key = mood + lv + Math.round(full * 10); if (PET.state === key) return; PET.state = key;
+    const sk = togetherStreak().n;
+    const key = mood + lv + Math.round(full * 10) + "s" + sk; if (PET.state === key) return; PET.state = key;
     const w = 30 + full * 9, h = 27 + full * 3; // gets chubbier as you eat
     const FACE_EYES = {
       held: '<circle cx="41" cy="51" r="6.5" fill="#fff"/><circle cx="59" cy="51" r="6.5" fill="#fff"/><circle cx="41" cy="52" r="3.6" fill="#2B0C10"/><circle cx="59" cy="52" r="3.6" fill="#2B0C10"/>',
@@ -1464,7 +1473,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
         '<path d="M' + (50 - w * 0.7).toFixed(1) + ' 78 Q50 92 ' + (50 + w * 0.7).toFixed(1) + ' 78 Q50 86 ' + (50 - w * 0.7).toFixed(1) + ' 78z" fill="#E0182D" opacity=".5"/>' +
         '<ellipse cx="' + (44 - w * 0.25).toFixed(1) + '" cy="40" rx="5" ry="3" fill="#fff" opacity=".35"/>' +
         eyes + '<ellipse cx="34" cy="60" rx="4.5" ry="2.8" fill="#FF9AA6"/><ellipse cx="66" cy="60" rx="4.5" ry="2.8" fill="#FF9AA6"/>' + mouth + drip + hats +
-      '</g>' + zzz;
+      '</g>' + zzz + (sk >= 2 ? '<g transform="translate(70 4)"><g class="streak-flame"><path d="M12 30c6 0 10-4 10-10 0-5-4-9-6-12-.6 3-2 4.6-3.6 5 .3-4-1.4-8.6-5-11.4.3 4.8-2.3 8-4.3 10.8C1.6 15.5 2 18 2 20.5 2 26 6 30 12 30z" fill="#FF7A1A"/><path d="M12 29c3 0 5-2 5-5 0-2.6-1.8-4.4-2.8-6-.3 1.6-1.2 2.5-2.2 2.8 0-2-.8-4-2.4-5.3 0 2.6-1.5 4.2-2.4 5.6-.7 1-.6 2-.6 2.9 0 3 2.3 5 5.4 5z" fill="#FFD23F"/><text x="12" y="27" text-anchor="middle" font-size="9.5" font-weight="800" fill="#7A1E00" font-family="Fredoka, sans-serif">' + sk + '</text></g></g>' : '');
     $("#pet-svg").innerHTML = markup; $("#buddy-svg").innerHTML = markup;
     const p = $("#pet"); p.setAttribute("aria-label", `${PET.name} is ${mood === "sleep" ? "asleep" : mood}`);
   }
@@ -1480,7 +1489,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     const b = el("div"); b.append(document.createTextNode(lv.next ? `${lv.d} days together · grows at ${lv.next}` : `${lv.d} days together · fully grown!`));
     const bb = el("div", "bar"); const bi = el("i"); const prev = PET_LEVELS[lv.i][0]; bi.style.width = (lv.next ? clamp((lv.d - prev) / (lv.next - prev), 0, 1) : 1) * 100 + "%"; bb.append(bi); b.append(bb);
     st.append(a, b);
-    renderBondRow(); renderJourney(); maybeGreet();
+    renderBondRow(); renderJourney(); maybeGreet(); setTimeout(maybeCelebrateStreak, 1800);
     drawPet(); startPet();
   }
   function renderPetStats() { if (!$("#yard").hidden) { const old = $("#bond-row"); if (old) old.remove(); renderBondRow(); } }
@@ -1498,7 +1507,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   }
   function startPet() { if (!PET.raf && !reduceMotion) { PET.last = performance.now(); PET.raf = requestAnimationFrame(petTick); } else if (reduceMotion) placePet(); }
   function stopPet() { if (PET.raf) cancelAnimationFrame(PET.raf); PET.raf = 0; }
-  function placePet() { const pe = $("#pet"); pe.style.transform = `translate(${PET.x.toFixed(1)}px, ${(-PET.y).toFixed(1)}px) scaleX(${PET.dir})`; }
+  function placePet() { const pe = $("#pet"); pe.dataset.dir = PET.dir; pe.style.transform = `translate(${PET.x.toFixed(1)}px, ${(-PET.y).toFixed(1)}px) scaleX(${PET.dir})`; }
   function petTick(now) {
     PET.raf = 0;
     if (S.view !== "home" || document.hidden || $("#yard").hidden || $("#pet").hidden) return;
@@ -1538,6 +1547,8 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     if (intro) return [{ text: `Hi, I'm ${PET.name}! I'm so happy to meet you.` }];
     { const wv = n((entry(S.me, TODAY) || {}).water) || 0; const wg = goalsOf(S.me).waterGoal; const due = Math.round(wg * clamp((hourNow() - 8) / 13, 0, 1));
       if (!isNight() && wv < due) tips.push({ text: `Thirsty? You've had ${wv} of ${wg} glasses of water today.`, action: { label: "+1 glass", run: () => setWater(wv + 1) } }); }
+    { const st = togetherStreak(); if (!isNight() && hourNow() >= 17 && st.n >= 2 && !st.today) { const pid2 = partnerId(); const meOk = hasFood(S.me, TODAY);
+        tips.unshift({ text: meOk && pid2 ? `Our ${st.n}-day streak is in danger! ${nameOf(pid2)} hasn't logged today.` : `Our ${st.n}-day streak is in danger! Log something today.`, action: meOk && pid2 ? { label: `Remind ${nameOf(pid2)}`, run: () => sendNudge(`Don't break our ${st.n}-day streak! Log something today.`) } : { label: "Log food", run: () => { S.sel = TODAY; S.timeEdited = false; S.slotAuto = true; S.slot = slotForNow(); go("food"); } } }); } }
     const mc = S.care[S.me]; if (!isNight() && hourNow() >= 17 && !(mc && mc.day === TODAY && mc.today.cuddles)) tips.push({ text: "I missed you today..." }); const g = goalsOf(S.me); const t = totals(entry(S.me, TODAY));
     if (isNight()) tips.push({ text: `Shh... ${PET.name} is sleeping. Have a good night, you two.` });
     if (me.due) tips.push({ text: me.last ? `My tummy is rumbling! You haven't eaten in ${fmtDur(me.since)}.` : "You haven't eaten anything today. Feed me by feeding you!", action: { label: "Log food", run: () => { S.sel = TODAY; S.timeEdited = false; S.slotAuto = true; S.slot = slotForNow(); go("food"); } } });
@@ -1556,6 +1567,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     hop(); const tips = petTips(); const tip = tips[PET.tipIdx % tips.length]; PET.tipIdx++; say(tip.text, tip.action);
   }
   function petChomp(meal) {
+    setTimeout(maybeCelebrateStreak, 2500);
     if (buddyOn() || (S.view !== "home")) { PET.state = ""; renderBuddy(); if (onScreen()) { buddyHop(); buddySay(meal.kcal ? `Yum! ${meal.name} (+${fmt(meal.kcal)} kcal)` : `${meal.name} done. Thanks!`); } return; }
     if ($("#yard").hidden) return; petHop();
     const area = $("#yard-area"); if (!reduceMotion) for (let i = 0; i < 8; i++) { const c = el("i", "crumb"); c.style.left = (PET.x + 52) + "px"; c.style.bottom = "60px"; area.append(c);
@@ -1710,6 +1722,19 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   }
 
   // ---------- Daily hello ----------
+  function maybeCelebrateStreak() {
+    if (!S.me || !S.loaded) return;
+    const st = togetherStreak(); if (!st.today || st.n < 1) return;
+    const key = `pulse.streakCheer.${S.me}.${TODAY}`; let done = false;
+    try { done = localStorage.getItem(key) === "1"; if (!done) localStorage.setItem(key, "1"); } catch (_) { done = !!S.streakCheered; S.streakCheered = true; }
+    if (done) return;
+    PET.state = ""; drawPet();
+    const big = [3, 7, 14, 30, 60, 100].includes(st.n);
+    setTimeout(() => {
+      anyHop(); if (!reduceMotion) burst(big ? 50 : 20);
+      anySay(st.n === 1 ? "Day 1 of our streak! Let's keep it going." : big ? `${st.n}-day streak${st.both ? " together" : ""}! I'm so proud of us!` : `${st.n} days in a row${st.both ? " together" : ""}! We're on fire!`);
+    }, 600);
+  }
   function maybeGreet() {
     if (!S.me || !S.loaded || !S.days[S.me]) return;
     const key = `pulse.greet.${S.me}.${TODAY}`; let done = false;
@@ -1747,7 +1772,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
   function startBuddy() { if (BUD.raf) return; if (reduceMotion) { keepInside(); placeBuddy(); return; } BUD.last = performance.now(); BUD.raf = requestAnimationFrame(buddyTick); }
   function stopBuddy() { if (BUD.raf) cancelAnimationFrame(BUD.raf); BUD.raf = 0; }
   function keepInside() { const bb = bBounds(); BUD.x = clamp(BUD.x, bb.minX, bb.maxX); BUD.y = clamp(BUD.y, bb.minY, bb.maxY); }
-  function placeBuddy() { $("#buddy-pet").style.transform = `translate(${BUD.x.toFixed(1)}px, ${BUD.y.toFixed(1)}px) scaleX(${BUD.dir})`; placeBubble(); }
+  function placeBuddy() { $("#buddy-pet").dataset.dir = BUD.dir; $("#buddy-pet").style.transform = `translate(${BUD.x.toFixed(1)}px, ${BUD.y.toFixed(1)}px) scaleX(${BUD.dir})`; placeBubble(); }
   function placeBubble() {
     const bub = $("#buddy-bubble"); if (bub.hidden) return;
     const w = bub.offsetWidth, h = bub.offsetHeight;
@@ -2346,6 +2371,9 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       const people = {}; snap.docs.forEach(d => { people[d.id] = d.data() || {}; });
       const newcomer = Object.keys(people).some(id => !(id in S.names));
       S.people = people; S.loaded = true;
+      if (!S.goalPresetChecked && S.user && S.me && typeof S.user.isOwner === "function") { S.goalPresetChecked = true;
+        S.user.isOwner().then(own => { const p = S.people[S.me] || {};
+          if (!own && p.kcalSet !== true && n(p.kcalGoal) !== 2000) saveGoals({ kcalGoal: 2000, kcalSet: true }); }).catch(() => {}); }
       Object.keys(people).forEach(subscribeDays);
       renderAll(); if (newcomer) refreshNames();
     }, () => { clearTimeout(timer); S.loaded = true; status("Lost connection to your shared log. Reload the page to reconnect."); renderAll(); });
