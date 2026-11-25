@@ -237,6 +237,11 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; c
 .mem li { position: relative; font-size: .9rem; overflow-wrap: anywhere; }
 .mem li::before { content: ""; position: absolute; left: -20px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--red); }
 .mem li small { display: block; color: var(--muted); font-size: .76rem; }
+.pet-life { display: flex; flex-direction: column; gap: 10px; }
+.life-row { display: flex; flex-direction: column; gap: 4px; }
+.life-row.due span { color: var(--red); font-weight: 600; }
+.life-row .badges { gap: 4px; }
+.life-row .badge { padding: 2px 8px; font-size: .72rem; }
 /* Pet that follows you */
 .buddy { position: fixed; inset: 0; z-index: 18; pointer-events: none; }
 .buddy .buddy-pet { position: absolute; left: 0; top: 0; width: 84px; height: 84px; pointer-events: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,.18)); }
@@ -1196,7 +1201,8 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     if (!st.last) return st.since > 0 ? `No food logged today (${fmtDur(st.since)} since 7am)` : "No food logged yet today";
     return `${fmtDur(st.since)} since last meal`;
   }
-  function renderTimer() {
+  function renderTimer() { $("#timer").hidden = true; }
+  function renderTimerCardUnused() {
     const box = $("#timer"); if (!S.me || !S.days[S.me]) { box.hidden = true; return; }
     const st = hungerState(S.me); box.hidden = false; box.textContent = ""; box.classList.toggle("due", st.due);
     const clock = el("div", "clock"); clock.append(icon("M12 21a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM12 9v4l3 2M9 2h6")); box.append(clock);
@@ -1255,7 +1261,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     S.alarmKey = key; S.alarmAt = Date.now();
     showAlert("Time to eat!", st.last ? `It's been ${fmtDur(st.since)} since you ate. Grab something now and log it.` : `You haven't logged any food today. Eat something and add it to the app.`, false);
   }
-  setInterval(() => { if (S.view === "home") { renderTimer(); const pid = partnerId(); const ps = $("#p-since"); if (pid && ps) { const ph = hungerState(pid); ps.textContent = sinceText(pid, ph); ps.classList.toggle("warn", ph.due); } } checkAlarm(); }, 30000);
+  setInterval(() => { if (S.view === "home") { renderPetLife(); const pid = partnerId(); const ps = $("#p-since"); if (pid && ps) { const ph = hungerState(pid); ps.textContent = sinceText(pid, ph); ps.classList.toggle("warn", ph.due); } } checkAlarm(); }, 30000);
 
   // Reminders between partners
   const seenKey = () => "pulse.nudgeSeen." + S.me;
@@ -1357,7 +1363,8 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     let c = 0; while (c < 365 && ok(ymd(d))) { c++; d.setDate(d.getDate() - 1); }
     return { n: c, both, today };
   }
-  function renderStreak() {
+  function renderStreak() { $("#streak").hidden = true; }
+  function renderStreakCardUnused() {
     const box = $("#streak"); if (!S.me || !S.loaded) { box.hidden = true; return; }
     const st = togetherStreak(); const pid = partnerId(); box.hidden = false; box.textContent = "";
     const fl = el("div", "flame"); const f = sv("svg", { viewBox: "0 0 24 24", "aria-hidden": "true" });
@@ -1549,10 +1556,35 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     const b = el("div"); b.append(document.createTextNode(lv.next ? `${lv.d} days together · grows at ${lv.next}` : `${lv.d} days together · fully grown!`));
     const bb = el("div", "bar"); const bi = el("i"); const prev = PET_LEVELS[lv.i][0]; bi.style.width = (lv.next ? clamp((lv.d - prev) / (lv.next - prev), 0, 1) : 1) * 100 + "%"; bb.append(bi); b.append(bb);
     st.append(a, b);
-    renderBondRow(); renderJourney(); maybeGreet(); setTimeout(maybeCelebrateStreak, 1800);
+    renderBondRow(); renderPetLife(); renderJourney(); maybeGreet(); setTimeout(maybeCelebrateStreak, 1800);
     drawPet(); startPet();
   }
-  function renderPetStats() { if (!$("#yard").hidden) { const old = $("#bond-row"); if (old) old.remove(); renderBondRow(); } }
+  function renderPetLife() {
+    const st = $("#pet-stats"); if (!st || !S.me) return;
+    let box = $("#pet-life"); if (!box) { box = el("div", "wide pet-life"); box.id = "pet-life"; st.prepend(box); }
+    box.textContent = "";
+    // Meal timer
+    const h = hungerState(S.me); const nowM = new Date().getHours() * 60 + new Date().getMinutes();
+    const t = el("div", "life-row" + (h.due ? " due" : ""));
+    let txt;
+    if (!h.last && nowM < 7 * 60) txt = "Meal timer starts at 7am";
+    else if (!h.last) txt = h.due ? `No food logged today. Time to eat!` : "No food logged yet today";
+    else txt = `Last ate ${String(h.last.m.name || "food").toLowerCase()} ${fmtDur(h.since)} ago` + (h.due ? ". Time to eat!" : h.active ? ` · eat again by ${h.nextAt.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}` : "");
+    t.append(el("span", null, txt));
+    const tb = el("div", "bar"); const ti = el("i"); ti.style.width = clamp(h.since / h.limit * 100, 0, 100) + "%"; tb.append(ti); t.append(tb);
+    box.append(t);
+    // Streak together
+    const sk = togetherStreak(); const pid = partnerId();
+    const next = BADGES.find(b => b > sk.n);
+    const r = el("div", "life-row");
+    let line = sk.n ? `${sk.n}-day streak${sk.both ? " together" : ""}` : (sk.both ? "No streak yet" : "No streak yet");
+    if (sk.both) { const a = hasFood(S.me, TODAY), b = hasFood(pid, TODAY); line += a && b ? " · both logged today" : a ? ` · waiting on ${nameOf(pid)}` : b ? " · your turn today" : " · log today to keep it"; }
+    if (next) line += ` · next badge at ${next}`;
+    r.append(el("span", null, line));
+    const bd = el("div", "badges"); BADGES.forEach(b => bd.append(el("span", "badge" + (sk.n >= b ? " got" : ""), `${b}`))); r.append(bd);
+    box.append(r);
+  }
+  function renderPetStats() { if (!$("#yard").hidden) { const old = $("#bond-row"); if (old) old.remove(); renderBondRow(); renderPetLife(); } }
   function renderBondRow() {
     const st = $("#pet-stats"); const bt = bondTier();
     const c = el("div", "wide"); c.id = "bond-row";
@@ -1617,6 +1649,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     if (next) tips.push({ text: `Next on your plan: ${next.name} at ${fmtTime(next.time)}.`, action: { label: "Ate it", run: () => eatPlanned(TODAY, next) } });
     if (g.mode === "gain" && g.kcalGoal - t.kcal > 250) { const bo = BOOSTERS[Math.floor(Math.random() * BOOSTERS.length)];
       tips.push({ text: `Easy boost: ${bo[0].toLowerCase()} adds ${bo[1]} kcal with hardly any effort.`, action: { label: `Add +${bo[1]}`, run: () => addMeal(TODAY, bo[0], bo[1], bo[2], 1, nowTime()) } }); }
+    if (!me.due && me.last && me.active) tips.push({ text: `You last ate ${String(me.last.m.name || "food").toLowerCase()} ${fmtDur(me.since)} ago. Eat again by ${me.nextAt.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}!` });
     const sk = togetherStreak(); if (sk.n >= 2) tips.push({ text: `We're on a ${sk.n}-day streak${sk.both ? " together" : ""}. Don't let me down!` });
     const lv = petLevel(); if (lv.next) tips.push({ text: `${lv.next - lv.d} more day${lv.next - lv.d === 1 ? "" : "s"} of you both logging and I grow into a ${PET_LEVELS[lv.i + 1][1]} ${PET.name}!` });
     if (pid) tips.push({ text: `Psst... ${nameOf(pid)} would love a heart right now.`, action: { label: "Send love", run: sendLove } });
