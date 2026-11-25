@@ -134,8 +134,11 @@ label.f { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; c
 @keyframes ring { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-12deg); } 40% { transform: rotate(12deg); } 60% { transform: rotate(-6deg); } 80% { transform: rotate(6deg); } }
 .streak-flame { transform-box: fill-box; transform-origin: center; }
 .pet[data-dir="-1"] .streak-flame { transform: scaleX(-1); }
-.partner .p-water { color: #2E86DE; font-weight: 600; }
+.partner .info .p-water { color: #2E86DE; font-weight: 600; }
 .water-bar i { background: #2E86DE; }
+.partner .info .p-sleep { color: #6C5CE7; font-weight: 600; }
+.sleep-bar i { background: #6C5CE7; }
+.simple .partner-s { font-size: .92rem; color: #6C5CE7; font-weight: 600; }
 .p-since.warn { color: var(--red); font-weight: 600; }
 .nudge-box { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; background: var(--sunk); border-radius: 14px; padding: 12px; }
 .nudge-box form { display: flex; gap: 8px; }
@@ -1003,6 +1006,9 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       { const pw = n(pe.water) || 0; const pwg = pg.waterGoal;
         const wl = el("span", "p-water", `Water: ${pw} of ${pwg} glasses (${fmt(pw * 0.25, 2)} L)`); info.append(wl);
         const wb = el("div", "bar water-bar"); const wi = el("i"); wi.style.width = clamp(pw / pwg * 100, 0, 100) + "%"; wb.append(wi); info.append(wb); }
+      { const sl = lastSleep(pid); const sg = pg.sleepGoal;
+        info.append(el("span", "p-sleep", sl ? `Sleep: ${fmt(sl.h, 1)} of ${fmt(sg, 1)} hours ${sl.when}` : "Sleep: not logged yet"));
+        const sb = el("div", "bar sleep-bar"); const si = el("i"); si.style.width = (sl ? clamp(sl.h / sg * 100, 0, 100) : 0) + "%"; sb.append(si); info.append(sb); }
       const love = el("button", "heart-btn"); love.type = "button"; love.setAttribute("aria-label", "Send love to " + nameOf(pid)); love.append(heartSvg(26, "#fff")); love.addEventListener("click", sendLove);
       pc.append(avatar(pid), info, love);
       const acts = el("div", "acts2");
@@ -1403,6 +1409,7 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
       const ph = hungerState(pid);
       hero.append(el("div", "muted", `${nameOf(pid)}: ${sinceText(pid, ph).toLowerCase()}`));
       { const pv = n((entry(pid, TODAY) || {}).water) || 0; hero.append(el("div", "partner-w", `${nameOf(pid)} drank ${pv} of ${goalsOf(pid).waterGoal} glasses of water today`)); }
+      { const sl = lastSleep(pid); hero.append(el("div", "partner-s", sl ? `${nameOf(pid)} slept ${fmt(sl.h, 1)} hours ${sl.when}` : `${nameOf(pid)} hasn't logged sleep yet`)); }
       const duo2 = el("div", "duo");
       const rem = el("button", "cta", `Remind ${nameOf(pid)}`); rem.type = "button"; rem.addEventListener("click", () => { S.nudgeOpen = !S.nudgeOpen; renderHome(); });
       const love = el("button", "cta dark love-btn"); love.type = "button"; love.append(heartSvg(20, "currentColor"), document.createTextNode("Send love")); love.addEventListener("click", sendLove);
@@ -1890,6 +1897,14 @@ canvas.fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events
     btns.append(add, minus); card.append(btns);
     const pid = partnerId();
     if (pid) { const pv = n((entry(pid, TODAY) || {}).water) || 0; card.append(el("div", "partner-w", `${nameOf(pid)}: ${pv} / ${goalsOf(pid).waterGoal} glasses today`)); }
+  }
+
+
+  // Partner's latest sleep: today's entry, or yesterday's if today's isn't logged yet
+  function lastSleep(uid) {
+    const t = n((entry(uid, TODAY) || {}).sleep); if (t != null && t > 0) return { h: t, when: "last night" };
+    const y = fromYmd(TODAY); y.setDate(y.getDate() - 1); const v = n((entry(uid, ymd(y)) || {}).sleep);
+    return v != null && v > 0 ? { h: v, when: "the night before" } : null;
   }
 
   function sendLove() {
